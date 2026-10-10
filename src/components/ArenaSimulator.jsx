@@ -412,7 +412,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
   };
 
   return (
-    <section className="simulator-section-root" id="simulator">
+    <section className="simulator-section-root" id="timeline">
       <div className="container">
         {/* Section Header */}
         <div className="section-header">

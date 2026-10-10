@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Cpu, 
-  Layers, 
-  Compass, 
-  Gamepad2, 
-  Activity, 
-  FileText, 
+  Settings, 
   Menu, 
   X, 
-  Sparkles, 
-  ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  Crosshair
 } from 'lucide-react';
 import './Navbar.css';
 
-export default function Navbar({ currentTheme, onToggleTheme, telemetryData }) {
+export default function Navbar({ currentTheme, onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('cad');
@@ -23,13 +17,12 @@ export default function Navbar({ currentTheme, onToggleTheme, telemetryData }) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      // detect active section
-      const sections = ['cad', 'mandates', 'simulator', 'kinematics', 'subsystems', 'gallery', 'specs'];
+      const sections = ['cad', 'timeline', 'mandates', 'subsystems', 'team', 'gallery', 'faq'];
       for (const id of sections) {
         const el = document.getElementById(id);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 200) {
+          if (rect.top <= 250 && rect.bottom >= 250) {
             setActiveSection(id);
             break;
           }
@@ -42,13 +35,13 @@ export default function Navbar({ currentTheme, onToggleTheme, telemetryData }) {
   }, []);
 
   const navLinks = [
-    { id: 'cad', label: '3D Digital Twin' },
-    { id: 'mandates', label: 'Problem 8' },
-    { id: 'simulator', label: 'Arena Sim' },
-    { id: 'kinematics', label: 'Kinematics' },
+    { id: 'cad', label: '3D CAD' },
+    { id: 'timeline', label: 'Timeline' },
+    { id: 'mandates', label: 'Mandates' },
     { id: 'subsystems', label: 'Subsystems' },
-    { id: 'gallery', label: 'CAD Gallery' },
-    { id: 'specs', label: 'Tech Specs' },
+    { id: 'team', label: 'Team' },
+    { id: 'gallery', label: 'Gallery' },
+    { id: 'faq', label: 'FAQ' },
   ];
 
   const scrollTo = (id) => {
@@ -60,106 +53,102 @@ export default function Navbar({ currentTheme, onToggleTheme, telemetryData }) {
   };
 
   return (
-    <header className={`navbar-root ${scrolled ? 'scrolled' : ''}`}>
-      <div className="navbar-container">
-        {/* Brand */}
-        <div className="nav-brand" onClick={() => scrollTo('cad')}>
-          <div className="brand-badge">
-            <span className="brand-code">T-8</span>
-            <div className="brand-pulse"></div>
+    <header className={`aaruush-nav ${scrolled ? 'scrolled' : ''}`}>
+      <div className="nav-container-wrapper">
+        <div className="nav-bar-inner">
+          {/* Left Brand */}
+          <div className="nav-brand-lockup" onClick={() => scrollTo('cad')}>
+            <div className="brand-icon-symbol">
+              <Crosshair size={18} className="symbol-crosshair" />
+            </div>
+            <div className="brand-text-block">
+              <span className="brand-org-name">TEAM 8 ROBOCON</span>
+              <span className="brand-team-div">SRM ROBOCON</span>
+            </div>
           </div>
-          <div className="brand-meta">
-            <span className="brand-title">ROBOCON</span>
-            <span className="brand-sub">OMNI-CARRIER 5K</span>
-          </div>
-        </div>
 
-        {/* Live Status Pill */}
-        <div className="nav-status-pill">
-          <span className="status-dot"></span>
-          <span className="status-text mono">ODOM_LIVE</span>
-          <span className="status-separator">|</span>
-          <span className="status-metric mono">
-            θ: {Math.round(telemetryData?.theta || 0)}°
-          </span>
-        </div>
+          {/* Center Floating Pill Menu */}
+          <nav className="nav-center-menu">
+            <div className="nav-center-pill">
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => scrollTo(link.id)}
+                    className={`nav-pill-item ${isActive ? 'active' : ''}`}
+                    id={`nav-link-${link.id}`}
+                  >
+                    <span>{link.label}</span>
+                    {isActive && <span className="nav-link-dot" />}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
 
-        {/* Desktop Navigation */}
-        <nav className="nav-desktop">
-          {navLinks.map((link) => (
+          {/* Right Actions */}
+          <div className="nav-right-actions">
+            {/* Theme Toggle Utility Button */}
             <button
-              key={link.id}
-              onClick={() => scrollTo(link.id)}
-              className={`nav-link ${activeSection === link.id ? 'active' : ''}`}
+              onClick={onToggleTheme}
+              className="aaruush-util-btn"
+              title={currentTheme === 'blueprint' ? 'Switch to Dark Void' : 'Technical Blueprint Mode'}
+              aria-label="Toggle Theme"
+              id="theme-toggle-btn"
             >
-              {link.label}
-              {activeSection === link.id && <span className="nav-link-indicator" />}
+              <Settings size={16} />
             </button>
-          ))}
-        </nav>
 
-        {/* Actions */}
-        <div className="nav-actions">
-          {/* Theme Toggle */}
-          <button
-            onClick={onToggleTheme}
-            className="theme-toggle-btn"
-            title={currentTheme === 'dark' ? 'Switch to Technical Blueprint' : 'Switch to Dark Void'}
-            id="theme-toggle-button"
-          >
-            <Layers size={16} />
-            <span className="theme-toggle-text">
-              {currentTheme === 'dark' ? 'BLUEPRINT' : 'DARK VOID'}
-            </span>
-          </button>
+            {/* CTA Lockup */}
+            <div className="nav-action-lockup">
+              <a
+                href="#cad"
+                onClick={(e) => { e.preventDefault(); scrollTo('cad'); }}
+                className="aaruush-primary-btn"
+                id="nav-model-btn"
+              >
+                <span className="nav-pulse-beacon" />
+                <span>OMNI-CARRIER 5K</span>
+              </a>
+              <span className="nav-action-tag mono">*SRM ROBOCON '25</span>
+            </div>
 
-          {/* Quick Drive Button */}
-          <button
-            onClick={() => scrollTo('simulator')}
-            className="nav-drive-btn"
-            id="nav-drive-button"
-          >
-            <Gamepad2 size={16} />
-            <span>MANUAL DRIVE</span>
-          </button>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="mobile-toggle-btn"
-            aria-label="Toggle menu"
-            id="mobile-menu-toggle"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+            {/* Mobile Drawer Trigger */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="aaruush-mobile-btn"
+              aria-label="Toggle Navigation Menu"
+              id="mobile-nav-toggle"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="mobile-drawer">
-          <div className="mobile-drawer-header">
-            <span className="mono">// NAVIGATION INDEX</span>
-            <span className="mobile-sys-badge">T-8 HOLONOMIC</span>
-          </div>
-          <div className="mobile-links">
-            {navLinks.map((link, idx) => (
-              <button
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className={`mobile-link-item ${activeSection === link.id ? 'active' : ''}`}
-              >
-                <span className="mobile-link-idx mono">0{idx + 1}</span>
-                <span className="mobile-link-name">{link.label}</span>
-                <ChevronRight size={16} className="mobile-link-arrow" />
-              </button>
-            ))}
-          </div>
-          <div className="mobile-drawer-footer">
-            <button onClick={onToggleTheme} className="mobile-theme-btn">
-              <Layers size={16} />
-              <span>{currentTheme === 'dark' ? 'Blueprint Mode' : 'Dark Void Mode'}</span>
-            </button>
+        <div className="aaruush-mobile-drawer">
+          <div className="mobile-drawer-inner">
+            <span className="mobile-drawer-label mono">// NAVIGATION INDEX</span>
+            <div className="mobile-links-list">
+              {navLinks.map((link, idx) => {
+                const isActive = activeSection === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => scrollTo(link.id)}
+                    className={`mobile-drawer-link ${isActive ? 'active' : ''}`}
+                  >
+                    <span className="mobile-link-idx mono">0{idx + 1}</span>
+                    <span className="mobile-link-text">{link.label}</span>
+                    {isActive && <span className="mobile-active-tag mono">LIVE</span>}
+                    <ChevronRight size={14} className="mobile-arrow" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

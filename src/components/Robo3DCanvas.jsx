@@ -1,32 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { 
-  Box, 
-  Eye, 
-  Rotate3d, 
-  ZoomIn, 
-  ZoomOut, 
-  Maximize2, 
-  Layers, 
-  Sparkles,
-  Shield,
-  Compass
-} from 'lucide-react';
-import './Robo3DCanvas.css';
 
-export default function Robo3DCanvas({ 
-  onTelemetryUpdate, 
+export default function Robo3DCanvas({
+  activeStep = 0,
+  renderMode = 'shaded',
+  showDims = true,
+  freeOrbit = false,
+  onTelemetryUpdate,
   currentTheme = 'dark',
-  scrollProgress = 0 
+  scrollProgress = 0,
+  steps = []
 }) {
   const mountRef = useRef(null);
-  const [exploded, setExploded] = useState(false);
-  const [wireframe, setWireframe] = useState(false);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const [showPayload, setShowPayload] = useState(true);
-  const [viewPreset, setViewPreset] = useState('isometric');
 
-  // References to 3D parts for exploded view & animation
+  // References
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -37,7 +24,7 @@ export default function Robo3DCanvas({
   const pcbRef = useRef(null);
   const motorsRef = useRef([]);
   const wheelsRef = useRef([]);
-  const cargoPkgRef = useRef(null);
+  const dimsGroupRef = useRef(null);
   const materialsRef = useRef({});
 
   // Spherical camera orbit state
@@ -45,12 +32,14 @@ export default function Robo3DCanvas({
     isDragging: false,
     prevX: 0,
     prevY: 0,
-    theta: 0.8,
-    phi: 1.1,
-    radius: 720,
-    targetTheta: 0.8,
-    targetPhi: 1.1,
-    targetRadius: 720,
+    theta: 0.72,
+    phi: 1.15,
+    radius: 820,
+    targetTheta: 0.72,
+    targetPhi: 1.15,
+    targetRadius: 820,
+    explode: 0,
+    targetExplode: 0,
   });
 
   // Setup Three.js Scene
@@ -64,16 +53,22 @@ export default function Robo3DCanvas({
     // 1. Scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    const isBlueprint = currentTheme === 'blueprint';
-    scene.background = new THREE.Color(isBlueprint ? 0x071b36 : 0x070a0f);
+    const isBlueprint = renderMode === 'blueprint' || currentTheme === 'blueprint';
+    scene.background = new THREE.Color(isBlueprint ? 0x051329 : 0x070a0f);
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(38, width / height, 1, 4000);
     cameraRef.current = camera;
-    updateCameraPosition();
+    camera.position.set(450, 400, 550);
+    camera.lookAt(0, 20, 0);
 
     // 3. Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true,
+    });
     rendererRef.current = renderer;
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -82,53 +77,44 @@ export default function Robo3DCanvas({
     container.replaceChildren(renderer.domElement);
 
     // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.5);
-    dirLight1.position.set(400, 600, 400);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.6);
+    dirLight1.position.set(450, 650, 450);
     dirLight1.castShadow = true;
-    dirLight1.shadow.mapSize.width = 1024;
-    dirLight1.shadow.mapSize.height = 1024;
+    dirLight1.shadow.mapSize.width = 2048;
+    dirLight1.shadow.mapSize.height = 2048;
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x00f0ff, 1.8);
-    dirLight2.position.set(-400, 300, -300);
-    scene.add(dirLight2);
+    // Subtle blue/cyan fill light
+    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
+    fillLight.position.set(-450, 300, -350);
+    scene.add(fillLight);
 
-    const groundLight = new THREE.DirectionalLight(0xffb703, 1.0);
-    groundLight.position.set(0, -300, 300);
-    scene.add(groundLight);
+    // Warm orange bottom rim light matching screenshot
+    const orangeRimLight = new THREE.DirectionalLight(0xff7a00, 2.2);
+    orangeRimLight.position.set(0, -200, 350);
+    scene.add(orangeRimLight);
 
-    // 5. Floor Grid
-    const gridHelper = new THREE.GridHelper(1000, 30, 0x00f0ff, isBlueprint ? 0x1e3a8a : 0x1a2638);
-    gridHelper.position.y = -120;
+    // 5. Dark Orange Floor Grid (Matching Screenshot)
+    const gridColor1 = isBlueprint ? 0x38bdf8 : 0xef6522;
+    const gridColor2 = isBlueprint ? 0x0d3163 : 0x2a1005;
+    const gridHelper = new THREE.GridHelper(1200, 36, gridColor1, gridColor2);
+    gridHelper.position.y = -115;
     scene.add(gridHelper);
-
-    // Coordinate Axes Guide Ring
-    const ringGeo = new THREE.RingGeometry(240, 243, 64);
-    const ringMat = new THREE.MeshBasicMaterial({ 
-      color: 0x00f0ff, 
-      side: THREE.DoubleSide, 
-      transparent: true, 
-      opacity: 0.25 
-    });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = -119;
-    scene.add(ring);
 
     // 6. Materials
     const materials = {
       chassisMetal: new THREE.MeshStandardMaterial({
         color: 0x64748b,
-        metalness: 0.85,
-        roughness: 0.25,
+        metalness: 0.82,
+        roughness: 0.22,
       }),
       motorBody: new THREE.MeshStandardMaterial({
         color: 0x334155,
         metalness: 0.9,
-        roughness: 0.2,
+        roughness: 0.25,
       }),
       motorShaft: new THREE.MeshStandardMaterial({
         color: 0xe2e8f0,
@@ -136,12 +122,12 @@ export default function Robo3DCanvas({
         roughness: 0.1,
       }),
       woodDeck: new THREE.MeshStandardMaterial({
-        color: 0xba8c58, // Warm plywood tone matching CAD
-        roughness: 0.65,
+        color: 0xb58852, // Warm plywood tone matching CAD
+        roughness: 0.7,
         metalness: 0.05,
       }),
       pcbBoard: new THREE.MeshStandardMaterial({
-        color: 0x15803d, // Circuit board green
+        color: 0x166534, // Circuit board green
         roughness: 0.35,
         metalness: 0.3,
       }),
@@ -152,19 +138,19 @@ export default function Robo3DCanvas({
       }),
       riserColumn: new THREE.MeshStandardMaterial({
         color: 0x94a3b8,
-        metalness: 0.9,
-        roughness: 0.15,
+        metalness: 0.88,
+        roughness: 0.18,
       }),
       cargoBin: new THREE.MeshStandardMaterial({
-        color: 0xd1d5db, // Sheet metal bin matching CAD
-        metalness: 0.7,
-        roughness: 0.3,
+        color: 0xcbd5e1, // Sheet metal cargo bin matching CAD
+        metalness: 0.75,
+        roughness: 0.28,
         side: THREE.DoubleSide,
       }),
       cargoPayload: new THREE.MeshStandardMaterial({
-        color: 0xeab308, // 5kg yellow warehouse box
-        roughness: 0.5,
-        metalness: 0.1,
+        color: 0xff7a00, // Orange payload matching Analytix
+        roughness: 0.45,
+        metalness: 0.15,
       }),
       omniHub: new THREE.MeshStandardMaterial({
         color: 0x1e293b,
@@ -176,10 +162,14 @@ export default function Robo3DCanvas({
         roughness: 0.85,
         metalness: 0.1,
       }),
-      cyanAccent: new THREE.MeshStandardMaterial({
-        color: 0x00f0ff,
-        emissive: 0x00f0ff,
+      orangeAccent: new THREE.MeshStandardMaterial({
+        color: 0xef6522,
+        emissive: 0xef6522,
         emissiveIntensity: 0.6,
+      }),
+      dimLineMat: new THREE.LineBasicMaterial({
+        color: 0x38bdf8,
+        linewidth: 1.5,
       }),
     };
     materialsRef.current = materials;
@@ -193,12 +183,10 @@ export default function Robo3DCanvas({
     const chassisGroup = new THREE.Group();
     robotRoot.add(chassisGroup);
 
-    // Outer frame perimeter (chamfered rectangular base: 260mm x 260mm)
     const frameThickness = 12;
     const frameWidth = 240;
     const frameLength = 260;
 
-    // Side frame rails
     const railMat = materials.chassisMetal;
     const leftRail = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameThickness, frameLength - 60), railMat);
     leftRail.position.set(-frameWidth / 2 + 6, -30, 0);
@@ -220,7 +208,6 @@ export default function Robo3DCanvas({
     backRail.castShadow = true;
     chassisGroup.add(backRail);
 
-    // Cross-member reinforcement
     const crossRail = new THREE.Mesh(new THREE.BoxGeometry(frameWidth - 60, frameThickness, frameThickness), railMat);
     crossRail.position.set(0, -30, 0);
     chassisGroup.add(crossRail);
@@ -244,12 +231,11 @@ export default function Robo3DCanvas({
     const motors = [];
     const wheels = [];
 
-    // The 4 corners: 45° holonomic omni drive
     const motorConfigs = [
-      { id: 'FL', x: -90, z: 90, angle: Math.PI / 4 },       // Front-Left
-      { id: 'FR', x: 90, z: 90, angle: -Math.PI / 4 },      // Front-Right
-      { id: 'RL', x: -90, z: -90, angle: 3 * Math.PI / 4 },  // Rear-Left
-      { id: 'RR', x: 90, z: -90, angle: -3 * Math.PI / 4 }, // Rear-Right
+      { id: 'FL', x: -90, z: 90, angle: Math.PI / 4 },
+      { id: 'FR', x: 90, z: 90, angle: -Math.PI / 4 },
+      { id: 'RL', x: -90, z: -90, angle: 3 * Math.PI / 4 },
+      { id: 'RR', x: 90, z: -90, angle: -3 * Math.PI / 4 },
     ];
 
     motorConfigs.forEach((cfg) => {
@@ -258,7 +244,6 @@ export default function Robo3DCanvas({
       motorAssembly.rotation.y = cfg.angle;
       chassisGroup.add(motorAssembly);
 
-      // Motor cylindrical gearbox & body
       const motorBody = new THREE.Mesh(
         new THREE.CylinderGeometry(15, 15, 65, 24),
         materials.motorBody
@@ -267,7 +252,6 @@ export default function Robo3DCanvas({
       motorBody.position.z = -15;
       motorAssembly.add(motorBody);
 
-      // Motor shaft
       const shaft = new THREE.Mesh(
         new THREE.CylinderGeometry(4, 4, 35, 16),
         materials.motorShaft
@@ -276,12 +260,10 @@ export default function Robo3DCanvas({
       shaft.position.z = 25;
       motorAssembly.add(shaft);
 
-      // Double-Row Omni Wheel Assembly
       const wheelGroup = new THREE.Group();
-      wheelGroup.position.set(0, 0, 52); // At shaft end
+      wheelGroup.position.set(0, 0, 52);
       motorAssembly.add(wheelGroup);
 
-      // Main hub
       const hub = new THREE.Mesh(
         new THREE.CylinderGeometry(28, 28, 18, 24),
         materials.omniHub
@@ -289,7 +271,6 @@ export default function Robo3DCanvas({
       hub.rotation.x = Math.PI / 2;
       wheelGroup.add(hub);
 
-      // Dual rows of omni barrel rollers
       const rollerCount = 10;
       const rollerRadius = 32;
 
@@ -303,7 +284,6 @@ export default function Robo3DCanvas({
             new THREE.CylinderGeometry(5.5, 5.5, 11, 12),
             materials.omniRoller
           );
-          // Position on circumference
           roller.position.set(
             Math.cos(theta) * rollerRadius,
             Math.sin(theta) * rollerRadius,
@@ -334,7 +314,7 @@ export default function Robo3DCanvas({
     woodPlate.castShadow = true;
     deckGroup.add(woodPlate);
 
-    // Electronics Board (Green PCB with Microcontroller & Components)
+    // Electronics PCB Board
     const pcbGroup = new THREE.Group();
     pcbRef.current = pcbGroup;
     pcbGroup.position.set(0, 6, 0);
@@ -346,7 +326,6 @@ export default function Robo3DCanvas({
     );
     pcbGroup.add(pcb);
 
-    // Microcontroller IC & Motor Driver heatsinks
     const mcuChip = new THREE.Mesh(new THREE.BoxGeometry(32, 5, 32), materials.pcbChip);
     mcuChip.position.set(-25, 4, 0);
     pcbGroup.add(mcuChip);
@@ -359,12 +338,11 @@ export default function Robo3DCanvas({
     heatsink2.position.set(35, 8, 25);
     pcbGroup.add(heatsink2);
 
-    // Blinking status LEDs on PCB
-    const led1 = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 4), materials.cyanAccent);
-    led1.position.set(-55, 3, -35);
-    pcbGroup.add(led1);
+    const led = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 4), materials.orangeAccent);
+    led.position.set(-55, 3, -35);
+    pcbGroup.add(led);
 
-    // --- 4x Vertical Riser Columns / Standoffs ---
+    // --- 4x Vertical Riser Columns ---
     const risersGroup = new THREE.Group();
     risersRef.current = risersGroup;
     robotRoot.add(risersGroup);
@@ -386,13 +364,12 @@ export default function Robo3DCanvas({
       risersGroup.add(riser);
     });
 
-    // --- Upper Payload Cargo Bin / Tray (5kg Container) ---
+    // --- Upper Payload Cargo Bin (5kg Container) ---
     const cargoBinGroup = new THREE.Group();
     cargoBoxRef.current = cargoBinGroup;
     cargoBinGroup.position.set(0, 75, 0);
     robotRoot.add(cargoBinGroup);
 
-    // Bin Bottom
     const binBottom = new THREE.Mesh(
       new THREE.BoxGeometry(230, 4, 250),
       materials.cargoBin
@@ -400,11 +377,9 @@ export default function Robo3DCanvas({
     binBottom.castShadow = true;
     cargoBinGroup.add(binBottom);
 
-    // Bin 4 Walls
     const wallHeight = 55;
     const wallThick = 4;
 
-    // Front & Back walls
     const frontWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBin);
     frontWall.position.set(0, wallHeight / 2, 125);
     cargoBinGroup.add(frontWall);
@@ -413,7 +388,6 @@ export default function Robo3DCanvas({
     backWall.position.set(0, wallHeight / 2, -125);
     cargoBinGroup.add(backWall);
 
-    // Left & Right walls
     const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBin);
     leftWall.position.set(-115, wallHeight / 2, 0);
     cargoBinGroup.add(leftWall);
@@ -422,15 +396,40 @@ export default function Robo3DCanvas({
     rightWall.position.set(115, wallHeight / 2, 0);
     cargoBinGroup.add(rightWall);
 
-    // 5kg Payload Box inside the container
+    // 5kg Payload Box inside (Orange accent top matching screenshot)
     const payloadPkg = new THREE.Mesh(
       new THREE.BoxGeometry(160, 45, 170),
       materials.cargoPayload
     );
     payloadPkg.position.set(0, 25, 0);
     payloadPkg.castShadow = true;
-    cargoPkgRef.current = payloadPkg;
     cargoBinGroup.add(payloadPkg);
+
+    // --- 3D Dimension Annotation Lines (Matching Screenshot `↔ 260 mm`) ---
+    const dimsGroup = new THREE.Group();
+    dimsGroupRef.current = dimsGroup;
+    robotRoot.add(dimsGroup);
+
+    const dimPoints = [
+      new THREE.Vector3(-115, 125, 0),
+      new THREE.Vector3(115, 125, 0),
+    ];
+    const dimGeo = new THREE.BufferGeometry().setFromPoints(dimPoints);
+    const dimLine = new THREE.Line(dimGeo, materials.dimLineMat);
+    dimsGroup.add(dimLine);
+
+    // Left & Right tick marks
+    const leftTick = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-115, 115, 0), new THREE.Vector3(-115, 135, 0)]),
+      materials.dimLineMat
+    );
+    dimsGroup.add(leftTick);
+
+    const rightTick = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(115, 115, 0), new THREE.Vector3(115, 135, 0)]),
+      materials.dimLineMat
+    );
+    dimsGroup.add(rightTick);
 
     // 8. Animation Loop
     let animationFrameId;
@@ -441,27 +440,34 @@ export default function Robo3DCanvas({
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Smooth camera interpolation towards orbit target
       const orb = orbitRef.current;
-      orb.theta += (orb.targetTheta - orb.theta) * 0.08;
-      orb.phi += (orb.targetPhi - orb.phi) * 0.08;
-      orb.radius += (orb.targetRadius - orb.radius) * 0.08;
 
-      if (autoRotate && !orb.isDragging) {
-        orb.targetTheta += delta * 0.25;
+      // Smooth camera interpolation towards target
+      orb.theta += (orb.targetTheta - orb.theta) * 0.06;
+      orb.phi += (orb.targetPhi - orb.phi) * 0.06;
+      orb.radius += (orb.targetRadius - orb.radius) * 0.06;
+      orb.explode += (orb.targetExplode - orb.explode) * 0.08;
+
+      // Update exploded position of parts
+      if (cargoBoxRef.current && risersRef.current && deckRef.current) {
+        cargoBoxRef.current.position.y = 75 + orb.explode * 120;
+        risersRef.current.position.y = orb.explode * 50;
+        deckRef.current.position.y = -18 - orb.explode * 25;
       }
 
-      updateCameraPosition();
+      // Update camera position
+      const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
+      const cx = orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
+      const cy = orb.radius * Math.cos(clampedPhi);
+      const cz = orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
 
-      // Animate wheels rotation gently
+      camera.position.set(cx, cy, cz);
+      camera.lookAt(0, 15, 0);
+
+      // Rotate wheels slowly
       wheels.forEach((w) => {
-        w.rotation.z += delta * 1.5;
+        w.rotation.z += delta * 1.2;
       });
-
-      // Subtle hover / suspension breathing
-      if (!exploded) {
-        robotRoot.position.y = Math.sin(elapsed * 2) * 2;
-      }
 
       renderer.render(scene, camera);
     };
@@ -487,125 +493,50 @@ export default function Robo3DCanvas({
     };
   }, [currentTheme]);
 
-  // Update Camera from spherical coordinates
-  const updateCameraPosition = () => {
+  // Synchronize Camera Target when activeStep changes
+  useEffect(() => {
+    if (freeOrbit) return; // don't override camera if user is in free orbit
+    const step = steps[activeStep];
+    if (!step) return;
+
     const orb = orbitRef.current;
-    const camera = cameraRef.current;
-    if (!camera) return;
+    orb.targetTheta = step.theta;
+    orb.targetPhi = step.phi;
+    orb.targetRadius = step.radius;
+    orb.targetExplode = step.explode || 0;
+  }, [activeStep, steps, freeOrbit]);
 
-    // Clamp phi to prevent flipping
-    const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
-
-    const x = orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
-    const y = orb.radius * Math.cos(clampedPhi);
-    const z = orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
-
-    camera.position.set(x, y, z);
-    camera.lookAt(0, 10, 0);
-  };
-
-  // Scroll Choreography: update robot transform and report telemetry as user scrolls
-  useEffect(() => {
-    const robot = robotRootRef.current;
-    if (!robot) return;
-
-    // Normalizing scroll progression (0 to 1)
-    const sp = Math.min(Math.max(scrollProgress, 0), 1);
-
-    // Choreographed holonomic maneuvers across scroll
-    if (sp < 0.25) {
-      // Phase 1: Pure lateral strafe (demonstrating omnidirectional capability)
-      const t = sp / 0.25;
-      robot.position.x = Math.sin(t * Math.PI * 2) * 45;
-      robot.position.z = (t - 0.5) * 40;
-      robot.rotation.y = 0; // Notice: NO rotation, pure strafe!
-    } else if (sp < 0.5) {
-      // Phase 2: Diagonal 45° translation
-      const t = (sp - 0.25) / 0.25;
-      robot.position.x = 45 - t * 90;
-      robot.position.z = 20 - t * 60;
-      robot.rotation.y = t * 0.4;
-    } else if (sp < 0.75) {
-      // Phase 3: In-place yaw rotation (spinning on its center axis)
-      const t = (sp - 0.5) / 0.25;
-      robot.position.x = -45 + t * 45;
-      robot.position.z = -40 + t * 40;
-      robot.rotation.y = 0.4 + t * (Math.PI * 1.5);
-    } else {
-      // Phase 4: Docking reposition
-      const t = (sp - 0.75) / 0.25;
-      robot.position.x = 0;
-      robot.position.z = 0;
-      robot.rotation.y = (0.4 + Math.PI * 1.5) + t * 0.2;
-    }
-
-    // Report calculated pose to Telemetry HUD
-    if (onTelemetryUpdate) {
-      const headingDeg = ((robot.rotation.y * 180) / Math.PI) % 360;
-      const normalizedAngle = headingDeg < 0 ? headingDeg + 360 : headingDeg;
-      onTelemetryUpdate({
-        x: robot.position.x * 20, // scale to mm
-        y: robot.position.z * 20, // scale to mm
-        theta: normalizedAngle,
-        distance: 1.2 + sp * 8.4, // meters
-        velocity: Math.abs(Math.sin(sp * 8)) * 0.85,
-        motionState: sp < 0.25 ? 'HOLONOMIC_STRAFE' : sp < 0.5 ? 'DIAGONAL_45°' : sp < 0.75 ? 'IN_PLACE_SPIN' : 'DOCKED',
-        source: '3D_SCROLL_CHOREOGRAPHY'
-      });
-    }
-  }, [scrollProgress, onTelemetryUpdate]);
-
-  // Handle Exploded View animation
-  useEffect(() => {
-    const cargoBox = cargoBoxRef.current;
-    const risers = risersRef.current;
-    const deck = deckRef.current;
-    const motors = motorsRef.current;
-
-    if (!cargoBox || !risers || !deck) return;
-
-    if (exploded) {
-      // Explode apart along Y and radial vectors
-      cargoBox.position.y = 170;
-      risers.position.y = 65;
-      deck.position.y = 20;
-
-      // Motors shift outward along their 45° shafts
-      motors.forEach((m, idx) => {
-        m.position.y = -45;
-      });
-    } else {
-      // Reset back to assembled state
-      cargoBox.position.y = 75;
-      risers.position.y = 0;
-      deck.position.y = -18;
-      motors.forEach((m) => {
-        m.position.y = -30;
-      });
-    }
-  }, [exploded]);
-
-  // Handle Wireframe Toggle
+  // Render Modes: Shaded, Wireframe, Blueprint
   useEffect(() => {
     const mats = materialsRef.current;
+    if (!mats.chassisMetal) return;
+
+    const isWire = renderMode === 'wireframe';
+    const isBlue = renderMode === 'blueprint';
+
     Object.values(mats).forEach((mat) => {
-      if (mat) mat.wireframe = wireframe;
+      if (mat && mat.isMaterial) {
+        mat.wireframe = isWire;
+      }
     });
-  }, [wireframe]);
 
-  // Handle Payload Visibility Toggle
-  useEffect(() => {
-    if (cargoPkgRef.current) {
-      cargoPkgRef.current.visible = showPayload;
+    if (sceneRef.current) {
+      sceneRef.current.background = new THREE.Color(isBlue ? 0x051329 : 0x070a0f);
     }
-  }, [showPayload]);
+  }, [renderMode]);
 
-  // Mouse Interaction handlers for Orbiting
+  // Toggle Dimension Annotations
+  useEffect(() => {
+    if (dimsGroupRef.current) {
+      dimsGroupRef.current.visible = showDims;
+    }
+  }, [showDims]);
+
+  // Mouse Orbit Dragging
   const handleMouseDown = (e) => {
     orbitRef.current.isDragging = true;
     orbitRef.current.prevX = e.clientX;
     orbitRef.current.prevY = e.clientY;
-    setAutoRotate(false);
   };
 
   const handleMouseMove = (e) => {
@@ -624,140 +555,22 @@ export default function Robo3DCanvas({
   };
 
   const handleWheel = (e) => {
+    if (!freeOrbit) return;
     e.preventDefault();
-    orbitRef.current.targetRadius += e.deltaY * 0.4;
-    orbitRef.current.targetRadius = Math.max(380, Math.min(1200, orbitRef.current.targetRadius));
-  };
-
-  // View Preset Buttons
-  const setCameraPreset = (preset) => {
-    setViewPreset(preset);
-    setAutoRotate(false);
-    const orb = orbitRef.current;
-
-    if (preset === 'isometric') {
-      orb.targetTheta = 0.8;
-      orb.targetPhi = 1.1;
-      orb.targetRadius = 720;
-    } else if (preset === 'top') {
-      orb.targetTheta = 0;
-      orb.targetPhi = 0.08; // directly above
-      orb.targetRadius = 650;
-    } else if (preset === 'bottom') {
-      orb.targetTheta = 0.8;
-      orb.targetPhi = Math.PI - 0.2; // underneath showing 45° motors
-      orb.targetRadius = 650;
-    } else if (preset === 'front') {
-      orb.targetTheta = 0;
-      orb.targetPhi = Math.PI / 2 - 0.05;
-      orb.targetRadius = 680;
-    }
+    orbitRef.current.targetRadius += e.deltaY * 0.35;
+    orbitRef.current.targetRadius = Math.max(380, Math.min(1300, orbitRef.current.targetRadius));
   };
 
   return (
-    <div className="robo-canvas-wrapper" id="cad-viewer-container">
-      {/* Three.js Canvas Container */}
-      <div 
-        ref={mountRef} 
-        className="canvas-container"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onWheel={handleWheel}
-      />
-
-      {/* 3D Viewport HUD Overlay Bar */}
-      <div className="canvas-hud-overlay">
-        <div className="hud-badge-tag mono">
-          <span className="dot pulse"></span>
-          <span>DIGITAL TWIN // 3D CAD MODEL</span>
-        </div>
-
-        {/* View presets */}
-        <div className="view-presets-bar">
-          <button 
-            className={`preset-btn ${viewPreset === 'isometric' ? 'active' : ''}`}
-            onClick={() => setCameraPreset('isometric')}
-            id="preset-iso-btn"
-          >
-            ISO 3D
-          </button>
-          <button 
-            className={`preset-btn ${viewPreset === 'bottom' ? 'active' : ''}`}
-            onClick={() => setCameraPreset('bottom')}
-            id="preset-bottom-btn"
-          >
-            UNDERSIDE (45° MOTORS)
-          </button>
-          <button 
-            className={`preset-btn ${viewPreset === 'top' ? 'active' : ''}`}
-            onClick={() => setCameraPreset('top')}
-            id="preset-top-btn"
-          >
-            TOP (PAYLOAD BIN)
-          </button>
-          <button 
-            className={`preset-btn ${viewPreset === 'front' ? 'active' : ''}`}
-            onClick={() => setCameraPreset('front')}
-            id="preset-front-btn"
-          >
-            FRONT ELEVATION
-          </button>
-        </div>
-
-        {/* Action Toggles */}
-        <div className="canvas-controls-group">
-          {/* Exploded View Toggle */}
-          <button 
-            className={`canvas-tool-btn ${exploded ? 'active' : ''}`}
-            onClick={() => setExploded(!exploded)}
-            title="Toggle Exploded CAD Assembly View"
-            id="exploded-view-toggle-btn"
-          >
-            <Layers size={14} />
-            <span className="mono">{exploded ? 'COLLAPSE' : 'EXPLODE VIEW'}</span>
-          </button>
-
-          {/* Wireframe Toggle */}
-          <button 
-            className={`canvas-tool-btn ${wireframe ? 'active' : ''}`}
-            onClick={() => setWireframe(!wireframe)}
-            title="Toggle Wireframe Blueprint"
-            id="wireframe-toggle-btn"
-          >
-            <Box size={14} />
-            <span className="mono">{wireframe ? 'SHADED' : 'WIREFRAME'}</span>
-          </button>
-
-          {/* 5kg Payload Toggle */}
-          <button 
-            className={`canvas-tool-btn ${showPayload ? 'active' : ''}`}
-            onClick={() => setShowPayload(!showPayload)}
-            title="Toggle 5kg Cargo Payload in Bin"
-            id="payload-box-toggle-btn"
-          >
-            <Shield size={14} />
-            <span className="mono">{showPayload ? '5KG LOADED' : 'NO CARGO'}</span>
-          </button>
-
-          {/* Auto Rotate Toggle */}
-          <button 
-            className={`canvas-tool-btn ${autoRotate ? 'active' : ''}`}
-            onClick={() => setAutoRotate(!autoRotate)}
-            title="Toggle Auto Rotation"
-            id="autorotate-toggle-btn"
-          >
-            <Rotate3d size={14} />
-            <span className="mono">{autoRotate ? 'PAUSE ROTATE' : 'AUTO ORBIT'}</span>
-          </button>
-        </div>
-
-        {/* Instruction Hint */}
-        <div className="canvas-hint mono">
-          <span>DRAG MOUSE TO ORBIT • SCROLL PAGE TO ANIMATE KINEMATICS</span>
-        </div>
-      </div>
-    </div>
+    <div
+      ref={mountRef}
+      className="hero-cad-canvas"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onWheel={handleWheel}
+      style={{ cursor: freeOrbit ? (orbitRef.current.isDragging ? 'grabbing' : 'grab') : 'default' }}
+    />
   );
 }

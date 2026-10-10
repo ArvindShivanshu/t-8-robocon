@@ -69,13 +69,13 @@ export default function SpecificationsFaq() {
   ];
 
   return (
-    <section className="specs-section-root" id="specs">
+    <section className="specs-section-root" id="team">
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>SYSTEM SPECIFICATIONS & TECHNICAL FAQ</span>
+            <span>SYSTEM SPECIFICATIONS & ENGINEERING ROSTER</span>
           </div>
           <h2 className="section-title">Specifications & Engineering Clarifications</h2>
           <p className="section-subtitle">
@@ -104,7 +104,7 @@ export default function SpecificationsFaq() {
         </div>
 
         {/* Technical FAQ */}
-        <div className="faq-wrapper">
+        <div className="faq-wrapper" id="faq">
           <div className="faq-header">
             <HelpCircle size={20} className="faq-icon" />
             <h3 className="faq-title">Technical FAQ & Design Rationale</h3>
