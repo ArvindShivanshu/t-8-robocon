@@ -8,6 +8,7 @@ import SubsystemsSection from './components/SubsystemsSection';
 import CadGallery from './components/CadGallery';
 import SpecificationsFaq from './components/SpecificationsFaq';
 import TeamSection from './components/TeamSection';
+import CurvedLoop from './components/CurvedLoop';
 import ScrollVelocity from './components/ScrollVelocity';
 import Footer from './components/Footer';
 
@@ -107,13 +108,11 @@ export default function App() {
           scrollProgress={scrollProgress}
         />
 
-        {/* React Bits: Kinetic Scroll Velocity Typography Divider */}
-        <ScrollVelocity 
-          texts={[
-            '4-WHEEL 45° HOLONOMIC OMNI • 360° TRANSLATIONAL AGILITY • 5.0 KG PAYLOAD CAPACITY •',
-            '100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • DIGITAL TWIN TELEMETRY •'
-          ]}
-          velocity={32}
+        {/* React Bits: Flowing Curved Loop */}
+        <CurvedLoop 
+          marqueeText="4-WHEEL 45° HOLONOMIC OMNI • 100HZ SENSOR FUSION • ZERO TURNING RADIUS • 5.0 KG PAYLOAD TWIN •"
+          curveAmount={140}
+          speed={1.8}
         />
 
         {/* Problem Statement 8 Directives */}
@@ -127,6 +126,15 @@ export default function App() {
 
         {/* 4-Wheel 45° Omni Kinematics Math Engine */}
         <KinematicsEngine />
+
+        {/* React Bits: Kinetic Scroll Velocity Typography */}
+        <ScrollVelocity 
+          texts={[
+            '4-WHEEL 45° HOLONOMIC OMNI • 360° TRANSLATIONAL AGILITY • 5.0 KG PAYLOAD CAPACITY •',
+            '100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • DIGITAL TWIN TELEMETRY •'
+          ]}
+          velocity={32}
+        />
 
         {/* Engineering Architecture & Subsystems */}
         <SubsystemsSection />
