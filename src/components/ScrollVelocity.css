@@ -1,0 +1,109 @@
+/* React Bits: ScrollVelocity Component */
+.scroll-velocity-root {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 3rem 0;
+  background: #06070b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  user-select: none;
+  cursor: default;
+}
+
+/* Gradient edge masks to fade text smoothly into darkness */
+.velocity-row-wrapper {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  white-space: nowrap;
+  margin: 0.25rem 0;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.velocity-track {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.velocity-text-block {
+  display: inline-block;
+  font-family: var(--font-display, -apple-system, BlinkMacSystemFont, sans-serif);
+  font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  padding-right: 2rem;
+  flex-shrink: 0;
+}
+
+/* Solid Row 1 */
+.solid-style .velocity-text-block {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
+}
+
+/* Outline Ghost Row 2 */
+.outline-style .velocity-text-block {
+  -webkit-text-stroke: 1.4px rgba(255, 255, 255, 0.25);
+  color: transparent;
+  font-style: italic;
+  transition: -webkit-text-stroke 0.3s ease;
+}
+
+.scroll-velocity-root:hover .outline-style .velocity-text-block {
+  -webkit-text-stroke: 1.4px rgba(0, 240, 255, 0.55);
+}
+
+/* Architectural boundary hairlines */
+.velocity-hairline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(0, 240, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.velocity-hairline.top {
+  top: 0;
+}
+
+.velocity-hairline.bottom {
+  bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .scroll-velocity-root {
+    padding: 2rem 0;
+  }
+  .velocity-text-block {
+    font-size: clamp(1.8rem, 6.5vw, 2.6rem);
+    padding-right: 1.25rem;
+  }
+  .outline-style .velocity-text-block {
+    -webkit-text-stroke-width: 1px;
+  }
+}

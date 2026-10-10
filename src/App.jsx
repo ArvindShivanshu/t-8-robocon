@@ -8,8 +8,8 @@ import SubsystemsSection from './components/SubsystemsSection';
 import CadGallery from './components/CadGallery';
 import SpecificationsFaq from './components/SpecificationsFaq';
 import TeamSection from './components/TeamSection';
-import CurvedLoop from './components/CurvedLoop';
-import TextLoop from './components/TextLoop';
+import ScrollVelocity from './components/ScrollVelocity';
+import TechDivider from './components/TechDivider';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -108,8 +108,14 @@ export default function App() {
           scrollProgress={scrollProgress}
         />
 
-        {/* React Bits Tech Animation: Curved Loop */}
-        <CurvedLoop />
+        {/* React Bits: Kinetic Scroll Velocity Typography Divider */}
+        <ScrollVelocity 
+          texts={[
+            '4-WHEEL 45° HOLONOMIC OMNI • 360° TRANSLATIONAL AGILITY • 5.0 KG PAYLOAD CAPACITY •',
+            '100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • DIGITAL TWIN TELEMETRY •'
+          ]}
+          velocity={32}
+        />
 
         {/* Problem Statement 8 Directives */}
         <MandatesSection />
@@ -123,8 +129,8 @@ export default function App() {
         {/* 4-Wheel 45° Omni Kinematics Math Engine */}
         <KinematicsEngine />
 
-        {/* React Bits Tech Animation: Infinite Velocity Text Loop */}
-        <TextLoop />
+        {/* Minimalist Architectural Divider */}
+        <TechDivider label="02 // MODULAR SUBSYSTEMS ARCHITECTURE" />
 
         {/* Engineering Architecture & Subsystems */}
         <SubsystemsSection />
@@ -132,7 +138,10 @@ export default function App() {
         {/* CAD Blueprints & Archives Gallery */}
         <CadGallery />
 
-        {/* Technical Specs & Engineering FAQ */}
+        {/* Minimalist Architectural Divider */}
+        <TechDivider label="03 // PERFORMANCE SPECIFICATIONS" />
+
+        {/* Technical Specs */}
         <SpecificationsFaq />
 
         {/* Engineering Team */}
