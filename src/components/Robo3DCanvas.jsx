@@ -133,15 +133,15 @@ export default function Robo3DCanvas({
     gridHelper.position.y = -67.5;
     scene.add(gridHelper);
 
-    // 6. Navigation Path Waypoints & Catmull-Rom Simulation Trajectory (Expansive 6.2m Arena Course)
+    // 6. Navigation Path Waypoints & Catmull-Rom Simulation Trajectory (Expansive, Non-Intersecting Circuit)
     const waypoints = [
-      new THREE.Vector3(-800, 0, -1400), // 00 Origin Datum Depot
-      new THREE.Vector3(-700, 0, -500),  // 01 45° Omni Chassis Strafe Aisle
-      new THREE.Vector3(0, 0, 100),      // 02 Central Intersect & Drivetrain Vectoring
-      new THREE.Vector3(900, 0, 700),    // 03 East Storage Arc & Sensor Deck Odometry
-      new THREE.Vector3(1200, 0, -300),  // 04 High-Bay Corridor & Titanium Risers
-      new THREE.Vector3(500, 0, -1100),  // 05 Cargo Bay & Payload Station
-      new THREE.Vector3(0, 0, 0),        // 06 Destination Docking Bay
+      new THREE.Vector3(-1200, 0, -1400), // 00 Southwest Origin Depot
+      new THREE.Vector3(-1200, 0, -200),  // 01 West Aisle Transit
+      new THREE.Vector3(-500, 0, 800),    // 02 Northwest Junction
+      new THREE.Vector3(700, 0, 1200),    // 03 Northeast High-Bay Arc
+      new THREE.Vector3(1400, 0, 200),    // 04 East Storage Corridor
+      new THREE.Vector3(1000, 0, -1000),  // 05 Southeast Transfer Bay
+      new THREE.Vector3(-100, 0, -400),   // 06 Central Destination Dock
     ];
     const simPath = new THREE.CatmullRomCurve3(waypoints, false, 'catmullrom', 0.5);
 
@@ -161,14 +161,13 @@ export default function Robo3DCanvas({
 
     // Tactical Waypoint Floor Rings along the Trajectory
     waypoints.forEach((wp, idx) => {
-      const isOriginOrEnd = idx === 0 || idx === 6;
       const wpRing = new THREE.Mesh(
-        new THREE.RingGeometry(isOriginOrEnd ? 28 : 18, isOriginOrEnd ? 31 : 20, 32),
+        new THREE.RingGeometry(20, 22.5, 32),
         new THREE.MeshBasicMaterial({
           color: idx === 6 ? 0x22c55e : (idx === 0 ? 0xffffff : 0x00f0ff),
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.4,
+          opacity: 0.45,
         })
       );
       wpRing.rotation.x = -Math.PI / 2;
@@ -176,12 +175,12 @@ export default function Robo3DCanvas({
       scene.add(wpRing);
 
       const wpDot = new THREE.Mesh(
-        new THREE.CircleGeometry(3.5, 16),
+        new THREE.CircleGeometry(3, 16),
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.6,
+          opacity: 0.65,
         })
       );
       wpDot.rotation.x = -Math.PI / 2;

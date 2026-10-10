@@ -34,7 +34,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0,
-      pose: { x: 0, y: 0, theta: 0, motion: 'ORIGIN_DATUM' }
+      pose: { x: -1200, y: -1400, theta: 0, motion: 'ORIGIN_DEPOT' }
     },
     {
       label: '01',
@@ -49,7 +49,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.16,
-      pose: { x: 350, y: 0, theta: 0, motion: 'HOLONOMIC_STRAFE' }
+      pose: { x: -1200, y: -200, theta: 45, motion: 'WEST_AISLE' }
     },
     {
       label: '02',
@@ -64,7 +64,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.32,
-      pose: { x: 520, y: 380, theta: 45, motion: 'DIAGONAL_45°' }
+      pose: { x: -500, y: 800, theta: 70, motion: 'NORTH_JUNCTION' }
     },
     {
       label: '03',
@@ -79,7 +79,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.49,
-      pose: { x: 740, y: 740, theta: 90, motion: 'YAW_TRANSIT' }
+      pose: { x: 700, y: 1200, theta: 110, motion: 'NORTHEAST_ARC' }
     },
     {
       label: '04',
@@ -94,7 +94,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.66,
-      pose: { x: 620, y: 1100, theta: 135, motion: 'AISLE_TRANSIT' }
+      pose: { x: 1400, y: 200, theta: 180, motion: 'EAST_CORRIDOR' }
     },
     {
       label: '05',
@@ -109,7 +109,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.82,
-      pose: { x: 300, y: 1450, theta: 180, motion: 'PAYLOAD_LOADED' }
+      pose: { x: 1000, y: -1000, theta: 240, motion: 'CARGO_STATION' }
     },
     {
       label: '06',
@@ -124,7 +124,7 @@ export default function HeroSection({
       radius: 780,
       explode: 0,
       p: 0.93,
-      pose: { x: 0, y: 1600, theta: 0, motion: 'DOCKING_LOCKED' }
+      pose: { x: -100, y: -400, theta: 300, motion: 'DESTINATION_DOCK' }
     },
   ];
 
