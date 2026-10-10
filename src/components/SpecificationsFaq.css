@@ -16,7 +16,6 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #ffffff;
 }
 
 .specs-cat-header {
@@ -27,7 +26,7 @@
 .specs-cat-title {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--accent-orange);
+  color: var(--accent-gold);
   letter-spacing: 0.05em;
 }
 
@@ -41,7 +40,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding-bottom: 0.5rem;
 }
 
@@ -58,7 +57,7 @@
 .spec-param-val {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 /* FAQ */
@@ -78,13 +77,13 @@
 }
 
 .faq-icon {
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
 }
 
 .faq-title {
   font-size: 1.4rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .faq-accordion {
@@ -100,16 +99,15 @@
   flex-direction: column;
   gap: 0.75rem;
   transition: all 0.25s ease;
-  background: #ffffff;
 }
 
 .faq-item:hover {
-  border-color: rgba(234, 88, 12, 0.4);
+  border-color: var(--accent-gold);
 }
 
 .faq-item.open {
-  border-color: var(--accent-orange);
-  box-shadow: 0 4px 18px var(--accent-orange-glow);
+  border-color: var(--accent-crimson);
+  box-shadow: 0 4px 20px var(--accent-crimson-glow);
 }
 
 .faq-question-row {
@@ -122,12 +120,12 @@
 .faq-q-text {
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   line-height: 1.35;
 }
 
 .faq-chevron {
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
   transition: transform 0.25s ease;
   flex-shrink: 0;
 }

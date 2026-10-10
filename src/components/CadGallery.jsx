@@ -76,11 +76,12 @@ export default function CadGallery() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>CAD DIGITAL TWIN ARCHIVES</span>
+            <span>STARK BLUEPRINT VAULT // CAD REPO</span>
           </div>
-          <h2 className="section-title">CAD Blueprints & Visual Renders</h2>
+          <h2 className="section-title">Engineering Blueprints & Schematics</h2>
           <p className="section-subtitle">
-            Explore authentic engineering CAD models and structural elevations designed for Problem Statement 8.
+            Authentic CAD digital twin models, 45° omni kinematic layout, structural 5kg load elevations, 
+            and official Problem Statement 8 design criteria.
           </p>
         </div>
 

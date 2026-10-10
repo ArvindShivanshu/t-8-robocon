@@ -75,12 +75,12 @@ export default function SpecificationsFaq() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>SYSTEM SPECIFICATIONS & ENGINEERING ROSTER</span>
+            <span>JARVIS ARCHITECTURE & SPECIFICATIONS</span>
           </div>
-          <h2 className="section-title">Specifications & Engineering Clarifications</h2>
+          <h2 className="section-title">Tactical Specs & Engineering FAQ</h2>
           <p className="section-subtitle">
-            Comprehensive parameters and engineering justifications addressing warehouse navigation, 
-            load carrying, and odometry estimation.
+            Comprehensive parameters and design rationale addressing warehouse agile navigation, 
+            5 kg load carrying, and dead-reckoning odometry estimation.
           </p>
         </div>
 

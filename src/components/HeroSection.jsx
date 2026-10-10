@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Rotate3d, 
   ChevronDown, 
   Ruler, 
-  Layers, 
-  Orbit 
+  Orbit,
+  Shield,
+  Zap
 } from 'lucide-react';
 import Robo3DCanvas from './Robo3DCanvas';
 import './HeroSection.css';
@@ -14,17 +14,17 @@ export default function HeroSection({
   currentTheme 
 }) {
   const [activeStep, setActiveStep] = useState(0);
-  const [renderMode, setRenderMode] = useState('shaded'); // 'shaded' (Solid), 'wireframe', 'blueprint'
+  const [renderMode, setRenderMode] = useState('shaded');
   const [showDims, setShowDims] = useState(true);
   const [freeOrbit, setFreeOrbit] = useState(false);
   const heroRootRef = useRef(null);
 
-  // 7 Sequence steps matching AnalytiX layout and our platform specifications
+  // 7 Sequence steps with Avengers & Stark Industries branding
   const steps = [
     {
       label: '00',
-      title: 'SOLIDWORKS MODEL',
-      desc: '1:1 collegiate autonomous warehouse mobile platform with 4-wheel 45° holonomic omni drive',
+      title: 'STARK DIGITAL TWIN',
+      desc: 'Mark-VIII collegiate autonomous warehouse platform with 4-wheel 45° holonomic omni drive',
       theta: 0.72,
       phi: 1.15,
       radius: 820,
@@ -35,7 +35,7 @@ export default function HeroSection({
     {
       label: '01',
       title: '45° OMNI CHASSIS',
-      desc: 'Chamfered aluminum extrusion frame with 45° motor gusset mounts minimizing aisle envelope',
+      desc: 'Aerospace titanium alloy frame with 45° motor gusset mounts minimizing aisle envelope',
       theta: 1.08,
       phi: 0.92,
       radius: 560,
@@ -45,8 +45,8 @@ export default function HeroSection({
     },
     {
       label: '02',
-      title: 'MOTOR DRIVETRAIN',
-      desc: '4x high-torque planetary geared DC motors with double-row rubber barrel rollers for 360° translation',
+      title: 'REPULSOR-TORQUE MOTORS',
+      desc: '4x high-torque planetary geared DC motors with dual-row omni rollers for 360° translation',
       theta: 1.48,
       phi: 0.80,
       radius: 480,
@@ -56,7 +56,7 @@ export default function HeroSection({
     },
     {
       label: '03',
-      title: 'EKF ODOMETRY DECK',
+      title: 'ARC ODOMETRY & EKF',
       desc: '1024 CPR optical quadrature encoders fused with 6-DoF IMU gyroscope for dead-reckoning',
       theta: 1.88,
       phi: 1.06,
@@ -67,7 +67,7 @@ export default function HeroSection({
     },
     {
       label: '04',
-      title: 'STRUCTURAL RISERS',
+      title: 'TITANIUM RISERS',
       desc: '4x 60mm cylindrical load-bearing standoffs distributing up to 5kg payload directly to chassis rails',
       theta: 2.32,
       phi: 0.88,
@@ -78,8 +78,8 @@ export default function HeroSection({
     },
     {
       label: '05',
-      title: '5KG PAYLOAD BIN',
-      desc: 'Sheet metal cargo containment box engineered for stable manual warehouse loading',
+      title: '5KG VIBRANIUM PAYLOAD',
+      desc: 'Hot-rod crimson cargo containment box engineered for stable manual warehouse loading',
       theta: 2.74,
       phi: 0.78,
       radius: 500,
@@ -89,7 +89,7 @@ export default function HeroSection({
     },
     {
       label: '06',
-      title: 'EXPLODED BOM',
+      title: 'EXPLODED ARMOR BOM',
       desc: 'Technical exploded breakdown of all modular sub-assemblies along axes',
       theta: 0.85,
       phi: 1.12,
@@ -113,7 +113,6 @@ export default function HeroSection({
       const scrolledDist = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolledDist / totalDist));
 
-      // Map progress to steps
       if (!freeOrbit) {
         let currentIdx = 0;
         for (let i = steps.length - 1; i >= 0; i--) {
@@ -124,7 +123,6 @@ export default function HeroSection({
         }
         setActiveStep(currentIdx);
 
-        // Update telemetry data
         if (onTelemetryUpdate) {
           const pose = steps[currentIdx].pose;
           onTelemetryUpdate({
@@ -132,10 +130,10 @@ export default function HeroSection({
             y: pose.y,
             theta: pose.theta,
             distance: progress * 4.2,
-            velocity: progress > 0.05 && progress < 0.95 ? 0.65 : 0.0,
+            velocity: progress > 0.05 && progress < 0.95 ? 0.75 : 0.0,
             payload: currentIdx >= 5 ? 5.0 : 3.5,
             motionState: pose.motion,
-            source: 'CAD_SCROLL_CORRIDOR'
+            source: 'JARVIS_CAD_STREAM'
           });
         }
       }
@@ -145,7 +143,6 @@ export default function HeroSection({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [freeOrbit, onTelemetryUpdate]);
 
-  // Click on a step button smoothly scrolls to that step's position
   const goToStep = (index) => {
     setActiveStep(index);
     setFreeOrbit(false);
@@ -167,21 +164,21 @@ export default function HeroSection({
   return (
     <section ref={heroRootRef} className="hero-scroll-container" id="cad">
       <div className="hero-scroll-viewport">
-        {/* Glow backdrop */}
-        <div className="hero-solar-glow" />
+        {/* Stark Atmospheric Energy Glows */}
+        <div className="hero-arc-ambient" />
+        <div className="hero-crimson-ambient" />
 
-        {/* 3D CAD Canvas taking 100% of viewport */}
+        {/* 3D CAD Canvas */}
         <Robo3DCanvas 
           activeStep={activeStep}
           renderMode={renderMode}
           showDims={showDims}
           freeOrbit={freeOrbit}
           onTelemetryUpdate={onTelemetryUpdate}
-          currentTheme={currentTheme}
           steps={steps}
         />
 
-        {/* Bottom Left Mode Dock (Matching screenshot) */}
+        {/* Bottom Left Mode Dock */}
         <div className="hero-mode-dock">
           {['shaded', 'wireframe', 'blueprint'].map((mode) => (
             <button
@@ -197,7 +194,7 @@ export default function HeroSection({
           <button
             onClick={() => setShowDims(!showDims)}
             className={`hud-mode-pill ${showDims ? 'active' : ''}`}
-            title="Toggle Dimension Annotations"
+            title="Toggle Tactical Dimension HUD"
             id="toggle-dims-btn"
           >
             <Ruler size={13} />
@@ -217,7 +214,7 @@ export default function HeroSection({
           </button>
         </div>
 
-        {/* Right Side Vertical Step Navigation (Matching screenshot) */}
+        {/* Right Side Vertical Step Navigation (Stark Tactical Pills) */}
         <div className="hero-cad-step-nav">
           {steps.map((step, idx) => {
             const isActive = activeStep === idx;
@@ -235,7 +232,7 @@ export default function HeroSection({
           })}
         </div>
 
-        {/* Bottom Center Caption Capsule (Matching screenshot) */}
+        {/* Bottom Center Caption Capsule */}
         <div className="hero-step-caption-capsule">
           <span className="step-capsule-tag mono">{currentStep.label}</span>
           <span className="step-capsule-dot" />

@@ -245,12 +245,12 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         });
       }
 
-      // DRAW CANVAS: Clean Light Studio Warehouse Floor
-      ctx.fillStyle = '#f8fafc';
+      // DRAW CANVAS: Stark Tactical Titanium Slate Warehouse Floor
+      ctx.fillStyle = '#101726';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Floor Grid
-      ctx.strokeStyle = '#e2e8f0';
+      ctx.strokeStyle = 'rgba(230, 36, 41, 0.07)';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < canvas.width; x += gridSize) {
@@ -266,58 +266,79 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         ctx.stroke();
       }
 
-      // Origin Marker (400, 300)
-      ctx.strokeStyle = 'rgba(234, 88, 12, 0.5)';
-      ctx.setLineDash([4, 4]);
+      // Stark Arc Reactor Origin Marker (400, 300)
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.arc(400, 300, 24, 0, Math.PI * 2);
+      ctx.arc(400, 300, 26, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.arc(400, 300, 16, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = '#ea580c';
-      ctx.font = '10px "JetBrains Mono"';
-      ctx.fillText('(0, 0) DATUM ORIGIN', 410, 295);
 
-      // Draw Warehouse Obstacles & Racks
+      ctx.fillStyle = '#00f0ff';
+      ctx.beginPath();
+      ctx.arc(400, 300, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = '10px "JetBrains Mono"';
+      ctx.fillText('STARK DATUM (0, 0)', 412, 296);
+
+      // Draw Warehouse Obstacles & Racks (Stark Titanium Storage Pods)
       obstacles.forEach((obs) => {
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#cbd5e1';
+        ctx.fillStyle = 'rgba(22, 32, 50, 0.92)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
         ctx.lineWidth = 1.5;
         ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
         ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
 
         // Rack Label
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = '#f8fafc';
         ctx.font = '9px "JetBrains Mono"';
         ctx.fillText(obs.label, obs.x + 8, obs.y + 22);
 
-        // Subtle hatching inside restricted zone
-        ctx.strokeStyle = 'rgba(234, 88, 12, 0.15)';
+        // Tactical Corner Triangles
+        ctx.fillStyle = 'rgba(230, 36, 41, 0.6)';
+        ctx.beginPath();
+        ctx.moveTo(obs.x, obs.y);
+        ctx.lineTo(obs.x + 8, obs.y);
+        ctx.lineTo(obs.x, obs.y + 8);
+        ctx.closePath();
+        ctx.fill();
+
+        // Subtle diagonal stripe inside restricted zone
+        ctx.strokeStyle = 'rgba(230, 36, 41, 0.15)';
         ctx.beginPath();
         ctx.moveTo(obs.x, obs.y);
         ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
         ctx.stroke();
       });
 
-      // Draw Breadcrumb Path Trail (Industrial Orange)
+      // Draw Breadcrumb Path Trail (Stark Hot-Rod Crimson)
       if (r.trail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(r.trail[0].x, r.trail[0].y);
         for (let i = 1; i < r.trail.length; i++) {
           ctx.lineTo(r.trail[i].x, r.trail[i].y);
         }
-        ctx.strokeStyle = '#ea580c';
+        ctx.strokeStyle = '#e62429';
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
-      // Draw Robot Sprite (Holonomic Mobile Platform)
+      // Draw Robot Sprite (Mark-VIII Holonomic Mobile Platform)
       ctx.save();
       ctx.translate(r.x, r.y);
       ctx.rotate(r.theta);
 
-      // Chassis Base Rect
-      ctx.fillStyle = '#334155';
-      ctx.strokeStyle = '#ea580c';
+      // Chassis Base Rect (Stark Titanium Plate)
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#e62429';
       ctx.lineWidth = 2;
       ctx.fillRect(-24, -26, 48, 52);
       ctx.strokeRect(-24, -26, 48, 52);
@@ -330,45 +351,52 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         { x: 22, y: 24, rot: -3 * Math.PI / 4 },
       ];
 
-      ctx.fillStyle = '#64748b';
-      ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 1;
       wheelOffsets.forEach((w) => {
         ctx.save();
         ctx.translate(w.x, w.y);
         ctx.rotate(w.rot);
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1;
         ctx.fillRect(-4, -9, 8, 18);
         ctx.strokeRect(-4, -9, 8, 18);
         ctx.restore();
       });
 
-      // Cargo Container (Top bin)
-      ctx.fillStyle = '#cbd5e1';
-      ctx.strokeStyle = '#94a3b8';
+      // Cargo Container (Mark-VIII Crimson Bed)
+      ctx.fillStyle = 'rgba(230, 36, 41, 0.25)';
+      ctx.strokeStyle = '#e62429';
+      ctx.lineWidth = 1.2;
       ctx.fillRect(-18, -20, 36, 40);
       ctx.strokeRect(-18, -20, 36, 40);
 
-      // 5kg Payload Inside Cargo Tray (Orange)
-      ctx.fillStyle = '#ea580c';
-      ctx.fillRect(-12, -14, 24, 28);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '7px "JetBrains Mono"';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${payloadKg.toFixed(1)}k`, 0, 3);
+      // Center Arc Core Glow
+      ctx.fillStyle = '#00f0ff';
+      ctx.beginPath();
+      ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Heading Arrow (Pointing forward)
-      ctx.strokeStyle = '#ea580c';
-      ctx.fillStyle = '#ea580c';
+      // 5kg Payload Inside Cargo Tray (Arc Gold)
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(-12, -14, 24, 16);
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 7px "JetBrains Mono"';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${payloadKg.toFixed(1)}k`, 0, -4);
+
+      // Heading Vector (Pointing forward)
+      ctx.strokeStyle = '#00f0ff';
+      ctx.fillStyle = '#00f0ff';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(0, -22);
-      ctx.lineTo(0, -36);
+      ctx.lineTo(0, -38);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.moveTo(-4, -33);
-      ctx.lineTo(0, -40);
-      ctx.lineTo(4, -33);
+      ctx.moveTo(-4, -34);
+      ctx.lineTo(0, -42);
+      ctx.lineTo(4, -34);
       ctx.closePath();
       ctx.fill();
 
@@ -418,12 +446,12 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>INTUITIVE MANUAL TELEOPERATION</span>
+            <span>STARK TACTICAL SIMULATION // ARENA</span>
           </div>
-          <h2 className="section-title">Warehouse Arena & Manual Drive Simulator</h2>
+          <h2 className="section-title">Restricted Workspace Flight & Telemetry Sim</h2>
           <p className="section-subtitle">
-            Experience true holonomic motion inside restricted warehouse aisles. 
-            Test real-time dead-reckoning odometry, live coordinate reporting, and 5 kg payload dynamics.
+            Interact with the Mark-VIII holonomic platform in real-time. Navigate confined aisles, 
+            test 45° lateral strafe, zero datum coordinates, and simulate 5 kg payload inertia.
           </p>
         </div>
 
@@ -434,26 +462,26 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
             <div className="arena-header-bar">
               <div className="arena-title mono">
                 <span className="beacon-dot"></span>
-                <span>RESTRICTED WORKSPACE FLOOR // 8.0m x 6.0m</span>
+                <span>TACTICAL ARENA GRID // 8.0m x 6.0m RESTRICTED ZONE</span>
               </div>
               <div className="arena-tools">
                 <button 
                   onClick={resetToOrigin} 
                   className="arena-tool-btn mono"
-                  title="Zero origin to (0,0)"
+                  title="Zero datum origin to (0,0)"
                   id="arena-zero-origin-btn"
                 >
                   <RefreshCw size={13} />
-                  <span>ZERO ORIGIN</span>
+                  <span>ZERO DATUM</span>
                 </button>
                 <button 
                   onClick={clearTrail} 
                   className="arena-tool-btn mono"
-                  title="Clear breadcrumb trail"
+                  title="Clear trajectory path"
                   id="arena-clear-trail-btn"
                 >
                   <Trash2 size={13} />
-                  <span>CLEAR PATH</span>
+                  <span>CLEAR TRAIL</span>
                 </button>
               </div>
             </div>
@@ -471,10 +499,10 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
 
             {/* Arena Legend */}
             <div className="arena-legend mono">
-              <div className="legend-item"><span className="legend-color cyan"></span><span>PATH TRAIL</span></div>
-              <div className="legend-item"><span className="legend-color red"></span><span>HEADING (θ)</span></div>
-              <div className="legend-item"><span className="legend-color yellow"></span><span>5KG CARGO</span></div>
-              <div className="legend-item"><span className="legend-color rack"></span><span>RESTRICTED RACKS</span></div>
+              <div className="legend-item"><span className="legend-color crimson"></span><span>CRIMSON TRAIL</span></div>
+              <div className="legend-item"><span className="legend-color cyan"></span><span>ARC VECTOR (θ)</span></div>
+              <div className="legend-item"><span className="legend-color gold"></span><span>5KG GOLD PAYLOAD</span></div>
+              <div className="legend-item"><span className="legend-color rack"></span><span>TITANIUM RACKS</span></div>
             </div>
           </div>
 
@@ -483,14 +511,14 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
             <div className="pendant-header">
               <Gamepad2 size={18} className="pendant-icon" />
               <div className="pendant-title-group">
-                <span className="pendant-title mono">OPERATOR PENDANT</span>
-                <span className="pendant-sub mono">MANUAL INPUT CONTROLLER</span>
+                <span className="pendant-title mono">JARVIS TACTICAL PENDANT</span>
+                <span className="pendant-sub mono">MARK-VIII TELEMETRY FLIGHT CONTROLLER</span>
               </div>
             </div>
 
             {/* Virtual Touch Joystick */}
             <div className="joystick-container">
-              <span className="mono joystick-label">// 360° HOLONOMIC JOYSTICK</span>
+              <span className="mono joystick-label">// 360° HOLONOMIC OMNI JOYSTICK</span>
               <div 
                 className="joystick-base"
                 onMouseDown={() => setJoystickActive(true)}
@@ -511,12 +539,12 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
                   <div className="thumb-center"></div>
                 </div>
               </div>
-              <span className="mono joystick-sub">DRAG THUMBSTICK FOR DIRECT OMNI TRANSLATION</span>
+              <span className="mono joystick-sub">DRAG ARC THUMBSTICK FOR DIRECT OMNI TRANSLATION</span>
             </div>
 
             {/* Discrete Direction Buttons */}
             <div className="discrete-controls-group">
-              <span className="mono control-group-label">// DISCRETE MANEUVERS</span>
+              <span className="mono control-group-label">// DISCRETE DIRECTIONAL THRUST</span>
               <div className="dpad-grid">
                 <button 
                   className={`dpad-btn up ${activeKeys['w'] ? 'pressed' : ''}`}
@@ -583,10 +611,10 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
 
             {/* Automated Presets */}
             <div className="presets-group">
-              <span className="mono control-group-label">// AUTOMATED DEMOS</span>
+              <span className="mono control-group-label">// FLIGHT PROTOCOLS</span>
               <div className="preset-buttons-row">
                 <button onClick={() => runPreset('square')} className="preset-action-btn mono" id="preset-square-btn">
-                  SQUARE STRAFE
+                  SQUARE PATROL
                 </button>
                 <button onClick={() => runPreset('diagonal')} className="preset-action-btn mono" id="preset-diag-btn">
                   45° DIAGONAL
@@ -601,7 +629,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
             <div className="slider-control-group">
               <div className="slider-header mono">
                 <span>PAYLOAD LOAD:</span>
-                <span className="slider-val text-cyan">{payloadKg.toFixed(1)} kg</span>
+                <span className="slider-val text-gold">{payloadKg.toFixed(1)} kg</span>
               </div>
               <input 
                 type="range" 

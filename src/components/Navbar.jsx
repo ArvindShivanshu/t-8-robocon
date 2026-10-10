@@ -4,7 +4,8 @@ import {
   Menu, 
   X, 
   ChevronRight,
-  Crosshair
+  Zap,
+  ShieldAlert
 } from 'lucide-react';
 import './Navbar.css';
 
@@ -56,13 +57,13 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
     <header className={`aaruush-nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-container-wrapper">
         <div className="nav-bar-inner">
-          {/* Left Brand */}
+          {/* Left Brand: Stark Industries / SRM Robocon */}
           <div className="nav-brand-lockup" onClick={() => scrollTo('cad')}>
-            <div className="brand-icon-symbol">
-              <Crosshair size={18} className="symbol-crosshair" />
+            <div className="brand-arc-symbol">
+              <Zap size={18} className="symbol-arc-core" />
             </div>
             <div className="brand-text-block">
-              <span className="brand-org-name">TEAM 8 ROBOCON</span>
+              <span className="brand-org-name">STARK INDUSTRIES</span>
               <span className="brand-team-div">SRM ROBOCON</span>
             </div>
           </div>
@@ -93,25 +94,25 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
             <button
               onClick={onToggleTheme}
               className="aaruush-util-btn"
-              title={currentTheme === 'blueprint' ? 'Switch to Dark Void' : 'Technical Blueprint Mode'}
+              title={currentTheme === 'blueprint' ? 'Switch to Stark Tactical' : 'Technical Blueprint Mode'}
               aria-label="Toggle Theme"
               id="theme-toggle-btn"
             >
               <Settings size={16} />
             </button>
 
-            {/* CTA Lockup */}
+            {/* Stark Protocol CTA */}
             <div className="nav-action-lockup">
               <a
                 href="#cad"
                 onClick={(e) => { e.preventDefault(); scrollTo('cad'); }}
-                className="aaruush-primary-btn"
+                className="aaruush-primary-btn stark-btn"
                 id="nav-model-btn"
               >
                 <span className="nav-pulse-beacon" />
-                <span>OMNI-CARRIER 5K</span>
+                <span>MARK-VIII PROTOCOL</span>
               </a>
-              <span className="nav-action-tag mono">*SRM ROBOCON '25</span>
+              <span className="nav-action-tag mono">*AVENGERS TECH '25</span>
             </div>
 
             {/* Mobile Drawer Trigger */}
@@ -131,7 +132,7 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
       {mobileOpen && (
         <div className="aaruush-mobile-drawer">
           <div className="mobile-drawer-inner">
-            <span className="mobile-drawer-label mono">// NAVIGATION INDEX</span>
+            <span className="mobile-drawer-label mono">// AVENGERS PROTOCOL INDEX</span>
             <div className="mobile-links-list">
               {navLinks.map((link, idx) => {
                 const isActive = activeSection === link.id;

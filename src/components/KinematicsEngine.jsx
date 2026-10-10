@@ -53,11 +53,12 @@ export default function KinematicsEngine() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>MATHEMATICAL KINEMATICS ENGINE</span>
+            <span>STARK DYNAMICS SOLVER // KINEMATICS</span>
           </div>
-          <h2 className="section-title">4-Wheel 45° Holonomic Inverse Kinematics</h2>
+          <h2 className="section-title">4-Wheel 45° Holonomic Kinematics</h2>
           <p className="section-subtitle">
-            Derivation of platform velocity mapping, transformation matrices, and real-time wheel angular speed equations.
+            Derivation of platform velocity mapping, transformation matrices, and real-time wheel angular speed equations 
+            integrated with dead-reckoning odometry.
           </p>
         </div>
 
@@ -67,7 +68,7 @@ export default function KinematicsEngine() {
             <div className="calc-header">
               <Calculator size={18} className="calc-icon" />
               <div className="calc-title-group">
-                <span className="calc-title mono">REAL-TIME INVERSE KINEMATICS SOLVER</span>
+                <span className="calc-title mono">JARVIS REAL-TIME INVERSE KINEMATICS</span>
                 <span className="calc-sub mono">INPUT DESIRED [Vx, Vy, ω] → SOLVE [ω1, ω2, ω3, ω4]</span>
               </div>
             </div>
@@ -78,7 +79,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>SURGE VELOCITY (Vx - FORWARD/BACK):</span>
-                  <span className="kin-val text-orange">{vx >= 0 ? `+${vx.toFixed(2)}` : vx.toFixed(2)} m/s</span>
+                  <span className="kin-val text-crimson">{vx >= 0 ? `+${vx.toFixed(2)}` : vx.toFixed(2)} m/s</span>
                 </div>
                 <input 
                   type="range" 
@@ -96,7 +97,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>SWAY VELOCITY (Vy - LATERAL STRAFE):</span>
-                  <span className="kin-val text-orange">{vy >= 0 ? `+${vy.toFixed(2)}` : vy.toFixed(2)} m/s</span>
+                  <span className="kin-val text-crimson">{vy >= 0 ? `+${vy.toFixed(2)}` : vy.toFixed(2)} m/s</span>
                 </div>
                 <input 
                   type="range" 
@@ -114,7 +115,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>YAW RATE (ω - IN-PLACE ROTATION):</span>
-                  <span className="kin-val text-orange">{omega >= 0 ? `+${omega.toFixed(2)}` : omega.toFixed(2)} rad/s</span>
+                  <span className="kin-val text-gold">{omega >= 0 ? `+${omega.toFixed(2)}` : omega.toFixed(2)} rad/s</span>
                 </div>
                 <input 
                   type="range" 

@@ -1,44 +1,52 @@
 /* =====================================================================
-   T-8 ROBOCON DESIGN SYSTEM // OMNI-CARRIER 5K
-   Clean Light CAD Studio Aesthetic
-   Unified Industrial Palette: Platinum / Slate / Industrial Orange
+   T-8 ROBOCON // AVENGERS & STARK INDUSTRIES THEME
+   Unified Palette: Titanium Slate Base / Hot-Rod Crimson / Arc Gold
+   Inspired by Iron Man, JARVIS Tactical HUD & Avengers Initiative
    ===================================================================== */
 
 :root {
-  /* Clean Light CAD Studio Palette */
-  --bg-primary: #f4f6fa;
-  --bg-secondary: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.94);
-  --bg-card-hover: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.88);
-  --bg-subtle: #edf2f7;
+  /* Titanium Slate Non-Black Base */
+  --bg-primary: #121824;
+  --bg-secondary: #172030;
+  --bg-card: rgba(22, 30, 46, 0.82);
+  --bg-card-hover: rgba(28, 38, 58, 0.92);
+  --bg-glass: rgba(18, 24, 36, 0.78);
+  --bg-subtle: rgba(255, 255, 255, 0.03);
 
-  /* Unified Industrial Orange Accent */
-  --accent-orange: #ea580c;
-  --accent-orange-hover: #c2410c;
-  --accent-orange-glow: rgba(234, 88, 12, 0.22);
-  --accent-orange-subtle: rgba(234, 88, 12, 0.08);
+  /* Stark Hot-Rod Crimson Accent */
+  --accent-crimson: #e62429;
+  --accent-crimson-hover: #ff2a3b;
+  --accent-crimson-glow: rgba(230, 36, 41, 0.45);
+  --accent-crimson-subtle: rgba(230, 36, 41, 0.12);
 
-  /* Borders */
-  --border-primary: rgba(234, 88, 12, 0.35);
-  --border-subtle: #e2e8f0;
-  --border-glass: rgba(15, 23, 42, 0.08);
-  --border-active: #ea580c;
+  /* Arc Reactor Gold & Energy Accents */
+  --accent-gold: #f59e0b;
+  --accent-gold-glow: rgba(245, 158, 11, 0.4);
+  --accent-arc: #00f0ff;
+  --accent-arc-glow: rgba(0, 240, 255, 0.45);
 
-  /* Typography Colors */
-  --text-primary: #0f172a;    /* Deep slate charcoal */
-  --text-secondary: #475569;  /* Balanced slate grey */
-  --text-muted: #94a3b8;      /* Soft label grey */
-  --text-accent: #ea580c;
+  /* Borders & Tactical Lines */
+  --border-primary: rgba(230, 36, 41, 0.45);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-glass: rgba(255, 255, 255, 0.14);
+  --border-active: #e62429;
+  --border-gold: rgba(245, 158, 11, 0.4);
 
-  /* Grid & Studio Ambience */
-  --grid-line: rgba(15, 23, 42, 0.05);
-  --grid-dot: rgba(234, 88, 12, 0.12);
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-accent: #e62429;
+  --text-gold: #fbbf24;
 
-  /* Shadows */
-  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-hud: 0 10px 30px -5px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
-  --glass-inset: inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  /* Grid & Atmospheric Ambience */
+  --grid-line: rgba(230, 36, 41, 0.08);
+  --grid-dot: rgba(245, 158, 11, 0.2);
+
+  /* Tactical Shadows */
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.6), 0 0 20px rgba(230, 36, 41, 0.1);
+  --shadow-hud: 0 15px 35px -5px rgba(0, 0, 0, 0.75), 0 0 25px rgba(230, 36, 41, 0.2);
+  --glass-inset: inset 0.5px 1px 2px rgba(255, 255, 255, 0.2), inset -0.5px -1px 2px rgba(0, 0, 0, 0.4);
 
   /* Fonts */
   --font-display: 'Space Grotesk', -apple-system, sans-serif;
@@ -46,10 +54,27 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
   --radius-lg: 16px;
   --radius-pill: 50px;
+}
+
+[data-theme="blueprint"] {
+  /* Stark Tactical Blueprint Mode */
+  --bg-primary: #0a1424;
+  --bg-secondary: #0f1e36;
+  --bg-card: rgba(15, 30, 54, 0.85);
+  --bg-card-hover: rgba(20, 40, 72, 0.92);
+  --bg-glass: rgba(12, 24, 44, 0.82);
+
+  --accent-crimson: #38bdf8;
+  --accent-crimson-hover: #0ea5e9;
+  --accent-crimson-glow: rgba(56, 189, 248, 0.45);
+  --accent-crimson-subtle: rgba(56, 189, 248, 0.12);
+
+  --border-primary: rgba(56, 189, 248, 0.45);
+  --border-active: #38bdf8;
 }
 
 /* Base Resets */
@@ -72,7 +97,27 @@ body {
   line-height: 1.6;
   position: relative;
   background-color: var(--bg-primary);
+  background-image: 
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 50px 50px;
   color: var(--text-primary);
+}
+
+/* Ambient Radial Stark Reactor Glows */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 50% 15%, rgba(230, 36, 41, 0.08), transparent 55%),
+    radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.05), transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(0, 240, 255, 0.04), transparent 45%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Scrollbar */
@@ -83,19 +128,19 @@ body {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(230, 36, 41, 0.4);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-orange);
+  background: var(--accent-crimson);
 }
 
 /* Typography Utilities */
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display);
   letter-spacing: -0.02em;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-weight: 800;
+  color: #ffffff;
 }
 
 .mono {
@@ -111,7 +156,7 @@ h1, h2, h3, h4, .font-display {
   z-index: 1;
 }
 
-/* Section Header Shared */
+/* Section Header */
 .section-header {
   text-align: center;
   margin-bottom: 3.5rem;
@@ -124,13 +169,13 @@ h1, h2, h3, h4, .font-display {
   gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent-orange);
+  font-weight: 700;
+  color: var(--accent-gold);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  background: var(--accent-orange-subtle);
-  border: 1px solid rgba(234, 88, 12, 0.25);
-  padding: 0.35rem 0.9rem;
+  letter-spacing: 0.15em;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 0.35rem 0.95rem;
   border-radius: var(--radius-pill);
   margin-bottom: 1rem;
 }
@@ -139,23 +184,27 @@ h1, h2, h3, h4, .font-display {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent-orange);
-  box-shadow: 0 0 6px var(--accent-orange);
+  background: var(--accent-crimson);
+  box-shadow: 0 0 8px var(--accent-crimson);
   animation: pulseBeacon 2s infinite ease-in-out;
 }
 
 .section-title {
-  font-size: clamp(2rem, 3.8vw, 3rem);
-  font-weight: 800;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 900;
   line-height: 1.15;
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #ffffff 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 0.85rem;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
 .section-subtitle {
   color: var(--text-secondary);
   font-size: 1.05rem;
-  max-width: 720px;
+  max-width: 740px;
   margin: 0 auto;
 }
 
@@ -165,25 +214,25 @@ h1, h2, h3, h4, .font-display {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  background: var(--accent-orange);
+  background: linear-gradient(135deg, var(--accent-crimson), #b91c1c);
   color: #ffffff;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.65rem 1.4rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.7rem 1.6rem;
   border-radius: var(--radius-pill);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   text-decoration: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 10px var(--accent-orange-glow);
+  box-shadow: 0 4px 20px var(--accent-crimson-glow);
 }
 
 .btn-primary:hover {
-  background: var(--accent-orange-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px var(--accent-orange-glow);
+  filter: brightness(1.15);
+  box-shadow: 0 6px 25px rgba(230, 36, 41, 0.6);
 }
 
 .btn-secondary {
@@ -191,45 +240,62 @@ h1, h2, h3, h4, .font-display {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.85rem;
-  padding: 0.65rem 1.4rem;
+  padding: 0.7rem 1.5rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
   text-decoration: none;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  backdrop-filter: blur(14px);
 }
 
 .btn-secondary:hover {
-  border-color: var(--accent-orange);
-  color: var(--accent-orange);
-  background: var(--accent-orange-subtle);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  background: rgba(245, 158, 11, 0.1);
   transform: translateY(-2px);
 }
 
-/* Glass Card */
+/* Tactical Glass Card */
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 2rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Tactical corner brackets */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-crimson), var(--accent-gold), transparent);
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
 .glass-card:hover {
-  border-color: rgba(234, 88, 12, 0.35);
-  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  border-color: var(--border-primary);
+  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.8), 0 0 25px var(--accent-crimson-glow);
   transform: translateY(-3px);
+}
+
+.glass-card:hover::before {
+  opacity: 1;
 }
 
 /* Animations */
@@ -252,4 +318,13 @@ h1, h2, h3, h4, .font-display {
 @keyframes floatSlow {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
+}
+
+@keyframes arcPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.7), inset 0 0 15px rgba(0, 240, 255, 0.5);
+  }
 }

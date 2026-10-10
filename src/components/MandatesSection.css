@@ -5,13 +5,27 @@
 
 /* Quote Card */
 .problem-quote-card {
-  background: #ffffff;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
-  border-left: 4px solid var(--accent-orange);
+  border-left: 4px solid var(--accent-crimson);
   border-radius: var(--radius-lg);
   padding: 2.25rem;
   margin-bottom: 3.5rem;
   box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.problem-quote-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 100%;
+  background: radial-gradient(circle at right, rgba(230, 36, 41, 0.08), transparent 70%);
+  pointer-events: none;
 }
 
 .quote-header {
@@ -27,7 +41,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -35,7 +49,8 @@
 
 .quote-ref {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: var(--accent-gold);
+  letter-spacing: 0.05em;
 }
 
 .quote-text {
@@ -46,7 +61,7 @@
 }
 
 .quote-text strong {
-  color: var(--accent-orange);
+  color: var(--accent-gold);
   font-weight: 700;
   font-style: normal;
 }
@@ -62,7 +77,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #ffffff;
 }
 
 .mandate-card-header {
@@ -79,9 +93,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-orange-subtle);
-  border: 1px solid rgba(234, 88, 12, 0.25);
-  color: var(--accent-orange);
+  background: rgba(230, 36, 41, 0.12);
+  border: 1px solid rgba(230, 36, 41, 0.35);
+  color: var(--accent-crimson);
+  box-shadow: 0 0 15px rgba(230, 36, 41, 0.2);
+}
+
+.mandate-card.color-gold .mandate-icon-box {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.mandate-card.color-cyan .mandate-icon-box {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.35);
+  color: var(--accent-arc);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .mandate-header-meta {
@@ -97,7 +126,7 @@
 
 .mandate-tag {
   font-size: 0.68rem;
-  color: var(--accent-orange);
+  color: var(--accent-gold);
   letter-spacing: 0.06em;
   font-weight: 600;
 }
@@ -106,7 +135,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1.2rem;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .mandate-body {
@@ -163,5 +192,13 @@
 .spec-val {
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
+}
+
+.mandate-card.color-gold .spec-val {
+  color: var(--accent-gold);
+}
+
+.mandate-card.color-cyan .spec-val {
+  color: var(--accent-arc);
 }

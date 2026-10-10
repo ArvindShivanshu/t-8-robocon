@@ -23,18 +23,18 @@ export default function Footer({ onScrollTop }) {
           {/* Brand Col */}
           <div className="footer-brand-col">
             <div className="footer-brand-badge" onClick={onScrollTop}>
-              <span className="brand-code">T-8</span>
+              <span className="brand-code">MK-8</span>
               <div className="brand-pulse"></div>
             </div>
-            <h4 className="footer-brand-title">ROBOCON TEAM 8</h4>
+            <h4 className="footer-brand-title">STARK INDUSTRIES // SRM ROBOCON</h4>
             <p className="footer-brand-desc">
-              Omni-Carrier 5K: Holonomic 4-wheel mobile platform designed for Problem Statement 8. 
+              Mark-VIII Omni-Carrier: Holonomic 4-wheel 45° mobile platform designed for Problem Statement 8. 
               Engineering dependable multi-directional motion, 5kg payload cargo delivery, and continuous 
-              real-time (X, Y, θ) coordinate telemetry.
+              JARVIS (X, Y, θ) coordinate telemetry.
             </p>
             <div className="footer-status-pill mono">
               <span className="dot pulse"></span>
-              <span>100Hz EKF POSE ESTIMATION</span>
+              <span>100Hz JARVIS EKF TELEMETRY ACTIVE</span>
             </div>
           </div>
 
@@ -43,12 +43,12 @@ export default function Footer({ onScrollTop }) {
             <h5 className="footer-col-title mono">// NAVIGATION INDEX</h5>
             <ul className="footer-links-list">
               <li><button onClick={() => scrollTo('cad')}>3D CAD Digital Twin</button></li>
-              <li><button onClick={() => scrollTo('mandates')}>Problem Statement 8</button></li>
+              <li><button onClick={() => scrollTo('mandates')}>Problem Statement 8 Directives</button></li>
               <li><button onClick={() => scrollTo('simulator')}>Arena Teleoperation Sim</button></li>
               <li><button onClick={() => scrollTo('kinematics')}>Inverse Kinematics Solver</button></li>
-              <li><button onClick={() => scrollTo('subsystems')}>Subsystems Architecture</button></li>
+              <li><button onClick={() => scrollTo('subsystems')}>Subsystems & Armor</button></li>
               <li><button onClick={() => scrollTo('gallery')}>CAD Blueprints & Renders</button></li>
-              <li><button onClick={() => scrollTo('specs')}>Technical Specifications & FAQ</button></li>
+              <li><button onClick={() => scrollTo('specs')}>Tactical Specifications & FAQ</button></li>
             </ul>
           </div>
 
@@ -57,19 +57,19 @@ export default function Footer({ onScrollTop }) {
             <h5 className="footer-col-title mono">// ROBOTICS DIVISIONS</h5>
             <div className="divisions-list">
               <div className="division-item">
-                <span className="div-code mono">SAMBED</span>
+                <span className="div-code mono">STARK MECHANICS</span>
                 <span className="div-desc">Mechanical Kinematics & Chassis</span>
               </div>
               <div className="division-item">
-                <span className="div-code mono">SPACED</span>
+                <span className="div-code mono">JARVIS EMBEDDED</span>
                 <span className="div-desc">Embedded Firmware & EKF Odometry</span>
               </div>
               <div className="division-item">
-                <span className="div-code mono">SIESED</span>
+                <span className="div-code mono">ARC POWER</span>
                 <span className="div-desc">Actuation & 14.8V Power Electronics</span>
               </div>
               <div className="division-item">
-                <span className="div-code mono">MCSOCD</span>
+                <span className="div-code mono">TACTICAL TELEMETRY</span>
                 <span className="div-desc">Operator HMI & 2.4GHz Telemetry</span>
               </div>
             </div>
@@ -79,9 +79,9 @@ export default function Footer({ onScrollTop }) {
           <div className="footer-action-col">
             <h5 className="footer-col-title mono">// HEADQUARTERS</h5>
             <div className="hq-info">
-              <p className="hq-name">Robocon Innovation Lab</p>
-              <p className="hq-spec">Autonomous Mobile Robotics Division</p>
-              <p className="hq-brief mono">PROBLEM STATEMENT 8 // T-8</p>
+              <p className="hq-name">SRM Robocon Innovation Lab</p>
+              <p className="hq-spec">Autonomous Robotics Division • Team 8</p>
+              <p className="hq-brief mono">PROBLEM STATEMENT 8 // MARK-VIII</p>
             </div>
 
             <button 
@@ -90,7 +90,7 @@ export default function Footer({ onScrollTop }) {
               id="footer-back-to-top-btn"
             >
               <ArrowUp size={15} />
-              <span>BACK TO TOP</span>
+              <span>RETURN TO TOP</span>
             </button>
           </div>
         </div>
@@ -98,14 +98,14 @@ export default function Footer({ onScrollTop }) {
         {/* Bottom Bar */}
         <div className="footer-bottom-bar">
           <div className="bottom-left mono">
-            &copy; {new Date().getFullYear()} Robocon Team 8 • Omni-Carrier 5K. All rights reserved.
+            &copy; {new Date().getFullYear()} SRM Robocon Team 8 • Stark Industries Mark-VIII. All rights reserved.
           </div>
           <div className="bottom-center mono">
             <span className="dot pulse"></span>
-            <span>MANDATE: PERSISTENT (X, Y, θ) COORDINATE HUD</span>
+            <span>MANDATE 08: CONTINUOUS (X, Y, θ) POSE TELEMETRY</span>
           </div>
           <div className="bottom-right mono">
-            SRM ROBOCON '25
+            SRM ROBOCON '26
           </div>
         </div>
       </div>

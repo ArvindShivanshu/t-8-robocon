@@ -6,7 +6,8 @@ import {
   Activity, 
   ShieldAlert, 
   CheckCircle2, 
-  ArrowUpRight 
+  Crosshair,
+  Zap
 } from 'lucide-react';
 import './MandatesSection.css';
 
@@ -23,20 +24,20 @@ export default function MandatesSection() {
         { label: 'Turning Radius', val: '0.00 mm (In-Place)' },
         { label: 'Degrees of Freedom', val: '3 DoF (X, Y, Yaw)' },
       ],
-      color: 'cyan'
+      color: 'crimson'
     },
     {
       id: '02',
       title: '5.0 kg Manual Payload Capacity',
       icon: <Weight size={24} />,
-      tag: 'STRUCTURAL STABILITY',
+      tag: 'ARMOR STRUCTURAL STABILITY',
       requirement: 'Must safely carry up to 5 kg of industrial payload while preserving acceleration, balance, and motor torque headroom.',
       solution: 'Elevated cargo containment bin mounted upon 4 vertical cylindrical load-bearing risers, lowering dynamic chassis deflection.',
       specs: [
         { label: 'Rated Payload', val: '5.0 kg (50 N load)' },
         { label: 'Safety Factor', val: '2.4x Dynamic Load' },
       ],
-      color: 'amber'
+      color: 'gold'
     },
     {
       id: '03',
@@ -49,20 +50,20 @@ export default function MandatesSection() {
         { label: 'Encoder Resolution', val: '1024 CPR Optical' },
         { label: 'Drift Mitigation', val: 'EKF / Complementary' },
       ],
-      color: 'emerald'
+      color: 'cyan'
     },
     {
       id: '04',
       title: 'Continuous Coordinate HUD Display',
       icon: <Activity size={24} />,
-      tag: 'MANDATORY OPERATOR TELEMETRY',
+      tag: 'JARVIS TACTICAL TELEMETRY',
       requirement: 'The operator demands the x, y coordinates as well as the angle of the mobile platform to be displayed at all times.',
       solution: 'Dedicated high-refresh telemetry stream broadcasting continuous pose (X, Y, θ) to persistent handheld HMI and digital twin HUD.',
       specs: [
         { label: 'Stream Frequency', val: '100 Hz Streaming' },
         { label: 'Telemetry Latency', val: '< 15 ms Response' },
       ],
-      color: 'blue'
+      color: 'crimson'
     },
   ];
 
@@ -73,12 +74,12 @@ export default function MandatesSection() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>CHALLENGE MANDATES</span>
+            <span>AVENGERS INITIATIVE // MANDATE 08</span>
           </div>
-          <h2 className="section-title">Problem Statement 8 Breakdown</h2>
+          <h2 className="section-title">Mission Parameters & Directives</h2>
           <p className="section-subtitle">
-            Analyzing the core requirements specified for warehouse teleoperation, 
-            motion kinematics, dead-reckoning odometry, and operator feedback.
+            Engineering specifications derived from Problem Statement 8 for warehouse agile teleoperation, 
+            45° omni-kinematics, and continuous JARVIS coordinate telemetry.
           </p>
         </div>
 
@@ -87,7 +88,7 @@ export default function MandatesSection() {
           <div className="quote-header">
             <div className="quote-badge mono">
               <ShieldAlert size={15} />
-              <span>OFFICIAL PROBLEM STATEMENT #8</span>
+              <span>STARK INDUSTRIES DIRECTIVE // PROBLEM STATEMENT #8</span>
             </div>
             <span className="quote-ref mono">ROBOCON DESIGN BENCHMARK</span>
           </div>
@@ -118,12 +119,12 @@ export default function MandatesSection() {
 
               <div className="mandate-body">
                 <div className="mandate-block">
-                  <span className="mandate-block-label mono">CHALLENGE:</span>
+                  <span className="mandate-block-label mono">OPERATIONAL DEMAND:</span>
                   <p className="mandate-block-desc">{m.requirement}</p>
                 </div>
 
                 <div className="mandate-block solution">
-                  <span className="mandate-block-label mono">ENGINEERED SOLUTION:</span>
+                  <span className="mandate-block-label mono">STARK SOLUTION:</span>
                   <p className="mandate-block-desc">{m.solution}</p>
                 </div>
               </div>

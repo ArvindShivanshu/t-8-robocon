@@ -19,9 +19,9 @@ export default function SubsystemsSection() {
     mechanical: {
       id: 'mechanical',
       title: 'Mechanical Kinematics & Structure',
-      tag: 'DIVISION // SAMBED',
+      tag: 'DIVISION // STARK MECHANICS',
       icon: <Wrench size={22} />,
-      lead: 'Custom fabricated lightweight aluminum alloy chassis designed for 4-wheel 45° holonomic omni mobility and 5kg cargo containment.',
+      lead: 'Custom fabricated lightweight titanium-aluminum alloy chassis designed for 4-wheel 45° holonomic omni mobility and 5kg cargo containment.',
       features: [
         {
           name: '45° Omni-Wheel Geometry',
@@ -50,7 +50,7 @@ export default function SubsystemsSection() {
     embedded: {
       id: 'embedded',
       title: 'Embedded Firmware & Odometry Fusion',
-      tag: 'DIVISION // SPACED',
+      tag: 'DIVISION // JARVIS EMBEDDED',
       icon: <Cpu size={22} />,
       lead: 'High-speed deterministic control loop running on 32-bit hardware timers for sub-millimeter dead-reckoning position tracking.',
       features: [
@@ -80,8 +80,8 @@ export default function SubsystemsSection() {
     },
     actuation: {
       id: 'actuation',
-      title: 'Actuation & Power Electronics',
-      tag: 'DIVISION // SIESED',
+      title: 'Actuation & Arc Power Electronics',
+      tag: 'DIVISION // ARC POWER',
       icon: <Zap size={22} />,
       lead: 'High-torque planetary geared drivetrains backed by synchronous MOSFET H-bridges and regulated lithium power rails.',
       features: [
@@ -111,8 +111,8 @@ export default function SubsystemsSection() {
     },
     telemetry: {
       id: 'telemetry',
-      title: 'Operator HMI & Low-Latency Telemetry',
-      tag: 'DIVISION // MCSOCD',
+      title: 'JARVIS Tactical HMI & Telemetry',
+      tag: 'DIVISION // TACTICAL TELEMETRY',
       icon: <Radio size={22} />,
       lead: 'Industrial wireless control pendant and digital twin interface delivering responsive control and zero-latency coordinate HUD.',
       features: [
@@ -151,12 +151,12 @@ export default function SubsystemsSection() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>ENGINEERING ARCHITECTURE</span>
+            <span>STARK AVIONICS & MECHANICS // PROTOCOL</span>
           </div>
-          <h2 className="section-title">Subsystems & Robotics Divisions</h2>
+          <h2 className="section-title">Subsystems & Armor Divisions</h2>
           <p className="section-subtitle">
             Multidisciplinary engineering breakdown spanning mechanical kinematics, 
-            embedded dead-reckoning, power distribution, and operator telemetry.
+            embedded dead-reckoning odometry, Arc power distribution, and JARVIS telemetry.
           </p>
         </div>
 

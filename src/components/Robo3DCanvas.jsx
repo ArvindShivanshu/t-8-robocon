@@ -23,6 +23,7 @@ export default function Robo3DCanvas({
   const motorsRef = useRef([]);
   const wheelsRef = useRef([]);
   const dimsGroupRef = useRef(null);
+  const arcCoreRef = useRef(null);
   const materialsRef = useRef({});
 
   // Spherical camera orbit state
@@ -48,12 +49,12 @@ export default function Robo3DCanvas({
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // 1. Scene with Clean Light CAD Studio Background
+    // 1. Scene with Titanium Slate Base
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    const studioBgColor = new THREE.Color(0xf1f5f9);
-    scene.background = studioBgColor;
-    scene.fog = new THREE.Fog(0xf1f5f9, 900, 2600);
+    const bgTitanium = new THREE.Color(0x101624);
+    scene.background = bgTitanium;
+    scene.fog = new THREE.Fog(0x101624, 850, 2600);
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(38, width / height, 1, 4000);
@@ -74,110 +75,127 @@ export default function Robo3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.1;
     container.replaceChildren(renderer.domElement);
 
-    // 4. Lighting: Clean Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
+    // 4. Lighting: Dramatic Stark Industries Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.4);
-    dirLight1.position.set(450, 700, 450);
-    dirLight1.castShadow = true;
-    dirLight1.shadow.mapSize.width = 2048;
-    dirLight1.shadow.mapSize.height = 2048;
-    dirLight1.shadow.bias = -0.0001;
-    scene.add(dirLight1);
+    // Key Light
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    keyLight.position.set(450, 700, 450);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 2048;
+    keyLight.shadow.mapSize.height = 2048;
+    keyLight.shadow.bias = -0.0001;
+    scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe2e8f0, 1.4);
-    fillLight.position.set(-450, 350, -350);
-    scene.add(fillLight);
+    // Hot-Rod Crimson Rim Light
+    const crimsonRim = new THREE.DirectionalLight(0xe62429, 2.8);
+    crimsonRim.position.set(-450, 300, -350);
+    scene.add(crimsonRim);
 
-    const warmRimLight = new THREE.DirectionalLight(0xea580c, 0.9);
-    warmRimLight.position.set(0, -150, 350);
-    scene.add(warmRimLight);
+    // Arc Gold Fill Light
+    const goldFill = new THREE.DirectionalLight(0xf59e0b, 1.8);
+    goldFill.position.set(0, -180, 350);
+    scene.add(goldFill);
 
-    // 5. Light Studio Floor Grid & Shadow Plane
-    const gridColor1 = 0xea580c; // Industrial Orange major grid
-    const gridColor2 = 0xcbd5e1; // Slate grey secondary grid
-    const gridHelper = new THREE.GridHelper(1400, 36, gridColor1, gridColor2);
+    // Arc Core Point Light
+    const arcLight = new THREE.PointLight(0x00f0ff, 2.0, 300);
+    arcLight.position.set(0, 15, 0);
+    scene.add(arcLight);
+
+    // 5. Floor Grid: Stark Tactical Grid with Arc Rings
+    const gridHelper = new THREE.GridHelper(1300, 32, 0xe62429, 0x1f2b3e);
     gridHelper.position.y = -115;
     scene.add(gridHelper);
 
-    // Contact shadow plane on floor
-    const shadowPlaneGeo = new THREE.PlaneGeometry(600, 600);
-    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.12 });
-    const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
-    shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.y = -114.8;
-    shadowPlane.receiveShadow = true;
-    scene.add(shadowPlane);
+    // Arc Reactor Concentric Target Rings on the Floor
+    const ringGeo1 = new THREE.RingGeometry(220, 222, 64);
+    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+    ring1.rotation.x = -Math.PI / 2;
+    ring1.position.y = -114.6;
+    scene.add(ring1);
 
-    // 6. Materials Matching CAD Renders
+    const ringGeo2 = new THREE.RingGeometry(110, 112, 64);
+    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xe62429, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
+    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+    ring2.rotation.x = -Math.PI / 2;
+    ring2.position.y = -114.5;
+    scene.add(ring2);
+
+    // 6. Materials: Stark Industries Titanium & Hot-Rod Red
     const materials = {
-      chassisMetal: new THREE.MeshStandardMaterial({
-        color: 0x94a3b8, // Clean extruded aluminum
-        metalness: 0.85,
-        roughness: 0.22,
+      chassisTitanium: new THREE.MeshStandardMaterial({
+        color: 0x334155, // Aeronautic Titanium Alloy
+        metalness: 0.88,
+        roughness: 0.25,
       }),
       motorBody: new THREE.MeshStandardMaterial({
-        color: 0x475569, // Dark slate steel motor casing
-        metalness: 0.9,
-        roughness: 0.25,
+        color: 0x1e293b,
+        metalness: 0.92,
+        roughness: 0.2,
       }),
       motorShaft: new THREE.MeshStandardMaterial({
-        color: 0xe2e8f0,
+        color: 0xf59e0b, // Gold-plated output shaft
         metalness: 0.95,
-        roughness: 0.1,
+        roughness: 0.15,
       }),
-      woodDeck: new THREE.MeshStandardMaterial({
-        color: 0xb58852, // Warm plywood tone matching CAD
-        roughness: 0.7,
-        metalness: 0.05,
-      }),
-      pcbBoard: new THREE.MeshStandardMaterial({
-        color: 0x166534, // Circuit board green matching CAD
-        roughness: 0.35,
+      deckCarbon: new THREE.MeshStandardMaterial({
+        color: 0x0f172a, // Carbon composite base
+        roughness: 0.5,
         metalness: 0.3,
       }),
+      pcbBoard: new THREE.MeshStandardMaterial({
+        color: 0x1e3a8a, // High-spec Navy PCB
+        roughness: 0.3,
+        metalness: 0.4,
+      }),
       pcbChip: new THREE.MeshStandardMaterial({
-        color: 0x0f172a,
+        color: 0x020617,
         roughness: 0.2,
-        metalness: 0.8,
+        metalness: 0.9,
       }),
       riserColumn: new THREE.MeshStandardMaterial({
-        color: 0x94a3b8,
-        metalness: 0.88,
-        roughness: 0.18,
+        color: 0xd4d4d8, // Polished Titanium Risers
+        metalness: 0.92,
+        roughness: 0.12,
       }),
-      cargoBin: new THREE.MeshStandardMaterial({
-        color: 0xcbd5e1, // Sheet metal cargo bin matching CAD
-        metalness: 0.75,
-        roughness: 0.28,
+      cargoBinStark: new THREE.MeshStandardMaterial({
+        color: 0xb91c1c, // Stark Hot-Rod Crimson Red!
+        metalness: 0.82,
+        roughness: 0.22,
         side: THREE.DoubleSide,
       }),
-      cargoPayload: new THREE.MeshStandardMaterial({
-        color: 0xea580c, // Unified Industrial Orange payload box
-        roughness: 0.45,
-        metalness: 0.15,
+      cargoPayloadGold: new THREE.MeshStandardMaterial({
+        color: 0xf59e0b, // Vibranium Gold 5kg Payload
+        metalness: 0.75,
+        roughness: 0.28,
       }),
       omniHub: new THREE.MeshStandardMaterial({
-        color: 0x334155,
-        metalness: 0.8,
-        roughness: 0.25,
+        color: 0x1e293b,
+        metalness: 0.85,
+        roughness: 0.2,
       }),
       omniRoller: new THREE.MeshStandardMaterial({
-        color: 0x1e293b, // Rubber rollers
+        color: 0x475569, // High-traction rollers
         roughness: 0.85,
         metalness: 0.1,
       }),
-      orangeAccent: new THREE.MeshStandardMaterial({
-        color: 0xea580c,
-        emissive: 0xea580c,
-        emissiveIntensity: 0.5,
+      arcReactorGlow: new THREE.MeshStandardMaterial({
+        color: 0x00f0ff,
+        emissive: 0x00f0ff,
+        emissiveIntensity: 1.2,
+      }),
+      crimsonGlow: new THREE.MeshStandardMaterial({
+        color: 0xe62429,
+        emissive: 0xe62429,
+        emissiveIntensity: 0.8,
       }),
       dimLineMat: new THREE.LineBasicMaterial({
-        color: 0xea580c,
+        color: 0x00f0ff,
         linewidth: 2,
       }),
     };
@@ -188,7 +206,7 @@ export default function Robo3DCanvas({
     robotRootRef.current = robotRoot;
     scene.add(robotRoot);
 
-    // --- Base Chassis Frame ---
+    // --- Base Chassis Frame (Titanium Alloy) ---
     const chassisGroup = new THREE.Group();
     robotRoot.add(chassisGroup);
 
@@ -196,7 +214,7 @@ export default function Robo3DCanvas({
     const frameWidth = 240;
     const frameLength = 260;
 
-    const railMat = materials.chassisMetal;
+    const railMat = materials.chassisTitanium;
     const leftRail = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameThickness, frameLength - 60), railMat);
     leftRail.position.set(-frameWidth / 2 + 6, -30, 0);
     leftRail.castShadow = true;
@@ -221,7 +239,7 @@ export default function Robo3DCanvas({
     crossRail.position.set(0, -30, 0);
     chassisGroup.add(crossRail);
 
-    // 45-degree corner gussets for motor mounting
+    // Corner Gussets
     const cornerAngles = [
       { x: -frameWidth / 2 + 35, z: frameLength / 2 - 35, rot: Math.PI / 4 },
       { x: frameWidth / 2 - 35, z: frameLength / 2 - 35, rot: -Math.PI / 4 },
@@ -262,6 +280,7 @@ export default function Robo3DCanvas({
       motorBody.castShadow = true;
       motorAssembly.add(motorBody);
 
+      // Gold shaft ring
       const shaft = new THREE.Mesh(
         new THREE.CylinderGeometry(4, 4, 35, 16),
         materials.motorShaft
@@ -312,18 +331,18 @@ export default function Robo3DCanvas({
     motorsRef.current = motors;
     wheelsRef.current = wheels;
 
-    // --- Middle Deck: Wooden Base Plate ---
+    // --- Middle Deck: Carbon Base Deck ---
     const deckGroup = new THREE.Group();
     deckRef.current = deckGroup;
     deckGroup.position.set(0, -18, 0);
     robotRoot.add(deckGroup);
 
-    const woodPlate = new THREE.Mesh(
+    const carbonPlate = new THREE.Mesh(
       new THREE.BoxGeometry(210, 8, 230),
-      materials.woodDeck
+      materials.deckCarbon
     );
-    woodPlate.castShadow = true;
-    deckGroup.add(woodPlate);
+    carbonPlate.castShadow = true;
+    deckGroup.add(carbonPlate);
 
     // Electronics PCB Board
     const pcbGroup = new THREE.Group();
@@ -337,23 +356,24 @@ export default function Robo3DCanvas({
     );
     pcbGroup.add(pcb);
 
-    const mcuChip = new THREE.Mesh(new THREE.BoxGeometry(32, 5, 32), materials.pcbChip);
-    mcuChip.position.set(-25, 4, 0);
+    // Glowing Arc Core on the Deck
+    const arcCore = new THREE.Mesh(
+      new THREE.CylinderGeometry(14, 14, 5, 32),
+      materials.arcReactorGlow
+    );
+    arcCore.position.set(0, 4, 0);
+    arcCoreRef.current = arcCore;
+    pcbGroup.add(arcCore);
+
+    const mcuChip = new THREE.Mesh(new THREE.BoxGeometry(28, 5, 28), materials.pcbChip);
+    mcuChip.position.set(-40, 4, 0);
     pcbGroup.add(mcuChip);
 
-    const heatsink1 = new THREE.Mesh(new THREE.BoxGeometry(22, 14, 30), materials.riserColumn);
-    heatsink1.position.set(35, 8, -25);
-    pcbGroup.add(heatsink1);
+    const heatsink = new THREE.Mesh(new THREE.BoxGeometry(20, 14, 28), materials.riserColumn);
+    heatsink.position.set(40, 8, 0);
+    pcbGroup.add(heatsink);
 
-    const heatsink2 = new THREE.Mesh(new THREE.BoxGeometry(22, 14, 30), materials.riserColumn);
-    heatsink2.position.set(35, 8, 25);
-    pcbGroup.add(heatsink2);
-
-    const led = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 4), materials.orangeAccent);
-    led.position.set(-55, 3, -35);
-    pcbGroup.add(led);
-
-    // --- 4x Vertical Riser Columns ---
+    // --- 4x Vertical Riser Columns (Titanium) ---
     const risersGroup = new THREE.Group();
     risersRef.current = risersGroup;
     robotRoot.add(risersGroup);
@@ -375,7 +395,7 @@ export default function Robo3DCanvas({
       risersGroup.add(riser);
     });
 
-    // --- Upper Payload Cargo Bin (5kg Container) ---
+    // --- Upper Payload Cargo Bin (Stark Hot-Rod Crimson Red) ---
     const cargoBinGroup = new THREE.Group();
     cargoBoxRef.current = cargoBinGroup;
     cargoBinGroup.position.set(0, 75, 0);
@@ -383,7 +403,7 @@ export default function Robo3DCanvas({
 
     const binBottom = new THREE.Mesh(
       new THREE.BoxGeometry(230, 4, 250),
-      materials.cargoBin
+      materials.cargoBinStark
     );
     binBottom.castShadow = true;
     cargoBinGroup.add(binBottom);
@@ -391,26 +411,31 @@ export default function Robo3DCanvas({
     const wallHeight = 55;
     const wallThick = 4;
 
-    const frontWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBin);
+    const frontWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBinStark);
     frontWall.position.set(0, wallHeight / 2, 125);
     cargoBinGroup.add(frontWall);
 
-    const backWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBin);
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBinStark);
     backWall.position.set(0, wallHeight / 2, -125);
     cargoBinGroup.add(backWall);
 
-    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBin);
+    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBinStark);
     leftWall.position.set(-115, wallHeight / 2, 0);
     cargoBinGroup.add(leftWall);
 
-    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBin);
+    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBinStark);
     rightWall.position.set(115, wallHeight / 2, 0);
     cargoBinGroup.add(rightWall);
 
-    // 5kg Payload Box inside (Industrial Orange)
+    // Gold Rim Trim around Top Edge
+    const trimFront = new THREE.Mesh(new THREE.BoxGeometry(232, 2, 6), materials.cargoPayloadGold);
+    trimFront.position.set(0, wallHeight, 125);
+    cargoBinGroup.add(trimFront);
+
+    // 5kg Vibranium-Gold Cargo Box
     const payloadPkg = new THREE.Mesh(
       new THREE.BoxGeometry(160, 45, 170),
-      materials.cargoPayload
+      materials.cargoPayloadGold
     );
     payloadPkg.position.set(0, 25, 0);
     payloadPkg.castShadow = true;
@@ -448,6 +473,7 @@ export default function Robo3DCanvas({
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
 
       const orb = orbitRef.current;
 
@@ -457,9 +483,15 @@ export default function Robo3DCanvas({
       orb.explode += (orb.targetExplode - orb.explode) * 0.08;
 
       if (cargoBoxRef.current && risersRef.current && deckRef.current) {
-        cargoBoxRef.current.position.y = 75 + orb.explode * 120;
-        risersRef.current.position.y = orb.explode * 50;
-        deckRef.current.position.y = -18 - orb.explode * 25;
+        cargoBoxRef.current.position.y = 75 + orb.explode * 125;
+        risersRef.current.position.y = orb.explode * 55;
+        deckRef.current.position.y = -18 - orb.explode * 30;
+      }
+
+      // Gentle Arc Reactor breathing pulse
+      if (arcCoreRef.current) {
+        const pulse = 1.0 + Math.sin(elapsed * 4) * 0.35;
+        materials.arcReactorGlow.emissiveIntensity = pulse;
       }
 
       const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
@@ -471,7 +503,7 @@ export default function Robo3DCanvas({
       camera.lookAt(0, 15, 0);
 
       wheels.forEach((w) => {
-        w.rotation.z += delta * 1.2;
+        w.rotation.z += delta * 1.3;
       });
 
       renderer.render(scene, camera);
@@ -513,7 +545,7 @@ export default function Robo3DCanvas({
   // Render Modes
   useEffect(() => {
     const mats = materialsRef.current;
-    if (!mats.chassisMetal) return;
+    if (!mats.chassisTitanium) return;
 
     const isWire = renderMode === 'wireframe';
     const isBlue = renderMode === 'blueprint';
@@ -525,7 +557,7 @@ export default function Robo3DCanvas({
     });
 
     if (sceneRef.current) {
-      sceneRef.current.background = new THREE.Color(isBlue ? 0xe2e8f0 : 0xf1f5f9);
+      sceneRef.current.background = new THREE.Color(isBlue ? 0x0a1424 : 0x101624);
     }
   }, [renderMode]);
 

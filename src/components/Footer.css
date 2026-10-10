@@ -1,5 +1,5 @@
 .footer-root {
-  background: #ffffff;
+  background: var(--bg-secondary);
   border-top: 1px solid var(--border-subtle);
   padding: 5rem 0 7rem 0;
   position: relative;
@@ -27,27 +27,49 @@
 
 .footer-brand-badge {
   position: relative;
-  width: 42px;
-  height: 42px;
-  background: var(--accent-orange-subtle);
-  border: 1px solid rgba(234, 88, 12, 0.35);
+  width: 44px;
+  height: 44px;
+  background: rgba(230, 36, 41, 0.12);
+  border: 1px solid rgba(230, 36, 41, 0.4);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.25s ease;
+  box-shadow: 0 0 15px rgba(230, 36, 41, 0.2);
 }
 
 .footer-brand-badge:hover {
-  border-color: var(--accent-orange);
-  box-shadow: 0 0 15px var(--accent-orange-glow);
+  border-color: var(--accent-crimson);
+  box-shadow: 0 0 25px var(--accent-crimson-glow);
+  transform: translateY(-2px);
+}
+
+.brand-code {
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--accent-gold);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+}
+
+.brand-pulse {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  top: 4px;
+  right: 4px;
+  background: var(--accent-crimson);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--accent-crimson);
+  animation: pulseBeacon 2s infinite ease-in-out;
 }
 
 .footer-brand-title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #ffffff;
   letter-spacing: 0.04em;
 }
 
@@ -61,27 +83,28 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-orange-subtle);
-  border: 1px solid rgba(234, 88, 12, 0.25);
-  padding: 0.35rem 0.75rem;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  padding: 0.35rem 0.85rem;
   border-radius: var(--radius-pill);
   font-size: 0.7rem;
-  color: var(--accent-orange);
+  color: var(--accent-arc);
   font-weight: 700;
   width: fit-content;
 }
 
 .footer-status-pill .dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--accent-orange);
+  background: var(--accent-arc);
+  box-shadow: 0 0 8px var(--accent-arc);
 }
 
 /* Links Col */
 .footer-col-title {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--accent-gold);
   margin-bottom: 1.25rem;
   letter-spacing: 0.05em;
 }
@@ -104,7 +127,7 @@
 }
 
 .footer-links-list button:hover {
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
   transform: translateX(4px);
 }
 
@@ -123,7 +146,7 @@
 .div-code {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--accent-orange);
+  color: var(--accent-gold);
 }
 
 .div-desc {
@@ -148,12 +171,12 @@
 
 .hq-name {
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .hq-brief {
   font-size: 0.7rem;
-  color: var(--accent-orange);
+  color: var(--accent-crimson);
   margin-top: 0.25rem;
   font-weight: 600;
 }
@@ -162,7 +185,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   font-family: var(--font-mono);
@@ -176,9 +199,10 @@
 }
 
 .footer-back-top-btn:hover {
-  border-color: var(--accent-orange);
-  color: var(--accent-orange);
-  background: var(--accent-orange-subtle);
+  border-color: var(--accent-crimson);
+  color: var(--accent-crimson);
+  background: rgba(230, 36, 41, 0.12);
+  box-shadow: 0 4px 15px rgba(230, 36, 41, 0.25);
 }
 
 /* Bottom Bar */
@@ -198,7 +222,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--accent-orange);
+  color: var(--accent-gold);
   font-weight: 600;
 }
 
@@ -206,7 +230,13 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent-orange);
+  background: var(--accent-crimson);
+  box-shadow: 0 0 6px var(--accent-crimson);
+}
+
+.bottom-right {
+  color: var(--accent-crimson);
+  font-weight: 700;
 }
 
 @media (max-width: 992px) {
