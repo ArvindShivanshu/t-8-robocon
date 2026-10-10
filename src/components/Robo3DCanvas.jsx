@@ -5,7 +5,7 @@ export default function Robo3DCanvas({
   activeStep = 0,
   scrollProgress = 0,
   renderMode = 'shaded',
-  showDims = true,
+  showDims = false,
   freeOrbit = false,
   onTelemetryUpdate,
   steps = []
@@ -35,6 +35,7 @@ export default function Robo3DCanvas({
   const dimsGroupRef = useRef(null);
   const arcCoreRef = useRef(null);
   const materialsRef = useRef({});
+  const highlightsRef = useRef({ chassis: 0, motors: 0, deck: 0, risers: 0, cargo: 0, root: 0 });
 
   // Spherical camera orbit state
   const orbitRef = useRef({
@@ -545,7 +546,12 @@ export default function Robo3DCanvas({
     mcuChip.position.set(-40, 4, 0);
     pcbGroup.add(mcuChip);
 
-    const heatsink = new THREE.Mesh(new THREE.BoxGeometry(20, 14, 28), materials.riserColumn);
+    const heatsinkMat = new THREE.MeshStandardMaterial({
+      color: 0xd4d4d8,
+      metalness: 0.88,
+      roughness: 0.18,
+    });
+    const heatsink = new THREE.Mesh(new THREE.BoxGeometry(20, 14, 28), heatsinkMat);
     heatsink.position.set(40, 8, 0);
     pcbGroup.add(heatsink);
 
@@ -637,6 +643,7 @@ export default function Robo3DCanvas({
 
     // --- 3D Dimension Annotation Lines (`↔ 260 mm`) ---
     const dimsGroup = new THREE.Group();
+    dimsGroup.visible = showDims;
     dimsGroupRef.current = dimsGroup;
     robotRoot.add(dimsGroup);
 
@@ -767,12 +774,116 @@ export default function Robo3DCanvas({
       camera.position.set(cx, cy, cz);
       camera.lookAt(targetCenter);
 
-      // 3D-to-2D CAD Callout Leader Line projection
+      // 3D-to-2D CAD Callout Leader Line projection & Part Highlighting
       const curSteps = stepsRef.current || [];
       const curStepIdx = activeStepRef.current || 0;
       const curStep = curSteps[curStepIdx] || curSteps[0];
 
-      if (curStep && curStep.anchor && container && camera) {
+      // Smoothly fade in callout card and 3D part highlights as camera zooms in onto the model
+      const cardOpacity = zoomBlend > 0.4 ? Math.min(1, (zoomBlend - 0.4) / 0.4) : 0;
+
+      // 6. Dynamic 3D CAD Component Highlighting on Model
+      // When the CAD callout card is highlighting a component, illuminate that specific part on the 3D model!
+      const activePart = curStep?.partGroup || 'root';
+      const targetHighlights = {
+        chassis: (activePart === 'chassis' && cardOpacity > 0.05) ? cardOpacity : 0,
+        motors: (activePart === 'motors' && cardOpacity > 0.05) ? cardOpacity : 0,
+        deck: (activePart === 'deck' && cardOpacity > 0.05) ? cardOpacity : 0,
+        risers: (activePart === 'risers' && cardOpacity > 0.05) ? cardOpacity : 0,
+        cargo: (activePart === 'cargo' && cardOpacity > 0.05) ? cardOpacity : 0,
+        root: (activePart === 'root' && cardOpacity > 0.05) ? cardOpacity : 0,
+      };
+
+      const hl = highlightsRef.current;
+      hl.chassis += (targetHighlights.chassis - hl.chassis) * 0.14;
+      hl.motors += (targetHighlights.motors - hl.motors) * 0.14;
+      hl.deck += (targetHighlights.deck - hl.deck) * 0.14;
+      hl.risers += (targetHighlights.risers - hl.risers) * 0.14;
+      hl.cargo += (targetHighlights.cargo - hl.cargo) * 0.14;
+      hl.root += (targetHighlights.root - hl.root) * 0.14;
+
+      const hlPulse = 0.55 + 0.18 * Math.sin(elapsed * 5.5);
+
+      // Chassis frame rails & 45° corner gussets
+      if (hl.chassis > 0.01) {
+        materials.chassisTitanium.emissive.setHex(0x00e5ff);
+        materials.chassisTitanium.emissiveIntensity = hl.chassis * hlPulse * 0.85;
+      } else if (hl.root > 0.01 && curStepIdx === 6) {
+        materials.chassisTitanium.emissive.setHex(0x22c55e); // Green lock-on dock highlight
+        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.55;
+      } else if (hl.root > 0.01) {
+        materials.chassisTitanium.emissive.setHex(0x00e5ff); // Step 00 digital twin highlight
+        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.35;
+      } else {
+        materials.chassisTitanium.emissive.setHex(0x000000);
+        materials.chassisTitanium.emissiveIntensity = 0;
+      }
+
+      // Motors & omni drivetrain (4x planetary motors + 4x 45° omni wheels)
+      if (hl.motors > 0.01) {
+        materials.motorBody.emissive.setHex(0x00e5ff);
+        materials.motorBody.emissiveIntensity = hl.motors * hlPulse * 0.95;
+        materials.omniHub.emissive.setHex(0x00e5ff);
+        materials.omniHub.emissiveIntensity = hl.motors * hlPulse * 0.95;
+        materials.motorShaft.emissive.setHex(0xffb800);
+        materials.motorShaft.emissiveIntensity = hl.motors * hlPulse * 0.8;
+        materials.omniRoller.emissive.setHex(0x00b4d8);
+        materials.omniRoller.emissiveIntensity = hl.motors * hlPulse * 0.5;
+      } else {
+        materials.motorBody.emissive.setHex(0x000000);
+        materials.motorBody.emissiveIntensity = 0;
+        materials.omniHub.emissive.setHex(0x000000);
+        materials.omniHub.emissiveIntensity = 0;
+        materials.motorShaft.emissive.setHex(0x000000);
+        materials.motorShaft.emissiveIntensity = 0;
+        materials.omniRoller.emissive.setHex(0x000000);
+        materials.omniRoller.emissiveIntensity = 0;
+      }
+
+      // Carbon base deck, PCB board & electronics odometry
+      if (hl.deck > 0.01) {
+        materials.deckCarbon.emissive.setHex(0x00e5ff);
+        materials.deckCarbon.emissiveIntensity = hl.deck * hlPulse * 0.65;
+        materials.pcbBoard.emissive.setHex(0x00e5ff);
+        materials.pcbBoard.emissiveIntensity = hl.deck * hlPulse * 1.1;
+        materials.pcbChip.emissive.setHex(0x00e5ff);
+        materials.pcbChip.emissiveIntensity = hl.deck * hlPulse * 0.7;
+      } else {
+        materials.deckCarbon.emissive.setHex(0x000000);
+        materials.deckCarbon.emissiveIntensity = 0;
+        materials.pcbBoard.emissive.setHex(0x000000);
+        materials.pcbBoard.emissiveIntensity = 0;
+        materials.pcbChip.emissive.setHex(0x000000);
+        materials.pcbChip.emissiveIntensity = 0;
+      }
+
+      // 4x Load-bearing Titanium Riser Columns
+      if (hl.risers > 0.01) {
+        materials.riserColumn.emissive.setHex(0x00e5ff);
+        materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.35;
+      } else {
+        materials.riserColumn.emissive.setHex(0x000000);
+        materials.riserColumn.emissiveIntensity = 0;
+      }
+
+      // Cargo containment bin (Crimson) & 5kg Vibranium payload (Gold)
+      if (hl.cargo > 0.01) {
+        materials.cargoBinStark.emissive.setHex(0xff2233);
+        materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 0.85;
+        materials.cargoPayloadGold.emissive.setHex(0xffaa00);
+        materials.cargoPayloadGold.emissiveIntensity = hl.cargo * hlPulse * 1.1;
+      } else {
+        materials.cargoBinStark.emissive.setHex(0x000000);
+        materials.cargoBinStark.emissiveIntensity = 0;
+        materials.cargoPayloadGold.emissive.setHex(0x000000);
+        materials.cargoPayloadGold.emissiveIntensity = 0;
+      }
+
+      if (beaconGroupRef.current) {
+        beaconGroupRef.current.visible = cardOpacity > 0.05;
+      }
+
+      if (curStep && curStep.anchor && container && camera && cardOpacity > 0.05) {
         const w = container.clientWidth;
         const h = container.clientHeight;
         if (w > 0 && h > 0) {
@@ -856,8 +967,6 @@ export default function Robo3DCanvas({
               // Leader line: Anchor -> Elbow -> Underline shelf
               linePathRef.current.setAttribute('d', `M ${ax} ${ay} L ${ex} ${ey} L ${sx} ${ey}`);
               cardRef.current.style.transform = `translate3d(${cardX}px, ${cardY}px, 0)`;
-              // Smoothly fade in callout card as camera zooms in onto the model
-              const cardOpacity = zoomBlend > 0.4 ? Math.min(1, (zoomBlend - 0.4) / 0.4) : 0;
               cardRef.current.style.opacity = `${cardOpacity}`;
               if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = `${cardOpacity}`;
             }
@@ -866,6 +975,9 @@ export default function Robo3DCanvas({
             if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = '0';
           }
         }
+      } else {
+        if (cardRef.current) cardRef.current.style.opacity = '0';
+        if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = '0';
       }
 
       renderer.render(scene, camera);

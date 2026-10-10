@@ -15,7 +15,7 @@ export default function HeroSection({
 }) {
   const [activeStep, setActiveStep] = useState(0);
   const [renderMode, setRenderMode] = useState('shaded');
-  const [showDims, setShowDims] = useState(true);
+  const [showDims, setShowDims] = useState(false);
   const [freeOrbit, setFreeOrbit] = useState(false);
   const heroRootRef = useRef(null);
 
