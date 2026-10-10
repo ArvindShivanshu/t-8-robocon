@@ -200,20 +200,16 @@ export default function HeroSection({
         <div className="hero-arc-ambient" />
         <div className="hero-crimson-ambient" />
 
-        {/* Hero Particle Title Overlay - Vanishes dynamically as user scrolls */}
+        {/* Hero Particle Title Overlay - Vanishes smoothly as user scrolls */}
         <div 
           className="hero-particle-title-wrap"
           style={{
-            opacity: scrollProgress > 0.05 ? 0 : 1,
-            pointerEvents: scrollProgress > 0.05 ? 'none' : 'auto',
-            transform: `translate(-50%, ${-scrollProgress * 450}px)`,
-            transition: 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+            opacity: Math.max(0, 1 - (scrollProgress / 0.14)),
+            pointerEvents: scrollProgress > 0.12 ? 'none' : 'auto',
+            transform: `translate(-50%, ${-scrollProgress * 280}px)`,
+            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
-          <div className="hero-particle-kicker">
-            <span className="kicker-pulse-dot" />
-            <span>ROBOCON 2026 // PROBLEM STATEMENT 08</span>
-          </div>
           <div className="hero-particle-text-container">
             <ParticleText
               text="T-8 ROBOCON"
@@ -222,8 +218,8 @@ export default function HeroSection({
               color="#ffffff"
               highlightColor="#00f0ff"
               scatter={160}
-              gatherDuration={1500}
-              stagger={380}
+              gatherDuration={1800}
+              stagger={420}
               idleDrift={1.2}
               curveLoop={true}
               enableHover={false}
@@ -235,12 +231,6 @@ export default function HeroSection({
               glow={true}
               scrollProgress={scrollProgress}
             />
-          </div>
-          <p className="hero-particle-subtitle">
-            Holonomic 4-Wheel 45° Mobile Platform • 5kg High-Stowage AGV Twin
-          </p>
-          <div className="hero-particle-scroll-prompt">
-            <span className="scroll-prompt-text">SCROLL TO DIVE INTO DIGITAL TWIN</span>
           </div>
         </div>
 
@@ -294,7 +284,7 @@ export default function HeroSection({
         {/* Scroll Cue */}
         <div
           className="hero-scroll-cue"
-          style={{ opacity: scrollProgress > 0.05 ? 0 : 1, transition: 'opacity 0.35s ease', pointerEvents: 'none' }}
+          style={{ opacity: Math.max(0, 1 - (scrollProgress / 0.14)), transition: 'opacity 0.6s ease', pointerEvents: 'none' }}
         >
           <ChevronDown size={18} className="prompt-chevron" />
         </div>

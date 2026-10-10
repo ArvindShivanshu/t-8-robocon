@@ -69,7 +69,7 @@ export default function SpecificationsFaq() {
   ];
 
   return (
-    <section className="specs-section-root" id="team">
+    <section className="specs-section-root" id="specs">
       <div className="container">
         {/* Section Header */}
         <div className="section-header">

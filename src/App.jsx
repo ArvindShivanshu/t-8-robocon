@@ -7,6 +7,7 @@ import KinematicsEngine from './components/KinematicsEngine';
 import SubsystemsSection from './components/SubsystemsSection';
 import CadGallery from './components/CadGallery';
 import SpecificationsFaq from './components/SpecificationsFaq';
+import TeamSection from './components/TeamSection';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -125,6 +126,9 @@ export default function App() {
 
         {/* Technical Specs & Engineering FAQ */}
         <SpecificationsFaq />
+
+        {/* Engineering Team */}
+        <TeamSection />
       </main>
 
       {/* Footer */}

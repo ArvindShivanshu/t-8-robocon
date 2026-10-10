@@ -137,12 +137,12 @@ const ParticleText = ({
     };
 
     const render = (now) => {
-      // Calculate scroll vanishing ratio
+      // Calculate scroll vanishing ratio - slow, cinematic ease
       const s = scrollRef.current || 0;
-      // Fade out completely by s = 0.05
-      const vanishThreshold = 0.05;
-      const scrollFade = clamp(1 - (s / vanishThreshold), 0, 1);
-      const scatterExpand = s > 0 ? (s / vanishThreshold) : 0;
+      const vanishThreshold = 0.14;
+      const sRatio = clamp(s / vanishThreshold, 0, 1);
+      const scrollFade = Math.cos(sRatio * Math.PI * 0.5); // Smooth 1 -> 0 cosine falloff
+      const scatterExpand = Math.pow(sRatio, 1.4); // Gentle initial acceleration
 
       ctx.clearRect(0, 0, width, height);
 
@@ -188,15 +188,15 @@ const ParticleText = ({
           }
         }
 
-        // On scroll, scatter particles dynamically outward into space
+        // On scroll, scatter particles dynamically and gracefully outward into space
         if (scatterExpand > 0) {
           const angle = particle.seed * Math.PI * 2;
-          const pushDist = scatterExpand * scatter * (1.2 + particle.depth * 1.5);
+          const pushDist = scatterExpand * scatter * (0.9 + particle.depth * 1.1);
           baseX += Math.cos(angle) * pushDist;
-          baseY += Math.sin(angle) * pushDist - scatterExpand * 60; // float slightly upward
+          baseY += Math.sin(angle) * pushDist - scatterExpand * 45; // float gently upward
         }
 
-        const follow = reducedMotion ? 1 : 0.22;
+        const follow = reducedMotion ? 1 : 0.15;
         particle.x += (baseX - particle.x) * follow;
         particle.y += (baseY - particle.y) * follow;
 

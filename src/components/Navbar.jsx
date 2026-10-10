@@ -15,7 +15,7 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      const sections = ['cad', 'mandates', 'timeline', 'kinematics', 'subsystems', 'gallery', 'team'];
+      const sections = ['cad', 'mandates', 'timeline', 'kinematics', 'subsystems', 'gallery', 'specs', 'team'];
       for (const id of sections) {
         const el = document.getElementById(id);
         if (el) {
@@ -39,7 +39,8 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
     { id: 'kinematics', label: 'Kinematics' },
     { id: 'subsystems', label: 'Subsystems' },
     { id: 'gallery', label: 'Blueprints' },
-    { id: 'team', label: 'Specs & FAQ' },
+    { id: 'specs', label: 'Specs & FAQ' },
+    { id: 'team', label: 'Team' },
   ];
 
   const scrollTo = (id) => {

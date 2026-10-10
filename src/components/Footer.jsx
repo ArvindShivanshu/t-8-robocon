@@ -52,6 +52,7 @@ export default function Footer({ onScrollTop }) {
               <li><button onClick={() => scrollTo('subsystems')}>Subsystems & Armor</button></li>
               <li><button onClick={() => scrollTo('gallery')}>CAD Blueprints & Renders</button></li>
               <li><button onClick={() => scrollTo('specs')}>Tactical Specifications & FAQ</button></li>
+              <li><button onClick={() => scrollTo('team')}>Engineering Team</button></li>
             </ul>
           </div>
 
