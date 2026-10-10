@@ -41,6 +41,26 @@ export default function Robo3DCanvas({
     targetExplode: 0,
   });
 
+  const activeStepRef = useRef(activeStep);
+  useEffect(() => {
+    activeStepRef.current = activeStep;
+  }, [activeStep]);
+
+  const stepsRef = useRef(steps);
+  useEffect(() => {
+    stepsRef.current = steps;
+  }, [steps]);
+
+  // 3D holographic beacon & 2D CAD callout leader line DOM refs
+  const beaconGroupRef = useRef(null);
+  const calloutSvgRef = useRef(null);
+  const linePathRef = useRef(null);
+  const reticlePulseRef = useRef(null);
+  const reticleDotRef = useRef(null);
+  const terminalDotRef = useRef(null);
+  const crosshairsRef = useRef([]);
+  const cardRef = useRef(null);
+
   // Setup Three.js Scene
   useEffect(() => {
     const container = mountRef.current;
@@ -483,6 +503,23 @@ export default function Robo3DCanvas({
     );
     dimsGroup.add(rightTick);
 
+    // --- 3D Holographic Callout Target Beacon ---
+    const beaconGroup = new THREE.Group();
+    beaconGroupRef.current = beaconGroup;
+    robotRoot.add(beaconGroup);
+
+    const beaconPulseRing = new THREE.Mesh(
+      new THREE.RingGeometry(3.5, 5.5, 32),
+      materials.arcReactorGlow
+    );
+    beaconGroup.add(beaconPulseRing);
+
+    const beaconCenterDot = new THREE.Mesh(
+      new THREE.CircleGeometry(2.2, 24),
+      materials.arcReactorGlow
+    );
+    beaconGroup.add(beaconCenterDot);
+
     // 8. Animation Loop
     let animationFrameId;
     let clock = new THREE.Clock();
@@ -522,6 +559,111 @@ export default function Robo3DCanvas({
       wheels.forEach((w) => {
         w.rotation.z += delta * 1.3;
       });
+
+      // 3D-to-2D CAD Callout Leader Line projection
+      const curSteps = stepsRef.current || [];
+      const curStepIdx = activeStepRef.current || 0;
+      const curStep = curSteps[curStepIdx] || curSteps[0];
+
+      if (curStep && curStep.anchor && container && camera) {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w > 0 && h > 0) {
+          const raw = curStep.anchor;
+          const v = new THREE.Vector3(raw.x, raw.y, raw.z);
+
+          // Apply vertical offsets for exploded view
+          if (curStep.partGroup === 'cargo' && cargoBoxRef.current) {
+            v.y += (cargoBoxRef.current.position.y - 47);
+          } else if (curStep.partGroup === 'risers' && risersRef.current) {
+            v.y += risersRef.current.position.y;
+          } else if (curStep.partGroup === 'deck' && deckRef.current) {
+            v.y += (deckRef.current.position.y - (-18));
+          }
+
+          if (beaconGroupRef.current) {
+            beaconGroupRef.current.position.copy(v);
+            beaconPulseRing.quaternion.copy(camera.quaternion);
+            beaconCenterDot.quaternion.copy(camera.quaternion);
+          }
+
+          // Transform to world space
+          if (robotRootRef.current) {
+            v.applyMatrix4(robotRootRef.current.matrixWorld);
+          }
+
+          // Project to NDC (-1 to 1)
+          v.project(camera);
+
+          if (v.z < 1) {
+            const ax = (v.x * 0.5 + 0.5) * w;
+            const ay = (-v.y * 0.5 + 0.5) * h;
+
+            const isLeft = ax > (w > 992 ? w - 280 : w) * 0.45;
+            const dirX = isLeft ? -1 : 1;
+
+            const elbowDistX = 52;
+            const elbowDistY = ay > h * 0.45 ? -46 : 46;
+            const shelfLen = 145;
+
+            const ex = ax + dirX * elbowDistX;
+            const ey = Math.max(90, Math.min(h - 140, ay + elbowDistY));
+            const sx = ex + dirX * shelfLen;
+
+            const cardW = Math.min(280, w - 40);
+            let cardX = isLeft ? (sx - cardW) : (sx + 10);
+            const rightLimit = w > 992 ? (w - 260) : w;
+            cardX = Math.max(20, Math.min(rightLimit - cardW - 16, cardX));
+            let cardY = Math.max(70, Math.min(h - 175, ey - 36));
+
+            if (linePathRef.current && reticleDotRef.current && cardRef.current) {
+              reticleDotRef.current.setAttribute('cx', ax);
+              reticleDotRef.current.setAttribute('cy', ay);
+              if (reticlePulseRef.current) {
+                reticlePulseRef.current.setAttribute('cx', ax);
+                reticlePulseRef.current.setAttribute('cy', ay);
+              }
+              if (terminalDotRef.current) {
+                terminalDotRef.current.setAttribute('cx', sx);
+                terminalDotRef.current.setAttribute('cy', ey);
+              }
+
+              if (crosshairsRef.current[0]) {
+                crosshairsRef.current[0].setAttribute('x1', ax - 14);
+                crosshairsRef.current[0].setAttribute('y1', ay);
+                crosshairsRef.current[0].setAttribute('x2', ax - 6);
+                crosshairsRef.current[0].setAttribute('y2', ay);
+              }
+              if (crosshairsRef.current[1]) {
+                crosshairsRef.current[1].setAttribute('x1', ax + 6);
+                crosshairsRef.current[1].setAttribute('y1', ay);
+                crosshairsRef.current[1].setAttribute('x2', ax + 14);
+                crosshairsRef.current[1].setAttribute('y2', ay);
+              }
+              if (crosshairsRef.current[2]) {
+                crosshairsRef.current[2].setAttribute('x1', ax);
+                crosshairsRef.current[2].setAttribute('y1', ay - 14);
+                crosshairsRef.current[2].setAttribute('x2', ax);
+                crosshairsRef.current[2].setAttribute('y2', ay - 6);
+              }
+              if (crosshairsRef.current[3]) {
+                crosshairsRef.current[3].setAttribute('x1', ax);
+                crosshairsRef.current[3].setAttribute('y1', ay + 6);
+                crosshairsRef.current[3].setAttribute('x2', ax);
+                crosshairsRef.current[3].setAttribute('y2', ay + 14);
+              }
+
+              linePathRef.current.setAttribute('d', `M ${ax} ${ay} L ${ex} ${ey} L ${sx} ${ey}`);
+              cardRef.current.style.transform = `translate3d(${cardX}px, ${cardY}px, 0)`;
+              cardRef.current.style.opacity = '1';
+              if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = '1';
+            }
+          } else {
+            if (cardRef.current) cardRef.current.style.opacity = '0';
+            if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = '0';
+          }
+        }
+      }
 
       renderer.render(scene, camera);
     };
@@ -614,9 +756,10 @@ export default function Robo3DCanvas({
     orbitRef.current.targetRadius = Math.max(380, Math.min(1300, orbitRef.current.targetRadius));
   };
 
+  const currentStep = steps[activeStep] || steps[0] || {};
+
   return (
     <div
-      ref={mountRef}
       className="hero-cad-canvas"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -624,6 +767,51 @@ export default function Robo3DCanvas({
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
       style={{ cursor: freeOrbit ? (orbitRef.current.isDragging ? 'grabbing' : 'grab') : 'default' }}
-    />
+    >
+      {/* 3D Canvas Mount Container */}
+      <div
+        ref={mountRef}
+        className="hero-cad-canvas-mount"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      />
+
+      {/* 2D Projected CAD Callout Leader Line Overlay */}
+      <div className="cad-callout-overlay">
+        <svg ref={calloutSvgRef} className="cad-callout-svg">
+          {/* Pulsing reticle ring on 3D anchor point */}
+          <circle ref={reticlePulseRef} cx="-100" cy="-100" r="10" className="callout-reticle-pulse" />
+          {/* Target bead */}
+          <circle ref={reticleDotRef} cx="-100" cy="-100" r="3.5" className="callout-reticle-dot" />
+          {/* Crosshairs */}
+          <line ref={(el) => (crosshairsRef.current[0] = el)} className="callout-crosshair" />
+          <line ref={(el) => (crosshairsRef.current[1] = el)} className="callout-crosshair" />
+          <line ref={(el) => (crosshairsRef.current[2] = el)} className="callout-crosshair" />
+          <line ref={(el) => (crosshairsRef.current[3] = el)} className="callout-crosshair" />
+          {/* Technical CAD Leader Path */}
+          <path ref={linePathRef} d="" className="callout-leader-line" />
+          {/* Terminal dot on shelf line */}
+          <circle ref={terminalDotRef} cx="-100" cy="-100" r="2.5" className="callout-terminal-dot" />
+        </svg>
+
+        {/* Minimalist CAD Callout Card */}
+        <div ref={cardRef} className="cad-callout-card">
+          <div className="callout-card-header mono">
+            <span className="callout-tag">SYS // {currentStep.label || '00'}</span>
+            <span className="callout-status">
+              <span className="callout-dot pulse" />
+              <span>DATUM LOCKED</span>
+            </span>
+          </div>
+          <div className="callout-title mono">{currentStep.title}</div>
+          <div className="callout-desc">{currentStep.desc}</div>
+          {currentStep.spec && (
+            <div className="callout-spec-badge mono">
+              <span className="spec-indicator">▸</span>
+              <span>{currentStep.spec}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

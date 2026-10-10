@@ -19,12 +19,15 @@ export default function HeroSection({
   const [freeOrbit, setFreeOrbit] = useState(false);
   const heroRootRef = useRef(null);
 
-  // 7 Sequence steps with Avengers & Stark Industries branding
+  // 7 Sequence steps with component anchors for dynamic CAD callout leader lines
   const steps = [
     {
       label: '00',
       title: 'STARK DIGITAL TWIN',
       desc: 'Mark-VIII collegiate autonomous warehouse platform with 4-wheel 45° holonomic omni drive',
+      spec: '45° HOLONOMIC AGV // 5KG PAYLOAD',
+      partGroup: 'root',
+      anchor: { x: -60, y: 50, z: 90 },
       theta: 0.72,
       phi: 1.15,
       radius: 820,
@@ -36,6 +39,9 @@ export default function HeroSection({
       label: '01',
       title: '45° OMNI CHASSIS',
       desc: 'Aerospace titanium alloy frame with 45° motor gusset mounts minimizing aisle envelope',
+      spec: '240 × 260 mm // TITANIUM GUSSET FRAME',
+      partGroup: 'chassis',
+      anchor: { x: -114, y: -30, z: 30 },
       theta: 1.08,
       phi: 0.92,
       radius: 560,
@@ -47,6 +53,9 @@ export default function HeroSection({
       label: '02',
       title: 'REPULSOR-TORQUE MOTORS',
       desc: '4x high-torque planetary geared DC motors with dual-row omni rollers for 360° translation',
+      spec: '4x DUAL-ROW OMNI ROLLERS // 45° VECTOR',
+      partGroup: 'motors',
+      anchor: { x: -119, y: -30, z: 129 },
       theta: 1.48,
       phi: 0.80,
       radius: 480,
@@ -58,6 +67,9 @@ export default function HeroSection({
       label: '03',
       title: 'ARC ODOMETRY & EKF',
       desc: '1024 CPR optical quadrature encoders fused with 6-DoF IMU gyroscope for dead-reckoning',
+      spec: '1024 CPR ENCODERS + 6-DOF IMU FUSION',
+      partGroup: 'deck',
+      anchor: { x: 0, y: -4, z: 0 },
       theta: 1.88,
       phi: 1.06,
       radius: 550,
@@ -69,6 +81,9 @@ export default function HeroSection({
       label: '04',
       title: 'TITANIUM RISERS',
       desc: '4x 60mm cylindrical load-bearing standoffs distributing up to 5kg payload directly to chassis rails',
+      spec: '4x 60mm COLUMNS // ZERO-GAP FLUSH MOUNT',
+      partGroup: 'risers',
+      anchor: { x: -90, y: 44, z: 90 },
       theta: 2.32,
       phi: 0.88,
       radius: 460,
@@ -80,6 +95,9 @@ export default function HeroSection({
       label: '05',
       title: '5KG VIBRANIUM PAYLOAD',
       desc: 'Hot-rod crimson cargo containment box engineered for stable manual warehouse loading',
+      spec: '5.0 KG PAYLOAD CAPACITY // STAMPED CRIMSON',
+      partGroup: 'cargo',
+      anchor: { x: 0, y: 72, z: 20 },
       theta: 2.74,
       phi: 0.78,
       radius: 500,
@@ -91,6 +109,9 @@ export default function HeroSection({
       label: '06',
       title: 'EXPLODED ARMOR BOM',
       desc: 'Technical exploded breakdown of all modular sub-assemblies along axes',
+      spec: 'DECOUPLED MODULAR BOM // Y-AXIS OFFSET',
+      partGroup: 'cargo',
+      anchor: { x: 0, y: 140, z: 0 },
       theta: 0.85,
       phi: 1.12,
       radius: 920,
@@ -232,14 +253,6 @@ export default function HeroSection({
           })}
         </div>
 
-        {/* Bottom Center Caption Capsule */}
-        <div className="hero-step-caption-capsule">
-          <span className="step-capsule-tag mono">{currentStep.label}</span>
-          <span className="step-capsule-dot" />
-          <span className="step-capsule-title mono">{currentStep.title}</span>
-          <span className="step-capsule-sep">•</span>
-          <span className="step-capsule-desc">{currentStep.desc}</span>
-        </div>
 
         {/* Scroll Cue */}
         <div className="hero-scroll-cue">
