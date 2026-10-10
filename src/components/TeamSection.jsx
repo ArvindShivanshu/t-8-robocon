@@ -47,6 +47,24 @@ const teamMembers = [
     twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
+  {
+    id: 'member-6',
+    name: 'Team Member 6',
+    role: 'Sensors & Odometry',
+    specialty: 'EKF Dead-Reckoning',
+    image: '/assets/team/team_member_6.png',
+    twitter: 'https://twitter.com',
+    linkedin: 'https://linkedin.com',
+  },
+  {
+    id: 'member-7',
+    name: 'Team Member 7',
+    role: 'Software & Telemetry',
+    specialty: 'Operator HUD Sim',
+    image: '/assets/team/team_member_7.png',
+    twitter: 'https://twitter.com',
+    linkedin: 'https://linkedin.com',
+  },
 ];
 
 export default function TeamSection() {
