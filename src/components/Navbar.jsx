@@ -39,7 +39,7 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
     { id: 'kinematics', label: 'Kinematics' },
     { id: 'subsystems', label: 'Subsystems' },
     { id: 'gallery', label: 'Blueprints' },
-    { id: 'specs', label: 'Specs & FAQ' },
+    { id: 'specs', label: 'Specs' },
     { id: 'team', label: 'Team' },
   ];
 

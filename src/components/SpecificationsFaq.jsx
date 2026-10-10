@@ -1,20 +1,7 @@
-import React, { useState } from 'react';
-import { 
-  HelpCircle, 
-  ChevronDown, 
-  FileText, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Gauge, 
-  Cpu, 
-  Compass, 
-  Weight 
-} from 'lucide-react';
+import React from 'react';
 import './SpecificationsFaq.css';
 
 export default function SpecificationsFaq() {
-  const [openFaq, setOpenFaq] = useState(0);
-
   const specsMatrix = [
     { category: 'Physical & Structural', items: [
       { param: 'Chassis Dimensions', value: '260 mm (L) x 260 mm (W) x 175 mm (H)' },
@@ -49,25 +36,6 @@ export default function SpecificationsFaq() {
     ]}
   ];
 
-  const faqs = [
-    {
-      q: 'How does the platform eliminate wheel slip errors during dead-reckoning odometry?',
-      a: 'In omnidirectional platforms, wheel rollers can experience micro-slip during abrupt diagonal accelerations. Our system uses a 100Hz Extended Kalman Filter (EKF) that fuses high-speed quadrature encoder pulses with an onboard 6-axis IMU gyroscope. When encoder derivative data deviates from inertial angular rates, the EKF rejects erroneous encoder ticks and relies on gyroscope integration, bounding coordinate drift to under 1.8% over long translation runs.'
-    },
-    {
-      q: 'Why was a 4-wheel 45° omnidirectional configuration chosen over Mecanum or differential drive?',
-      a: 'Restricted warehouse corridors require instantaneous translation in any direction without turning radius (R_turn = 0). A differential drive requires pivoting before translating laterally, risking collisions in narrow aisles. Mecanum drives exhibit uneven roller contact and higher friction wear. The 4-wheel 45° omni drive provides symmetric thrust vectors along all 360° directions, providing balanced surge, sway, and yaw control authority.'
-    },
-    {
-      q: 'How is structural stability maintained when carrying the maximum 5 kg manual payload?',
-      a: 'The payload cargo bin is elevated on four 60mm cylindrical risers bolted directly to the chassis cross-members, transferring the load symmetrically to all four motor mounts. Heavy electrical components (14.8V battery, motor drivers, and microcontroller PCB) are mounted on the lower wooden baseplate, maintaining a low overall center of gravity that prevents tipping during emergency braking.'
-    },
-    {
-      q: 'How does the continuous (X, Y, θ) coordinate feedback fulfill the operator demand?',
-      a: 'Problem Statement 8 explicitly demands that the operator has the x, y coordinates as well as the angle displayed at all times. Our embedded firmware packages the fused pose (X in mm, Y in mm, θ in degrees) into a prioritized telemetry packet streamed over a 2.4 GHz low-latency wireless protocol. This feeds both the physical handheld pendant display and the web-based digital twin HUD simultaneously at 100 Hz.'
-    }
-  ];
-
   return (
     <section className="specs-section-root" id="specs">
       <div className="container">
@@ -75,16 +43,15 @@ export default function SpecificationsFaq() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>JARVIS ARCHITECTURE & SPECIFICATIONS</span>
+            <span>TACTICAL SPECIFICATIONS</span>
           </div>
-          <h2 className="section-title">Tactical Specs & Engineering FAQ</h2>
+          <h2 className="section-title">Technical Specifications</h2>
           <p className="section-subtitle">
-            Comprehensive parameters and design rationale addressing warehouse agile navigation, 
-            5 kg load carrying, and dead-reckoning odometry estimation.
+            Core dimensions, drivetrain kinematics, sensor telemetry, and power electronics matrix.
           </p>
         </div>
 
-        {/* Specs Matrix */}
+        {/* Specs Matrix - All 4 Cards in One Row */}
         <div className="specs-matrix-grid">
           {specsMatrix.map((cat, idx) => (
             <div key={idx} className="specs-cat-card glass-card">
@@ -101,37 +68,6 @@ export default function SpecificationsFaq() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Technical FAQ */}
-        <div className="faq-wrapper" id="faq">
-          <div className="faq-header">
-            <HelpCircle size={20} className="faq-icon" />
-            <h3 className="faq-title">Technical FAQ & Design Rationale</h3>
-          </div>
-
-          <div className="faq-accordion">
-            {faqs.map((f, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div 
-                  key={idx} 
-                  className={`faq-item glass-card ${isOpen ? 'open' : ''}`}
-                  onClick={() => setOpenFaq(isOpen ? null : idx)}
-                >
-                  <div className="faq-question-row">
-                    <span className="faq-q-text">{f.q}</span>
-                    <ChevronDown size={18} className={`faq-chevron ${isOpen ? 'rotated' : ''}`} />
-                  </div>
-                  {isOpen && (
-                    <div className="faq-answer-block">
-                      <p className="faq-answer-text">{f.a}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
     </section>

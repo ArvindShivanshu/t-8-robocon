@@ -1,5 +1,5 @@
 .specs-section-root {
-  padding: 7rem 0 6rem 0;
+  padding: 6rem 0 5.5rem 0;
   position: relative;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-primary);
@@ -14,7 +14,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
-  margin-bottom: 4.5rem;
 }
 
 .specs-cat-card {
@@ -65,103 +64,14 @@
 }
 
 .spec-param-name {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
 }
 
 .spec-param-val {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: #ffffff;
-}
-
-/* FAQ */
-.faq-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.faq-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.faq-icon {
-  color: #ffffff;
-}
-
-.faq-title {
-  font-size: 1.35rem;
-  font-weight: 400;
-  color: #ffffff;
-  letter-spacing: -0.02em;
-}
-
-.faq-accordion {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.faq-item {
-  padding: 1.35rem 1.75rem;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  transition: border-color 0.18s ease;
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-sm);
-}
-
-.faq-item:hover {
-  border-color: var(--border-hover);
-}
-
-.faq-item.open {
-  border-color: #ffffff;
-}
-
-.faq-question-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.faq-q-text {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #ffffff;
-  line-height: 1.35;
-}
-
-.faq-chevron {
-  color: var(--text-muted);
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.faq-chevron.rotated {
-  transform: rotate(180deg);
-  color: #ffffff;
-}
-
-.faq-answer-block {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 0.85rem;
-}
-
-.faq-answer-text {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
 }
 
 @media (max-width: 1080px) {
@@ -173,23 +83,13 @@
 
 @media (max-width: 640px) {
   .specs-section-root {
-    padding: 4.5rem 0 4rem 0;
+    padding: 4rem 0 3.5rem 0;
   }
   .specs-matrix-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
-    margin-bottom: 3rem;
   }
   .specs-cat-card {
-    padding: 1.25rem;
-  }
-  .faq-title {
-    font-size: 1.15rem;
-  }
-  .faq-q-text {
-    font-size: 0.88rem;
-  }
-  .faq-answer-text {
-    font-size: 0.82rem;
+    padding: 1.15rem;
   }
 }

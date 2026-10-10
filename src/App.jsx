@@ -8,6 +8,8 @@ import SubsystemsSection from './components/SubsystemsSection';
 import CadGallery from './components/CadGallery';
 import SpecificationsFaq from './components/SpecificationsFaq';
 import TeamSection from './components/TeamSection';
+import CurvedLoop from './components/CurvedLoop';
+import TextLoop from './components/TextLoop';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -106,7 +108,10 @@ export default function App() {
           scrollProgress={scrollProgress}
         />
 
-        {/* Problem Statement 8 Breakdown */}
+        {/* React Bits Tech Animation: Curved Loop */}
+        <CurvedLoop />
+
+        {/* Problem Statement 8 Directives */}
         <MandatesSection />
 
         {/* Warehouse Arena & Manual Drive Simulator */}
@@ -117,6 +122,9 @@ export default function App() {
 
         {/* 4-Wheel 45° Omni Kinematics Math Engine */}
         <KinematicsEngine />
+
+        {/* React Bits Tech Animation: Infinite Velocity Text Loop */}
+        <TextLoop />
 
         {/* Engineering Architecture & Subsystems */}
         <SubsystemsSection />

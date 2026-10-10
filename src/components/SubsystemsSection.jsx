@@ -5,10 +5,6 @@ import {
   Zap, 
   Radio, 
   CheckCircle2, 
-  ChevronRight,
-  Shield,
-  Layers,
-  Sparkles
 } from 'lucide-react';
 import './SubsystemsSection.css';
 
@@ -19,125 +15,101 @@ export default function SubsystemsSection() {
     mechanical: {
       id: 'mechanical',
       title: 'Mechanical Kinematics & Structure',
-      tag: 'DIVISION // STARK MECHANICS',
-      icon: <Wrench size={22} />,
-      lead: 'Custom fabricated lightweight titanium-aluminum alloy chassis designed for 4-wheel 45° holonomic omni mobility and 5kg cargo containment.',
+      tag: 'MECHANICAL ARCHITECTURE',
+      icon: <Wrench size={20} />,
+      lead: 'Custom titanium-aluminum alloy chassis designed for 45° holonomic omni mobility and 5kg cargo containment.',
       features: [
         {
           name: '45° Omni-Wheel Geometry',
-          desc: 'Four double-row omnidirectional wheels mounted symmetrically at 45° to provide equal translation authority in both surge and sway axes.'
+          desc: 'Symmetric 45° wheel vectors deliver equal translation authority across surge and sway axes.'
         },
         {
           name: '5kg Payload Cargo Bin & Risers',
-          desc: 'High-strength aluminum containment tray supported by 4 precision cylindrical standoffs, optimizing vertical load distribution.'
+          desc: 'High-strength aluminum tray supported by 4 cylindrical standoffs, optimizing vertical load distribution.'
         },
         {
-          name: 'Chamfered Footprint Enclosure',
-          desc: 'Beveled corners reduce collision hazards when maneuvering through restricted warehouse passageways and pallet racks.'
+          name: 'Chamfered Enclosure',
+          desc: 'Beveled 260×260mm corners prevent collision hazards when maneuvering through restricted warehouse passageways.'
         },
         {
           name: 'Dual-Row Barrel Rollers',
-          desc: '10 rubber-coated rollers per wheel ring eliminate lateral wheel scrub and provide continuous contact during high-speed transitions.'
+          desc: '20 rubber-coated rollers per wheel ring eliminate lateral scrub during high-speed diagonal transitions.'
         }
-      ],
-      specs: [
-        { key: 'Chassis Dimensions', val: '260 mm x 260 mm x 175 mm' },
-        { key: 'Chassis Mass', val: '3.2 kg (Dry) / 8.2 kg (Loaded)' },
-        { key: 'Wheel Diameter', val: '64 mm (Double-Row Omni)' },
-        { key: 'Payload Bin Volume', val: '230 x 250 x 55 mm' },
       ]
     },
     embedded: {
       id: 'embedded',
-      title: 'Embedded Firmware & Odometry Fusion',
-      tag: 'DIVISION // JARVIS EMBEDDED',
-      icon: <Cpu size={22} />,
-      lead: 'High-speed deterministic control loop running on 32-bit hardware timers for sub-millimeter dead-reckoning position tracking.',
+      title: 'Embedded Firmware & Sensor Fusion',
+      tag: 'EMBEDDED CONTROL',
+      icon: <Cpu size={20} />,
+      lead: 'Sub-millimeter dead-reckoning position tracking powered by 32-bit hardware timers and inertial integration.',
       features: [
         {
           name: '100Hz Extended Kalman Filter (EKF)',
-          desc: 'Fuses high-frequency optical encoder delta pulses with 6-axis IMU gyro rates to cancel wheel slip drift and heading bias.'
+          desc: 'Fuses optical encoder delta pulses with 6-axis IMU gyro rates to cancel wheel slip drift and heading bias.'
         },
         {
           name: 'Hardware Quadrature Timers',
-          desc: 'Direct microsecond encoder capture prevents missed pulses during high acceleration, preserving absolute origin integrity.'
+          desc: 'Microsecond encoder capture prevents missed pulses during high acceleration, preserving absolute origin integrity.'
         },
         {
-          name: 'PID Velocity Trajectory Controller',
-          desc: 'Independent closed-loop PID controllers on all 4 wheel drives with feedforward friction compensation.'
+          name: 'PID Velocity Controller',
+          desc: 'Independent closed-loop PID control on all 4 wheel drives with feedforward friction compensation.'
         },
         {
           name: 'Real-Time Pose Broadcasting',
-          desc: 'Streams X, Y coordinates and θ orientation at 100 Hz to fulfill the operator mandate for continuous display.'
+          desc: 'Streams X, Y coordinates and θ orientation at 100 Hz to fulfill continuous operator display requirements.'
         }
-      ],
-      specs: [
-        { key: 'Microcontroller', val: 'STM32F4 / ESP32-S3 Dual-Core' },
-        { key: 'Control Loop Rate', val: '100 Hz (10 ms period)' },
-        { key: 'Encoder Resolution', val: '1024 CPR Optical Quad' },
-        { key: 'IMU Sensor', val: '6-DoF 16-bit Gyro + Accelerometer' },
       ]
     },
     actuation: {
       id: 'actuation',
-      title: 'Actuation & Arc Power Electronics',
-      tag: 'DIVISION // ARC POWER',
-      icon: <Zap size={22} />,
-      lead: 'High-torque planetary geared drivetrains backed by synchronous MOSFET H-bridges and regulated lithium power rails.',
+      title: 'Actuation & Power Electronics',
+      tag: 'ACTUATION & POWER',
+      icon: <Zap size={20} />,
+      lead: 'High-torque planetary geared drivetrains backed by synchronous MOSFET H-bridges and regulated power rails.',
       features: [
         {
-          name: 'High-Torque Planetary Geared Motors',
-          desc: 'Metal-gear reduction delivers 28 kg-cm stall torque per motor, providing ample acceleration headroom under full 5 kg load.'
+          name: 'Planetary Geared DC Motors',
+          desc: 'Metal-gear 30:1 reduction delivers 28 kg-cm stall torque per motor under full 5 kg load.'
         },
         {
           name: 'Dual High-Current H-Bridges',
           desc: 'MOSFET drivers with active regenerative braking, thermal throttling, and fast current-sensing feedback.'
         },
         {
-          name: 'Isolated DC-DC Buck Regulators',
-          desc: 'Independent electrical rails for MCU logic (3.3V), sensor bus (5V), and motor power (14.8V) preventing electrical noise.'
+          name: 'Isolated DC-DC Regulators',
+          desc: 'Independent electrical rails for MCU logic (3.3V), sensor bus (5V), and motors (14.8V) preventing noise.'
         },
         {
           name: 'Smart Battery Monitoring',
           desc: 'Real-time cell voltage and current telemetry with low-voltage cutoff protection.'
         }
-      ],
-      specs: [
-        { key: 'Operating Voltage', val: '14.8V (4S LiPo 4200 mAh)' },
-        { key: 'Peak Motor Current', val: '8.5A per channel' },
-        { key: 'Gear Reduction', val: '30:1 All-Steel Planetary' },
-        { key: 'Continuous Run Time', val: '45+ minutes nominal' },
       ]
     },
     telemetry: {
       id: 'telemetry',
-      title: 'JARVIS Tactical HMI & Telemetry',
-      tag: 'DIVISION // TACTICAL TELEMETRY',
-      icon: <Radio size={22} />,
-      lead: 'Industrial wireless control pendant and digital twin interface delivering responsive control and zero-latency coordinate HUD.',
+      title: 'Tactical HMI & Telemetry Link',
+      tag: 'WIRELESS TELEMETRY',
+      icon: <Radio size={20} />,
+      lead: 'Industrial wireless control pendant and digital twin interface delivering zero-latency coordinate HUD.',
       features: [
         {
           name: 'Precision Dual Thumbstick Pendant',
-          desc: 'Hall-effect analog gimbals allow fine millimeter translation control in restricted warehouse spaces.'
+          desc: 'Hall-effect analog gimbals allow fine millimeter translation control in restricted warehouse aisles.'
         },
         {
-          name: '2.4GHz Ultra-Low Latency Link',
-          desc: 'Proprietary frequency-hopping protocol ensuring sub-15ms packet latency even with warehouse radio interference.'
+          name: '2.4GHz Low-Latency Link',
+          desc: 'Frequency-hopping wireless protocol ensuring sub-15ms packet latency even under warehouse interference.'
         },
         {
           name: 'Always-On Coordinate Display',
-          desc: 'Instant visual readouts of X, Y displacement and heading angle θ displayed on both pendant OLED and web telemetry.'
+          desc: 'Visual readouts of X, Y displacement and heading angle θ displayed on pendant OLED and digital twin HUD.'
         },
         {
           name: 'Single-Touch Datum Calibration',
-          desc: 'Instant origin zeroing and odometer reset at pallet loading bays.'
+          desc: 'Instant origin zeroing and odometer tare at pallet loading bays with dedicated datum module.'
         }
-      ],
-      specs: [
-        { key: 'Radio Frequency', val: '2.4 GHz NRF24L01+ / Wi-Fi' },
-        { key: 'Telemetry Latency', val: '< 15 ms End-to-End' },
-        { key: 'Operating Range', val: '50+ meters in-warehouse' },
-        { key: 'Encryption', val: 'AES-128 Frame Verification' },
       ]
     }
   };
@@ -151,12 +123,11 @@ export default function SubsystemsSection() {
         <div className="section-header">
           <div className="section-tag">
             <span className="dot"></span>
-            <span>STARK AVIONICS & MECHANICS // PROTOCOL</span>
+            <span>ENGINEERING SUBSYSTEMS</span>
           </div>
-          <h2 className="section-title">Subsystems & Armor Divisions</h2>
+          <h2 className="section-title">Hardware & Firmware Architecture</h2>
           <p className="section-subtitle">
-            Multidisciplinary engineering breakdown spanning mechanical kinematics, 
-            embedded dead-reckoning odometry, Arc power distribution, and JARVIS telemetry.
+            Modular engineering divisions powering the Mark-VIII autonomous platform.
           </p>
         </div>
 
@@ -193,35 +164,17 @@ export default function SubsystemsSection() {
             <p className="detail-lead">{current.lead}</p>
           </div>
 
-          <div className="detail-content-grid">
-            {/* Features */}
-            <div className="detail-features-column">
-              <span className="features-col-title mono">// ARCHITECTURAL SPECIFICATIONS</span>
-              <div className="features-list">
-                {current.features.map((f, idx) => (
-                  <div key={idx} className="feature-item-row">
-                    <div className="feature-check"><CheckCircle2 size={16} /></div>
-                    <div className="feature-item-body">
-                      <h4 className="feature-item-name">{f.name}</h4>
-                      <p className="feature-item-desc">{f.desc}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* Clean 2x2 Feature Grid */}
+          <div className="features-grid-2x2">
+            {current.features.map((f, idx) => (
+              <div key={idx} className="feature-item-card">
+                <div className="feature-item-header">
+                  <div className="feature-check"><CheckCircle2 size={15} /></div>
+                  <h4 className="feature-item-name">{f.name}</h4>
+                </div>
+                <p className="feature-item-desc">{f.desc}</p>
               </div>
-            </div>
-
-            {/* Technical Specs List */}
-            <div className="detail-specs-column">
-              <span className="specs-col-title mono">// BENCHMARK PARAMETERS</span>
-              <div className="specs-data-card">
-                {current.specs.map((s, idx) => (
-                  <div key={idx} className="spec-data-row">
-                    <span className="spec-data-key mono">{s.key}</span>
-                    <span className="spec-data-val mono">{s.val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

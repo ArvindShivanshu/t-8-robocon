@@ -31,13 +31,11 @@ export default function Footer({ onScrollTop }) {
             </div>
             <h4 className="footer-brand-title">STARK INDUSTRIES // SRM ROBOCON</h4>
             <p className="footer-brand-desc">
-              Mark-VIII Omni-Carrier: Holonomic 4-wheel 45° mobile platform designed for Problem Statement 8. 
-              Engineering dependable multi-directional motion, 5kg payload cargo delivery, and continuous 
-              JARVIS (X, Y, θ) coordinate telemetry.
+              Mark-VIII Holonomic 4-Wheel 45° Mobile Platform for collegiate robotics intra-logistics.
             </p>
             <div className="footer-status-pill mono">
               <span className="dot pulse"></span>
-              <span>100Hz JARVIS EKF TELEMETRY ACTIVE</span>
+              <span>100Hz EKF TELEMETRY ACTIVE</span>
             </div>
           </div>
 
@@ -45,14 +43,14 @@ export default function Footer({ onScrollTop }) {
           <div className="footer-nav-col">
             <h5 className="footer-col-title mono">// NAVIGATION INDEX</h5>
             <ul className="footer-links-list">
-              <li><button onClick={() => scrollTo('cad')}>3D CAD Digital Twin</button></li>
-              <li><button onClick={() => scrollTo('mandates')}>Problem Statement 8 Directives</button></li>
-              <li><button onClick={() => scrollTo('simulator')}>Arena Teleoperation Sim</button></li>
-              <li><button onClick={() => scrollTo('kinematics')}>Inverse Kinematics Solver</button></li>
-              <li><button onClick={() => scrollTo('subsystems')}>Subsystems & Armor</button></li>
-              <li><button onClick={() => scrollTo('gallery')}>CAD Blueprints & Renders</button></li>
-              <li><button onClick={() => scrollTo('specs')}>Tactical Specifications & FAQ</button></li>
-              <li><button onClick={() => scrollTo('team')}>Engineering Team</button></li>
+              <li><button onClick={() => scrollTo('cad')}>3D Digital Twin</button></li>
+              <li><button onClick={() => scrollTo('mandates')}>System Mandates</button></li>
+              <li><button onClick={() => scrollTo('simulator')}>Arena Teleoperation</button></li>
+              <li><button onClick={() => scrollTo('kinematics')}>Kinematics Solver</button></li>
+              <li><button onClick={() => scrollTo('subsystems')}>Subsystems</button></li>
+              <li><button onClick={() => scrollTo('gallery')}>CAD Blueprints</button></li>
+              <li><button onClick={() => scrollTo('specs')}>Specifications</button></li>
+              <li><button onClick={() => scrollTo('team')}>Team</button></li>
             </ul>
           </div>
 

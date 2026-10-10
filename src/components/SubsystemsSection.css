@@ -132,96 +132,59 @@
   max-width: 820px;
 }
 
-/* Content Grid */
-.detail-content-grid {
+/* 2x2 Feature Cards Grid */
+.features-grid-2x2 {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 2.5rem;
-}
-
-.features-col-title, .specs-col-title {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 1.25rem;
-  letter-spacing: 0.05em;
-}
-
-.features-list {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
 }
 
-.feature-item-row {
+.feature-item-card {
+  padding: 1.25rem 1.35rem;
+  background: rgba(14, 18, 28, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
   display: flex;
-  gap: 0.85rem;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.feature-item-card:hover {
+  border-color: rgba(0, 240, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.feature-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
 }
 
 .feature-check {
-  color: #ffffff;
-  margin-top: 0.2rem;
+  color: #00f0ff;
   flex-shrink: 0;
-  opacity: 0.8;
-}
-
-.feature-item-body {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
 }
 
 .feature-item-name {
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 600;
   color: #ffffff;
 }
 
 .feature-item-desc {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
-  line-height: 1.55;
+  line-height: 1.5;
+  margin-left: 1.8rem;
 }
 
-/* Specs Column */
-.specs-data-card {
-  background: rgba(18, 18, 20, 0.4);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xs);
-  padding: 1.35rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.spec-data-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 0.6rem;
-}
-
-.spec-data-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.spec-data-key {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-}
-
-.spec-data-val {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: #ffffff;
-}
-
-@media (max-width: 900px) {
-  .detail-content-grid {
+@media (max-width: 800px) {
+  .features-grid-2x2 {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
@@ -243,7 +206,7 @@
   .detail-header-block {
     padding-bottom: 1.25rem;
   }
-  .specs-data-card {
-    padding: 1rem;
+  .feature-item-desc {
+    margin-left: 0;
   }
 }

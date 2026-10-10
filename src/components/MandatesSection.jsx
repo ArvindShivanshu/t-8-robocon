@@ -5,34 +5,34 @@ export default function MandatesSection() {
   const mandates = [
     {
       num: '01',
-      title: 'Restricted Workspace Agility',
-      lead: '4-Wheel 45° holonomic omni-drive configuration enabling instantaneous lateral strafe, 45° diagonals, and 0-radius in-place rotation inside narrow aisles.',
+      title: '360° Holonomic Agility',
+      lead: 'Instantaneous lateral strafe and 0-radius rotation inside restricted warehouse aisles.',
       metricLabel: 'Turning Radius',
-      metricVal: '0.00 mm (Holonomic)',
+      metricVal: '0.00 mm',
       category: 'Kinematics'
     },
     {
       num: '02',
-      title: '5.0 kg Manual Payload Capacity',
-      lead: 'Elevated cargo containment bin mounted upon 4 vertical cylindrical load-bearing risers, lowering dynamic chassis deflection and stabilizing acceleration.',
-      metricLabel: 'Payload Rating',
-      metricVal: '5.0 kg (50 N Load)',
+      title: '5.0 kg Payload Capacity',
+      lead: 'Elevated cargo containment bin on 4 vertical risers with low center of gravity.',
+      metricLabel: 'Rated Load',
+      metricVal: '5.0 kg (50 N)',
       category: 'Structure'
     },
     {
       num: '03',
-      title: 'Dependable Dead-Reckoning',
-      lead: 'Continuous tracking of distance travelled and relative position via sensor fusion combining high-resolution 1024 CPR wheel encoders with a 6-axis IMU gyro.',
-      metricLabel: 'Drift Mitigation',
-      metricVal: 'EKF Sensor Fusion',
+      title: 'Dead-Reckoning Fusion',
+      lead: '1024 CPR quadrature encoders fused with 6-axis IMU gyroscope via 100Hz EKF.',
+      metricLabel: 'Odometry Drift',
+      metricVal: '< 1.8% / 10m',
       category: 'Odometry'
     },
     {
       num: '04',
-      title: 'Continuous Coordinate HUD',
-      lead: 'Mandatory operator teleoperation requirement: continuous (X, Y, θ) coordinate pose streaming at 100 Hz to both physical handheld pendant and web telemetry.',
+      title: 'Live Coordinate HUD',
+      lead: 'Continuous real-time (X, Y, θ) pose telemetry streamed at 100 Hz to operator display.',
       metricLabel: 'Refresh Rate',
-      metricVal: '100 Hz Streaming',
+      metricVal: '100 Hz Stream',
       category: 'Telemetry'
     },
   ];
@@ -40,15 +40,16 @@ export default function MandatesSection() {
   return (
     <section className="mandates-section-root" id="mandates">
       <div className="container">
-        {/* Terafab-Style Editorial Statement */}
-        <div className="statement-block">
-          <p className="statement-kicker mono">// PROBLEM STATEMENT 08 SPECIFICATION</p>
-          <blockquote className="statement-quote">
-            “A warehouse operator controls a mobile platform which can carry up to <strong>5kgs</strong> manually 
-            inside a restricted workspace where movement in several directions is useful. The platform should be able to 
-            <strong> translate and reposition itself while keeping track of how far it has travelled and where it believes it is relative to its starting point</strong>. 
-            The operator demands the x, y coordinates as well as the angle of the mobile platform to be displayed at all times.”
-          </blockquote>
+        {/* Streamlined Header */}
+        <div className="mandates-header-row">
+          <div className="mandates-tag-pill mono">
+            <span className="dot" />
+            <span>MANDATES MATRIX // PS-08</span>
+          </div>
+          <h2 className="mandates-heading">Core System Directives</h2>
+          <p className="mandates-subhead">
+            Operational mandates engineered directly into the Mark-VIII architecture.
+          </p>
         </div>
 
         {/* Minimalist 4-Column Grid */}
