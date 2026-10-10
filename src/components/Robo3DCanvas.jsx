@@ -367,13 +367,14 @@ export default function Robo3DCanvas({
     robotRoot.add(risersGroup);
 
     const riserPositions = [
-      { x: -75, z: 85 },
-      { x: 75, z: 85 },
-      { x: -75, z: -85 },
-      { x: 75, z: -85 },
+      { x: -90, z: 90 },
+      { x: 90, z: 90 },
+      { x: -90, z: -90 },
+      { x: 90, z: -90 },
     ];
 
     riserPositions.forEach((pos) => {
+      // Main load-bearing cylindrical riser column (60mm height, 14mm diameter)
       const riser = new THREE.Mesh(
         new THREE.CylinderGeometry(7, 7, 60, 20),
         materials.riserColumn
@@ -381,12 +382,29 @@ export default function Robo3DCanvas({
       riser.position.set(pos.x, 15, pos.z);
       riser.castShadow = true;
       risersGroup.add(riser);
+
+      // Top mounting flange boss - sits perfectly flush against the underside of the cargo box
+      const topFlange = new THREE.Mesh(
+        new THREE.CylinderGeometry(11, 11, 2, 20),
+        materials.riserColumn
+      );
+      topFlange.position.set(pos.x, 44, pos.z);
+      risersGroup.add(topFlange);
+
+      // Bottom mounting flange boss - anchored to the chassis frame / deck
+      const btmFlange = new THREE.Mesh(
+        new THREE.CylinderGeometry(11, 11, 2, 20),
+        materials.riserColumn
+      );
+      btmFlange.position.set(pos.x, -14, pos.z);
+      risersGroup.add(btmFlange);
     });
 
     // --- Upper Payload Cargo Bin (Stark Hot-Rod Crimson Red) ---
+    // Positioned at Y = 47 so bottom face (thickness 4: Y in [-2, +2]) rests exactly at Y = 45 flush on top of the risers
     const cargoBinGroup = new THREE.Group();
     cargoBoxRef.current = cargoBinGroup;
-    cargoBinGroup.position.set(0, 75, 0);
+    cargoBinGroup.position.set(0, 47, 0);
     robotRoot.add(cargoBinGroup);
 
     const binBottom = new THREE.Mesh(
@@ -435,21 +453,21 @@ export default function Robo3DCanvas({
     robotRoot.add(dimsGroup);
 
     const dimPoints = [
-      new THREE.Vector3(-115, 125, 0),
-      new THREE.Vector3(115, 125, 0),
+      new THREE.Vector3(-115, 108, 0),
+      new THREE.Vector3(115, 108, 0),
     ];
     const dimGeo = new THREE.BufferGeometry().setFromPoints(dimPoints);
     const dimLine = new THREE.Line(dimGeo, materials.dimLineMat);
     dimsGroup.add(dimLine);
 
     const leftTick = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-115, 115, 0), new THREE.Vector3(-115, 135, 0)]),
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-115, 100, 0), new THREE.Vector3(-115, 116, 0)]),
       materials.dimLineMat
     );
     dimsGroup.add(leftTick);
 
     const rightTick = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(115, 115, 0), new THREE.Vector3(115, 135, 0)]),
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(115, 100, 0), new THREE.Vector3(115, 116, 0)]),
       materials.dimLineMat
     );
     dimsGroup.add(rightTick);
@@ -471,7 +489,7 @@ export default function Robo3DCanvas({
       orb.explode += (orb.targetExplode - orb.explode) * 0.08;
 
       if (cargoBoxRef.current && risersRef.current && deckRef.current) {
-        cargoBoxRef.current.position.y = 75 + orb.explode * 125;
+        cargoBoxRef.current.position.y = 47 + orb.explode * 125;
         risersRef.current.position.y = orb.explode * 55;
         deckRef.current.position.y = -18 - orb.explode * 30;
       }
