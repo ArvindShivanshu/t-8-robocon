@@ -1,0 +1,277 @@
+.kinematics-section-root {
+  padding: 6rem 0;
+  position: relative;
+}
+
+.kinematics-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+/* Calculator Card */
+.calc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.calc-header, .math-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.calc-icon, .math-icon {
+  color: var(--accent-cyan);
+}
+
+.calc-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.calc-title, .math-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.calc-sub {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+/* Sliders */
+.kin-sliders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.kin-slider-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kin-slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+}
+
+.kin-val {
+  font-weight: 700;
+}
+
+.kin-presets-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.kin-preset-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.4rem 0.2rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.kin-preset-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+/* Solved Wheels Grid */
+.wheels-solution-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.wheel-solution-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.wheel-sol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.wheel-id {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.wheel-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.wheel-rpm {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.wheel-unit {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.wheel-rad {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.wheel-vector-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+  font-size: 0.6rem;
+}
+
+.spin-indicator.cw {
+  color: var(--accent-cyan);
+  animation: spinSlow linear infinite;
+}
+
+.spin-indicator.ccw {
+  color: var(--accent-amber);
+  animation: spinSlow linear infinite reverse;
+}
+
+.spin-indicator.idle {
+  color: var(--text-muted);
+}
+
+.vector-text {
+  color: var(--text-secondary);
+}
+
+/* Math Formulations Card */
+.math-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.matrix-block, .dead-reckoning-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.matrix-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.matrix-equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: rgba(7, 10, 15, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1rem 0.5rem;
+  font-size: 0.72rem;
+  overflow-x: auto;
+}
+
+.matrix-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.matrix-grid-3x4 {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 0.25rem 0.6rem;
+  text-align: right;
+}
+
+.matrix-bracket {
+  width: 5px;
+  align-self: stretch;
+  border: 1px solid var(--accent-cyan);
+}
+
+.matrix-bracket.left { border-right: none; }
+.matrix-bracket.right { border-left: none; }
+
+.eq-sign {
+  font-size: 1.1rem;
+  color: var(--accent-cyan);
+  margin: 0 0.2rem;
+}
+
+.scalar {
+  color: var(--accent-amber);
+  font-weight: 700;
+}
+
+.math-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.equation-box {
+  background: rgba(7, 10, 15, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.equation-box.global {
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.params-strip {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  .kinematics-grid {
+    grid-template-columns: 1fr;
+  }
+}

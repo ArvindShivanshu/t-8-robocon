@@ -1,0 +1,166 @@
+.robo-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 580px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-primary);
+  background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%), var(--bg-card);
+  box-shadow: var(--shadow-hud);
+  overflow: hidden;
+  user-select: none;
+}
+
+.canvas-container {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.canvas-container:active {
+  cursor: grabbing;
+}
+
+/* HUD Overlay Bar */
+.canvas-hud-overlay {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hud-badge-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(7, 10, 15, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  pointer-events: auto;
+}
+
+.hud-badge-tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+}
+
+/* View Presets Bar */
+.view-presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(7, 10, 15, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.35rem;
+  border-radius: var(--radius-sm);
+  pointer-events: auto;
+}
+
+.preset-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.preset-btn.active {
+  background: var(--accent-cyan);
+  color: #070a0f;
+  font-weight: 700;
+}
+
+/* Control Buttons */
+.canvas-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  pointer-events: auto;
+}
+
+.canvas-tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(7, 10, 15, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.72rem;
+  transition: all 0.2s ease;
+}
+
+.canvas-tool-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.1);
+}
+
+.canvas-tool-btn.active {
+  border-color: var(--accent-amber);
+  background: rgba(255, 183, 3, 0.15);
+  color: var(--accent-amber);
+}
+
+/* Bottom Hint */
+.canvas-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(7, 10, 15, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .robo-canvas-wrapper {
+    height: 440px;
+  }
+  .canvas-hud-overlay {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .view-presets-bar {
+    overflow-x: auto;
+  }
+  .canvas-controls-group {
+    flex-wrap: wrap;
+  }
+  .canvas-hint {
+    display: none;
+  }
+}

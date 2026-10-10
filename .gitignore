@@ -24,7 +24,8 @@ __pycache__/
 .venv/
 venv/
 ENV/
-*.egg-info/
+# Dependencies
+node_modules/
 dist/
 
 # ROS / Colcon (if applicable)
