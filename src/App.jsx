@@ -9,7 +9,6 @@ import CadGallery from './components/CadGallery';
 import SpecificationsFaq from './components/SpecificationsFaq';
 import TeamSection from './components/TeamSection';
 import ScrollVelocity from './components/ScrollVelocity';
-import TechDivider from './components/TechDivider';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -129,17 +128,11 @@ export default function App() {
         {/* 4-Wheel 45° Omni Kinematics Math Engine */}
         <KinematicsEngine />
 
-        {/* Minimalist Architectural Divider */}
-        <TechDivider label="02 // MODULAR SUBSYSTEMS ARCHITECTURE" />
-
         {/* Engineering Architecture & Subsystems */}
         <SubsystemsSection />
 
         {/* CAD Blueprints & Archives Gallery */}
         <CadGallery />
-
-        {/* Minimalist Architectural Divider */}
-        <TechDivider label="03 // PERFORMANCE SPECIFICATIONS" />
 
         {/* Technical Specs */}
         <SpecificationsFaq />

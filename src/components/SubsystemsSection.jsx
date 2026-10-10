@@ -121,10 +121,6 @@ export default function SubsystemsSection() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <span className="dot"></span>
-            <span>ENGINEERING SUBSYSTEMS</span>
-          </div>
           <h2 className="section-title">Hardware & Firmware Architecture</h2>
           <p className="section-subtitle">
             Modular engineering divisions powering the Mark-VIII autonomous platform.
@@ -156,10 +152,7 @@ export default function SubsystemsSection() {
         {/* Subsystem Details Card */}
         <div className="glass-card subsystem-detail-card">
           <div className="detail-header-block">
-            <div className="detail-badge-group">
-              <span className="detail-tag mono">{current.tag}</span>
-              <span className="detail-status mono">VERIFIED CAD & PROTO</span>
-            </div>
+            <span className="detail-tag mono">{current.tag}</span>
             <h3 className="detail-title">{current.title}</h3>
             <p className="detail-lead">{current.lead}</p>
           </div>

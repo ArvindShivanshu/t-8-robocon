@@ -41,10 +41,6 @@ export default function SpecificationsFaq() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <span className="dot"></span>
-            <span>TACTICAL SPECIFICATIONS</span>
-          </div>
           <h2 className="section-title">Technical Specifications</h2>
           <p className="section-subtitle">
             Core dimensions, drivetrain kinematics, sensor telemetry, and power electronics matrix.

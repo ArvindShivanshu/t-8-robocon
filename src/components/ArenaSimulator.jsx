@@ -413,10 +413,6 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <span className="dot"></span>
-            <span>STARK TACTICAL SIMULATION // ARENA</span>
-          </div>
           <h2 className="section-title">Restricted Workspace Flight & Telemetry Sim</h2>
           <p className="section-subtitle">
             Interact with the Mark-VIII holonomic platform in real-time. Navigate confined aisles, 

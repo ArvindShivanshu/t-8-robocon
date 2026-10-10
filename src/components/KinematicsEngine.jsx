@@ -51,14 +51,9 @@ export default function KinematicsEngine() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <span className="dot"></span>
-            <span>STARK DYNAMICS SOLVER // KINEMATICS</span>
-          </div>
           <h2 className="section-title">4-Wheel 45° Holonomic Kinematics</h2>
           <p className="section-subtitle">
-            Derivation of platform velocity mapping, transformation matrices, and real-time wheel angular speed equations 
-            integrated with dead-reckoning odometry.
+            Derivation of platform velocity mapping, transformation matrices, and real-time wheel angular speed equations.
           </p>
         </div>
 

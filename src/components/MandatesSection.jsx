@@ -42,10 +42,6 @@ export default function MandatesSection() {
       <div className="container">
         {/* Streamlined Header */}
         <div className="mandates-header-row">
-          <div className="mandates-tag-pill mono">
-            <span className="dot" />
-            <span>MANDATES MATRIX // PS-08</span>
-          </div>
           <h2 className="mandates-heading">Core System Directives</h2>
           <p className="mandates-subhead">
             Operational mandates engineered directly into the Mark-VIII architecture.

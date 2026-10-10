@@ -61,14 +61,9 @@ export default function CadGallery() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <span className="dot"></span>
-            <span>STARK BLUEPRINT VAULT // CAD REPO</span>
-          </div>
           <h2 className="section-title">Engineering Blueprints & Schematics</h2>
           <p className="section-subtitle">
-            Authentic CAD digital twin models, 45° omni kinematic layout, structural 5kg load elevations, 
-            and official Problem Statement 8 design criteria.
+            Authentic CAD digital twin models, 45° omni kinematic layout, and structural load elevations.
           </p>
         </div>
 
