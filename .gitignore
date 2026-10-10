@@ -35,3 +35,6 @@ log/
 # Environment files
 .env
 .env.local
+
+# Scratch and temporary scripts
+scratch/
