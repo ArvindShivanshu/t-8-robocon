@@ -537,9 +537,9 @@ export default function Robo3DCanvas({
       orb.explode += (orb.targetExplode - orb.explode) * 0.08;
 
       if (cargoBoxRef.current && risersRef.current && deckRef.current) {
-        cargoBoxRef.current.position.y = 47 + orb.explode * 125;
-        risersRef.current.position.y = orb.explode * 55;
-        deckRef.current.position.y = -18 - orb.explode * 30;
+        cargoBoxRef.current.position.y = 47 + orb.explode * 58;
+        risersRef.current.position.y = orb.explode * 28;
+        deckRef.current.position.y = -18 - orb.explode * 18;
       }
 
       // Gentle Arc Reactor breathing pulse
@@ -554,7 +554,8 @@ export default function Robo3DCanvas({
       const cz = orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
 
       camera.position.set(cx, cy, cz);
-      camera.lookAt(0, 15, 0);
+      // Smoothly shift camera lookAt upwards during explosion so top cargo box is never cut off
+      camera.lookAt(0, 15 + orb.explode * 28, 0);
 
       wheels.forEach((w) => {
         w.rotation.z += delta * 1.3;
@@ -599,22 +600,24 @@ export default function Robo3DCanvas({
             const ax = (v.x * 0.5 + 0.5) * w;
             const ay = (-v.y * 0.5 + 0.5) * h;
 
+            const cardW = 230;
+            const cardH = 88;
+
             const isLeft = ax > (w > 992 ? w - 280 : w) * 0.45;
             const dirX = isLeft ? -1 : 1;
 
-            const elbowDistX = 52;
-            const elbowDistY = ay > h * 0.45 ? -46 : 46;
-            const shelfLen = 145;
+            const elbowDistX = 40;
+            const elbowDistY = ay > h * 0.5 ? -38 : 38;
 
+            let ey = ay + elbowDistY;
+            // Prevent card from clipping top or bottom screen boundaries
+            ey = Math.max(cardH + 40, Math.min(h - 40, ey));
             const ex = ax + dirX * elbowDistX;
-            const ey = Math.max(90, Math.min(h - 140, ay + elbowDistY));
-            const sx = ex + dirX * shelfLen;
+            const sx = ex + dirX * cardW;
 
-            const cardW = Math.min(280, w - 40);
-            let cardX = isLeft ? (sx - cardW) : (sx + 10);
-            const rightLimit = w > 992 ? (w - 260) : w;
-            cardX = Math.max(20, Math.min(rightLimit - cardW - 16, cardX));
-            let cardY = Math.max(70, Math.min(h - 175, ey - 36));
+            // Card rests directly on top of the horizontal shelf line
+            const cardX = isLeft ? sx : ex;
+            const cardY = ey - cardH - 2;
 
             if (linePathRef.current && reticleDotRef.current && cardRef.current) {
               reticleDotRef.current.setAttribute('cx', ax);
@@ -629,30 +632,31 @@ export default function Robo3DCanvas({
               }
 
               if (crosshairsRef.current[0]) {
-                crosshairsRef.current[0].setAttribute('x1', ax - 14);
+                crosshairsRef.current[0].setAttribute('x1', ax - 12);
                 crosshairsRef.current[0].setAttribute('y1', ay);
-                crosshairsRef.current[0].setAttribute('x2', ax - 6);
+                crosshairsRef.current[0].setAttribute('x2', ax - 5);
                 crosshairsRef.current[0].setAttribute('y2', ay);
               }
               if (crosshairsRef.current[1]) {
-                crosshairsRef.current[1].setAttribute('x1', ax + 6);
+                crosshairsRef.current[1].setAttribute('x1', ax + 5);
                 crosshairsRef.current[1].setAttribute('y1', ay);
-                crosshairsRef.current[1].setAttribute('x2', ax + 14);
+                crosshairsRef.current[1].setAttribute('x2', ax + 12);
                 crosshairsRef.current[1].setAttribute('y2', ay);
               }
               if (crosshairsRef.current[2]) {
                 crosshairsRef.current[2].setAttribute('x1', ax);
-                crosshairsRef.current[2].setAttribute('y1', ay - 14);
+                crosshairsRef.current[2].setAttribute('y1', ay - 12);
                 crosshairsRef.current[2].setAttribute('x2', ax);
-                crosshairsRef.current[2].setAttribute('y2', ay - 6);
+                crosshairsRef.current[2].setAttribute('y2', ay - 5);
               }
               if (crosshairsRef.current[3]) {
                 crosshairsRef.current[3].setAttribute('x1', ax);
-                crosshairsRef.current[3].setAttribute('y1', ay + 6);
+                crosshairsRef.current[3].setAttribute('y1', ay + 5);
                 crosshairsRef.current[3].setAttribute('x2', ax);
-                crosshairsRef.current[3].setAttribute('y2', ay + 14);
+                crosshairsRef.current[3].setAttribute('y2', ay + 12);
               }
 
+              // Leader line: Anchor -> Elbow -> Underline shelf
               linePathRef.current.setAttribute('d', `M ${ax} ${ay} L ${ex} ${ey} L ${sx} ${ey}`);
               cardRef.current.style.transform = `translate3d(${cardX}px, ${cardY}px, 0)`;
               cardRef.current.style.opacity = '1';
@@ -793,21 +797,17 @@ export default function Robo3DCanvas({
           <circle ref={terminalDotRef} cx="-100" cy="-100" r="2.5" className="callout-terminal-dot" />
         </svg>
 
-        {/* Minimalist CAD Callout Card */}
+        {/* Minimalist CAD Architectural Datum Card */}
         <div ref={cardRef} className="cad-callout-card">
-          <div className="callout-card-header mono">
-            <span className="callout-tag">SYS // {currentStep.label || '00'}</span>
-            <span className="callout-status">
-              <span className="callout-dot pulse" />
-              <span>DATUM LOCKED</span>
-            </span>
+          <div className="callout-top-row mono">
+            <span className="callout-step-num">[{currentStep.label || '00'}]</span>
+            <span className="callout-comp-name">{currentStep.shortTitle || currentStep.title}</span>
           </div>
-          <div className="callout-title mono">{currentStep.title}</div>
-          <div className="callout-desc">{currentStep.desc}</div>
+          <div className="callout-desc-clean">{currentStep.desc}</div>
           {currentStep.spec && (
-            <div className="callout-spec-badge mono">
-              <span className="spec-indicator">▸</span>
-              <span>{currentStep.spec}</span>
+            <div className="callout-datum-spec mono">
+              <span className="datum-prefix">SPEC //</span>
+              <span className="datum-val">{currentStep.spec}</span>
             </div>
           )}
         </div>

@@ -24,12 +24,9 @@ export default function TelemetryHUD({ telemetry, onResetOrigin, onTareDistance 
 
   return (
     <div className={`telemetry-minimal-dock ${expanded ? 'expanded' : ''}`} id="telemetry-hud-dock">
-      {/* Sleek Minimal Floating Stark HUD Pill Bar */}
+      {/* Sleek Minimal Floating Architectural HUD Bar */}
       <div className="telemetry-pill-strip" onClick={() => setExpanded(!expanded)}>
-        <div className="telemetry-arc-dot">
-          <Zap size={11} className="arc-icon-spin" />
-        </div>
-        <span className="telemetry-pill-title mono">JARVIS HUD:</span>
+        <span className="telemetry-pill-title mono">HUD //</span>
         <span className="telemetry-pill-val mono">
           X: {x >= 0 ? `+${(x / 1000).toFixed(2)}` : (x / 1000).toFixed(2)}m
         </span>
@@ -42,7 +39,7 @@ export default function TelemetryHUD({ telemetry, onResetOrigin, onTareDistance 
         <span className="telemetry-pill-divider">|</span>
         <span className="telemetry-pill-val mono gold-val">{payload.toFixed(1)}kg</span>
         <span className="telemetry-expand-btn">
-          {expanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+          {expanded ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
         </span>
       </div>
 

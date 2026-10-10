@@ -19,15 +19,16 @@ export default function HeroSection({
   const [freeOrbit, setFreeOrbit] = useState(false);
   const heroRootRef = useRef(null);
 
-  // 7 Sequence steps with constant camera radius (no zooming during scroll)
+  // 7 Sequence steps with component anchors for dynamic CAD callout leader lines
   const steps = [
     {
       label: '00',
       title: 'STARK DIGITAL TWIN',
+      shortTitle: 'DIGITAL TWIN',
       desc: 'Mark-VIII collegiate autonomous warehouse platform with 4-wheel 45° holonomic omni drive',
       spec: '45° HOLONOMIC AGV // 5KG PAYLOAD',
       partGroup: 'root',
-      anchor: { x: -60, y: 50, z: 90 },
+      anchor: { x: 50, y: 55, z: 120 },
       theta: 0.72,
       phi: 1.15,
       radius: 780,
@@ -38,10 +39,11 @@ export default function HeroSection({
     {
       label: '01',
       title: '45° OMNI CHASSIS',
+      shortTitle: 'TITANIUM CHASSIS',
       desc: 'Aerospace titanium alloy frame with 45° motor gusset mounts minimizing aisle envelope',
       spec: '240 × 260 mm // TITANIUM GUSSET FRAME',
       partGroup: 'chassis',
-      anchor: { x: -114, y: -30, z: 30 },
+      anchor: { x: 114, y: -30, z: 20 },
       theta: 1.08,
       phi: 0.92,
       radius: 780,
@@ -52,10 +54,11 @@ export default function HeroSection({
     {
       label: '02',
       title: 'REPULSOR-TORQUE MOTORS',
+      shortTitle: 'OMNI DRIVETRAIN',
       desc: '4x high-torque planetary geared DC motors with dual-row omni rollers for 360° translation',
       spec: '4x DUAL-ROW OMNI ROLLERS // 45° VECTOR',
       partGroup: 'motors',
-      anchor: { x: -119, y: -30, z: 129 },
+      anchor: { x: 119, y: -30, z: 129 },
       theta: 1.48,
       phi: 0.80,
       radius: 780,
@@ -66,6 +69,7 @@ export default function HeroSection({
     {
       label: '03',
       title: 'ARC ODOMETRY & EKF',
+      shortTitle: 'SENSOR DECK',
       desc: '1024 CPR optical quadrature encoders fused with 6-DoF IMU gyroscope for dead-reckoning',
       spec: '1024 CPR ENCODERS + 6-DOF IMU FUSION',
       partGroup: 'deck',
@@ -80,10 +84,11 @@ export default function HeroSection({
     {
       label: '04',
       title: 'TITANIUM RISERS',
+      shortTitle: 'TITANIUM RISERS',
       desc: '4x 60mm cylindrical load-bearing standoffs distributing up to 5kg payload directly to chassis rails',
       spec: '4x 60mm COLUMNS // ZERO-GAP FLUSH MOUNT',
       partGroup: 'risers',
-      anchor: { x: -90, y: 44, z: 90 },
+      anchor: { x: 90, y: 35, z: -90 },
       theta: 2.32,
       phi: 0.88,
       radius: 780,
@@ -94,10 +99,11 @@ export default function HeroSection({
     {
       label: '05',
       title: '5KG VIBRANIUM PAYLOAD',
+      shortTitle: 'CARGO PAYLOAD',
       desc: 'Hot-rod crimson cargo containment box engineered for stable manual warehouse loading',
       spec: '5.0 KG PAYLOAD CAPACITY // STAMPED CRIMSON',
       partGroup: 'cargo',
-      anchor: { x: 0, y: 72, z: 20 },
+      anchor: { x: 0, y: 72, z: 0 },
       theta: 2.74,
       phi: 0.78,
       radius: 780,
@@ -108,13 +114,14 @@ export default function HeroSection({
     {
       label: '06',
       title: 'EXPLODED ARMOR BOM',
+      shortTitle: 'MODULAR ASSEMBLY',
       desc: 'Technical exploded breakdown of all modular sub-assemblies along axes',
-      spec: 'DECOUPLED MODULAR BOM // Y-AXIS OFFSET',
+      spec: 'MODULAR CAD BOM // ZERO-COLLISION EXPLODE',
       partGroup: 'cargo',
-      anchor: { x: 0, y: 140, z: 0 },
+      anchor: { x: 60, y: 55, z: 90 },
       theta: 0.85,
-      phi: 1.12,
-      radius: 780,
+      phi: 1.10,
+      radius: 820,
       explode: 1,
       p: 0.93,
       pose: { x: 0, y: 1600, theta: 0, motion: 'EXPLODED_BOM' }
@@ -235,8 +242,9 @@ export default function HeroSection({
           </button>
         </div>
 
-        {/* Right Side Vertical Step Navigation (Stark Tactical Pills) */}
-        <div className="hero-cad-step-nav">
+        {/* Right Side Vertical Step Rail Navigation (Minimalist Architectural CAD Index) */}
+        <div className="hero-cad-step-nav" aria-label="CAD Subsystem Index">
+          <div className="step-nav-track-bar" />
           {steps.map((step, idx) => {
             const isActive = activeStep === idx;
             return (
@@ -245,9 +253,11 @@ export default function HeroSection({
                 onClick={() => goToStep(idx)}
                 className={`step-nav-item ${isActive ? 'active' : ''}`}
                 id={`step-pill-${step.label}`}
+                title={step.desc}
               >
+                <span className="step-nav-indicator" />
                 <span className="step-nav-num mono">{step.label}</span>
-                <span className="step-nav-label mono">{step.title}</span>
+                <span className="step-nav-label mono">{step.shortTitle || step.title}</span>
               </button>
             );
           })}
