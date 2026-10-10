@@ -245,12 +245,12 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         });
       }
 
-      // DRAW CANVAS
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // DRAW CANVAS: Clean Light Studio Warehouse Floor
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Floor Grid
-      const isBlueprint = currentTheme === 'blueprint';
-      ctx.strokeStyle = isBlueprint ? 'rgba(56, 189, 248, 0.12)' : 'rgba(0, 240, 255, 0.07)';
+      ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < canvas.width; x += gridSize) {
@@ -267,45 +267,45 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       }
 
       // Origin Marker (400, 300)
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+      ctx.strokeStyle = 'rgba(234, 88, 12, 0.5)';
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
       ctx.arc(400, 300, 24, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(0, 240, 255, 0.6)';
+      ctx.fillStyle = '#ea580c';
       ctx.font = '10px "JetBrains Mono"';
       ctx.fillText('(0, 0) DATUM ORIGIN', 410, 295);
 
       // Draw Warehouse Obstacles & Racks
       obstacles.forEach((obs) => {
-        ctx.fillStyle = isBlueprint ? 'rgba(10, 36, 74, 0.7)' : 'rgba(13, 20, 32, 0.85)';
-        ctx.strokeStyle = isBlueprint ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 183, 3, 0.35)';
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#cbd5e1';
         ctx.lineWidth = 1.5;
         ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
         ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
 
         // Rack Label
-        ctx.fillStyle = isBlueprint ? '#93c5fd' : '#f0f6fc';
+        ctx.fillStyle = '#0f172a';
         ctx.font = '9px "JetBrains Mono"';
         ctx.fillText(obs.label, obs.x + 8, obs.y + 22);
 
-        // Warning hash marks inside restricted zone
-        ctx.strokeStyle = 'rgba(255, 183, 3, 0.15)';
+        // Subtle hatching inside restricted zone
+        ctx.strokeStyle = 'rgba(234, 88, 12, 0.15)';
         ctx.beginPath();
         ctx.moveTo(obs.x, obs.y);
         ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
         ctx.stroke();
       });
 
-      // Draw Breadcrumb Path Trail
+      // Draw Breadcrumb Path Trail (Industrial Orange)
       if (r.trail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(r.trail[0].x, r.trail[0].y);
         for (let i = 1; i < r.trail.length; i++) {
           ctx.lineTo(r.trail[i].x, r.trail[i].y);
         }
-        ctx.strokeStyle = 'rgba(0, 240, 255, 0.5)';
+        ctx.strokeStyle = '#ea580c';
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
@@ -316,8 +316,8 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       ctx.rotate(r.theta);
 
       // Chassis Base Rect
-      ctx.fillStyle = '#1e293b';
-      ctx.strokeStyle = '#00f0ff';
+      ctx.fillStyle = '#334155';
+      ctx.strokeStyle = '#ea580c';
       ctx.lineWidth = 2;
       ctx.fillRect(-24, -26, 48, 52);
       ctx.strokeRect(-24, -26, 48, 52);
@@ -331,7 +331,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       ];
 
       ctx.fillStyle = '#64748b';
-      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeStyle = '#94a3b8';
       ctx.lineWidth = 1;
       wheelOffsets.forEach((w) => {
         ctx.save();
@@ -343,22 +343,22 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       });
 
       // Cargo Container (Top bin)
-      ctx.fillStyle = '#475569';
+      ctx.fillStyle = '#cbd5e1';
       ctx.strokeStyle = '#94a3b8';
       ctx.fillRect(-18, -20, 36, 40);
       ctx.strokeRect(-18, -20, 36, 40);
 
-      // 5kg Payload Inside Cargo Tray
-      ctx.fillStyle = '#eab308';
+      // 5kg Payload Inside Cargo Tray (Orange)
+      ctx.fillStyle = '#ea580c';
       ctx.fillRect(-12, -14, 24, 28);
-      ctx.fillStyle = '#070a0f';
+      ctx.fillStyle = '#ffffff';
       ctx.font = '7px "JetBrains Mono"';
       ctx.textAlign = 'center';
       ctx.fillText(`${payloadKg.toFixed(1)}k`, 0, 3);
 
       // Heading Arrow (Pointing forward)
-      ctx.strokeStyle = '#ff3366';
-      ctx.fillStyle = '#ff3366';
+      ctx.strokeStyle = '#ea580c';
+      ctx.fillStyle = '#ea580c';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(0, -22);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 export default function Robo3DCanvas({
@@ -7,8 +7,6 @@ export default function Robo3DCanvas({
   showDims = true,
   freeOrbit = false,
   onTelemetryUpdate,
-  currentTheme = 'dark',
-  scrollProgress = 0,
   steps = []
 }) {
   const mountRef = useRef(null);
@@ -50,11 +48,12 @@ export default function Robo3DCanvas({
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // 1. Scene
+    // 1. Scene with Clean Light CAD Studio Background
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    const isBlueprint = renderMode === 'blueprint' || currentTheme === 'blueprint';
-    scene.background = new THREE.Color(isBlueprint ? 0x051329 : 0x070a0f);
+    const studioBgColor = new THREE.Color(0xf1f5f9);
+    scene.background = studioBgColor;
+    scene.fog = new THREE.Fog(0xf1f5f9, 900, 2600);
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(38, width / height, 1, 4000);
@@ -74,45 +73,55 @@ export default function Robo3DCanvas({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
     container.replaceChildren(renderer.domElement);
 
-    // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // 4. Lighting: Clean Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.6);
-    dirLight1.position.set(450, 650, 450);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.4);
+    dirLight1.position.set(450, 700, 450);
     dirLight1.castShadow = true;
     dirLight1.shadow.mapSize.width = 2048;
     dirLight1.shadow.mapSize.height = 2048;
+    dirLight1.shadow.bias = -0.0001;
     scene.add(dirLight1);
 
-    // Subtle blue/cyan fill light
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
-    fillLight.position.set(-450, 300, -350);
+    const fillLight = new THREE.DirectionalLight(0xe2e8f0, 1.4);
+    fillLight.position.set(-450, 350, -350);
     scene.add(fillLight);
 
-    // Warm orange bottom rim light matching screenshot
-    const orangeRimLight = new THREE.DirectionalLight(0xff7a00, 2.2);
-    orangeRimLight.position.set(0, -200, 350);
-    scene.add(orangeRimLight);
+    const warmRimLight = new THREE.DirectionalLight(0xea580c, 0.9);
+    warmRimLight.position.set(0, -150, 350);
+    scene.add(warmRimLight);
 
-    // 5. Dark Orange Floor Grid (Matching Screenshot)
-    const gridColor1 = isBlueprint ? 0x38bdf8 : 0xef6522;
-    const gridColor2 = isBlueprint ? 0x0d3163 : 0x2a1005;
-    const gridHelper = new THREE.GridHelper(1200, 36, gridColor1, gridColor2);
+    // 5. Light Studio Floor Grid & Shadow Plane
+    const gridColor1 = 0xea580c; // Industrial Orange major grid
+    const gridColor2 = 0xcbd5e1; // Slate grey secondary grid
+    const gridHelper = new THREE.GridHelper(1400, 36, gridColor1, gridColor2);
     gridHelper.position.y = -115;
     scene.add(gridHelper);
 
-    // 6. Materials
+    // Contact shadow plane on floor
+    const shadowPlaneGeo = new THREE.PlaneGeometry(600, 600);
+    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.12 });
+    const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
+    shadowPlane.rotation.x = -Math.PI / 2;
+    shadowPlane.position.y = -114.8;
+    shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
+
+    // 6. Materials Matching CAD Renders
     const materials = {
       chassisMetal: new THREE.MeshStandardMaterial({
-        color: 0x64748b,
-        metalness: 0.82,
+        color: 0x94a3b8, // Clean extruded aluminum
+        metalness: 0.85,
         roughness: 0.22,
       }),
       motorBody: new THREE.MeshStandardMaterial({
-        color: 0x334155,
+        color: 0x475569, // Dark slate steel motor casing
         metalness: 0.9,
         roughness: 0.25,
       }),
@@ -127,7 +136,7 @@ export default function Robo3DCanvas({
         metalness: 0.05,
       }),
       pcbBoard: new THREE.MeshStandardMaterial({
-        color: 0x166534, // Circuit board green
+        color: 0x166534, // Circuit board green matching CAD
         roughness: 0.35,
         metalness: 0.3,
       }),
@@ -148,28 +157,28 @@ export default function Robo3DCanvas({
         side: THREE.DoubleSide,
       }),
       cargoPayload: new THREE.MeshStandardMaterial({
-        color: 0xff7a00, // Orange payload matching Analytix
+        color: 0xea580c, // Unified Industrial Orange payload box
         roughness: 0.45,
         metalness: 0.15,
       }),
       omniHub: new THREE.MeshStandardMaterial({
-        color: 0x1e293b,
+        color: 0x334155,
         metalness: 0.8,
         roughness: 0.25,
       }),
       omniRoller: new THREE.MeshStandardMaterial({
-        color: 0x475569, // Rubber rollers
+        color: 0x1e293b, // Rubber rollers
         roughness: 0.85,
         metalness: 0.1,
       }),
       orangeAccent: new THREE.MeshStandardMaterial({
-        color: 0xef6522,
-        emissive: 0xef6522,
-        emissiveIntensity: 0.6,
+        color: 0xea580c,
+        emissive: 0xea580c,
+        emissiveIntensity: 0.5,
       }),
       dimLineMat: new THREE.LineBasicMaterial({
-        color: 0x38bdf8,
-        linewidth: 1.5,
+        color: 0xea580c,
+        linewidth: 2,
       }),
     };
     materialsRef.current = materials;
@@ -250,6 +259,7 @@ export default function Robo3DCanvas({
       );
       motorBody.rotation.x = Math.PI / 2;
       motorBody.position.z = -15;
+      motorBody.castShadow = true;
       motorAssembly.add(motorBody);
 
       const shaft = new THREE.Mesh(
@@ -269,6 +279,7 @@ export default function Robo3DCanvas({
         materials.omniHub
       );
       hub.rotation.x = Math.PI / 2;
+      hub.castShadow = true;
       wheelGroup.add(hub);
 
       const rollerCount = 10;
@@ -396,7 +407,7 @@ export default function Robo3DCanvas({
     rightWall.position.set(115, wallHeight / 2, 0);
     cargoBinGroup.add(rightWall);
 
-    // 5kg Payload Box inside (Orange accent top matching screenshot)
+    // 5kg Payload Box inside (Industrial Orange)
     const payloadPkg = new THREE.Mesh(
       new THREE.BoxGeometry(160, 45, 170),
       materials.cargoPayload
@@ -405,7 +416,7 @@ export default function Robo3DCanvas({
     payloadPkg.castShadow = true;
     cargoBinGroup.add(payloadPkg);
 
-    // --- 3D Dimension Annotation Lines (Matching Screenshot `↔ 260 mm`) ---
+    // --- 3D Dimension Annotation Lines (`↔ 260 mm`) ---
     const dimsGroup = new THREE.Group();
     dimsGroupRef.current = dimsGroup;
     robotRoot.add(dimsGroup);
@@ -418,7 +429,6 @@ export default function Robo3DCanvas({
     const dimLine = new THREE.Line(dimGeo, materials.dimLineMat);
     dimsGroup.add(dimLine);
 
-    // Left & Right tick marks
     const leftTick = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-115, 115, 0), new THREE.Vector3(-115, 135, 0)]),
       materials.dimLineMat
@@ -438,24 +448,20 @@ export default function Robo3DCanvas({
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
-      const elapsed = clock.getElapsedTime();
 
       const orb = orbitRef.current;
 
-      // Smooth camera interpolation towards target
       orb.theta += (orb.targetTheta - orb.theta) * 0.06;
       orb.phi += (orb.targetPhi - orb.phi) * 0.06;
       orb.radius += (orb.targetRadius - orb.radius) * 0.06;
       orb.explode += (orb.targetExplode - orb.explode) * 0.08;
 
-      // Update exploded position of parts
       if (cargoBoxRef.current && risersRef.current && deckRef.current) {
         cargoBoxRef.current.position.y = 75 + orb.explode * 120;
         risersRef.current.position.y = orb.explode * 50;
         deckRef.current.position.y = -18 - orb.explode * 25;
       }
 
-      // Update camera position
       const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
       const cx = orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
       const cy = orb.radius * Math.cos(clampedPhi);
@@ -464,7 +470,6 @@ export default function Robo3DCanvas({
       camera.position.set(cx, cy, cz);
       camera.lookAt(0, 15, 0);
 
-      // Rotate wheels slowly
       wheels.forEach((w) => {
         w.rotation.z += delta * 1.2;
       });
@@ -474,7 +479,6 @@ export default function Robo3DCanvas({
 
     animate();
 
-    // 9. Resize Listener
     const handleResize = () => {
       if (!container || !camera || !renderer) return;
       const w = container.clientWidth;
@@ -491,11 +495,11 @@ export default function Robo3DCanvas({
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
     };
-  }, [currentTheme]);
+  }, []);
 
-  // Synchronize Camera Target when activeStep changes
+  // Update target when activeStep changes
   useEffect(() => {
-    if (freeOrbit) return; // don't override camera if user is in free orbit
+    if (freeOrbit) return;
     const step = steps[activeStep];
     if (!step) return;
 
@@ -506,7 +510,7 @@ export default function Robo3DCanvas({
     orb.targetExplode = step.explode || 0;
   }, [activeStep, steps, freeOrbit]);
 
-  // Render Modes: Shaded, Wireframe, Blueprint
+  // Render Modes
   useEffect(() => {
     const mats = materialsRef.current;
     if (!mats.chassisMetal) return;
@@ -521,18 +525,18 @@ export default function Robo3DCanvas({
     });
 
     if (sceneRef.current) {
-      sceneRef.current.background = new THREE.Color(isBlue ? 0x051329 : 0x070a0f);
+      sceneRef.current.background = new THREE.Color(isBlue ? 0xe2e8f0 : 0xf1f5f9);
     }
   }, [renderMode]);
 
-  // Toggle Dimension Annotations
+  // Dimension lines toggle
   useEffect(() => {
     if (dimsGroupRef.current) {
       dimsGroupRef.current.visible = showDims;
     }
   }, [showDims]);
 
-  // Mouse Orbit Dragging
+  // Mouse Interaction handlers
   const handleMouseDown = (e) => {
     orbitRef.current.isDragging = true;
     orbitRef.current.prevX = e.clientX;

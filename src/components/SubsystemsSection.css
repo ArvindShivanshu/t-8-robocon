@@ -15,37 +15,36 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: var(--bg-card);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   color: var(--text-secondary);
   cursor: pointer;
   text-align: left;
   transition: all 0.25s ease;
-  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .subsystem-tab-btn:hover {
-  border-color: var(--accent-cyan);
-  background: var(--bg-card-hover);
+  border-color: rgba(234, 88, 12, 0.4);
   color: var(--text-primary);
   transform: translateY(-2px);
 }
 
 .subsystem-tab-btn.active {
-  border-color: var(--accent-cyan);
-  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--accent-orange);
+  background: #ffffff;
   color: var(--text-primary);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+  box-shadow: 0 4px 18px var(--accent-orange-glow);
 }
 
 .tab-icon {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 240, 255, 0.08);
+  background: var(--accent-orange-subtle);
   padding: 0.5rem;
   border-radius: var(--radius-sm);
 }
@@ -61,7 +60,7 @@
 }
 
 .subsystem-tab-btn.active .tab-tag {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
 }
 
 .tab-name {
@@ -77,6 +76,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background: #ffffff;
 }
 
 .detail-header-block {
@@ -95,17 +95,18 @@
 
 .detail-tag {
   font-size: 0.72rem;
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   font-weight: 700;
   letter-spacing: 0.08em;
 }
 
 .detail-status {
-  font-size: 0.65rem;
-  color: var(--accent-emerald);
-  background: rgba(0, 255, 136, 0.1);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  font-size: 0.68rem;
+  color: var(--accent-orange);
+  background: var(--accent-orange-subtle);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
 }
 
 .detail-title {
@@ -148,7 +149,7 @@
 }
 
 .feature-check {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   margin-top: 0.2rem;
   flex-shrink: 0;
 }
@@ -173,10 +174,10 @@
 
 /* Specs Column */
 .specs-data-card {
-  background: rgba(7, 10, 15, 0.85);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  padding: 1.35rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -186,7 +187,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 0.6rem;
 }
 
@@ -203,7 +204,7 @@
 .spec-data-val {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--accent-cyan);
+  color: var(--text-primary);
 }
 
 @media (max-width: 900px) {

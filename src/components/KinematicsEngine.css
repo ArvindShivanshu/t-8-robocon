@@ -15,6 +15,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  background: #ffffff;
 }
 
 .calc-header, .math-header {
@@ -26,7 +27,7 @@
 }
 
 .calc-icon, .math-icon {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
 }
 
 .calc-title-group {
@@ -35,14 +36,14 @@
 }
 
 .calc-title, .math-title {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .calc-sub {
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
 }
 
@@ -62,37 +63,38 @@
 .kin-slider-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
 }
 
-.kin-val {
+.kin-val.text-orange {
   font-weight: 700;
+  color: var(--accent-orange);
 }
 
 .kin-presets-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.4rem;
+  gap: 0.45rem;
   margin-top: 0.3rem;
 }
 
 .kin-preset-btn {
-  background: rgba(255, 255, 255, 0.03);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  padding: 0.4rem 0.2rem;
-  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.2rem;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
 }
 
 .kin-preset-btn:hover {
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan);
-  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  background: var(--accent-orange-subtle);
 }
 
 /* Solved Wheels Grid */
@@ -103,10 +105,10 @@
 }
 
 .wheel-solution-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  padding: 0.95rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -116,12 +118,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
 }
 
 .wheel-id {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   font-weight: 700;
 }
 
@@ -144,26 +146,21 @@
 }
 
 .wheel-rad {
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
 }
 
 .wheel-vector-indicator {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   margin-top: 0.3rem;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
 }
 
-.spin-indicator.cw {
-  color: var(--accent-cyan);
+.spin-indicator.cw, .spin-indicator.ccw {
+  color: var(--accent-orange);
   animation: spinSlow linear infinite;
-}
-
-.spin-indicator.ccw {
-  color: var(--accent-amber);
-  animation: spinSlow linear infinite reverse;
 }
 
 .spin-indicator.idle {
@@ -178,17 +175,18 @@
 .math-card {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.35rem;
+  background: #ffffff;
 }
 
 .matrix-block, .dead-reckoning-block {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
 .matrix-label {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
@@ -197,11 +195,12 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  background: rgba(7, 10, 15, 0.85);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 1rem 0.5rem;
-  font-size: 0.72rem;
+  border-radius: var(--radius-md);
+  padding: 1.1rem 0.6rem;
+  font-size: 0.75rem;
+  color: var(--text-primary);
   overflow-x: auto;
 }
 
@@ -222,7 +221,7 @@
 .matrix-bracket {
   width: 5px;
   align-self: stretch;
-  border: 1px solid var(--accent-cyan);
+  border: 1.5px solid var(--accent-orange);
 }
 
 .matrix-bracket.left { border-right: none; }
@@ -230,42 +229,42 @@
 
 .eq-sign {
   font-size: 1.1rem;
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   margin: 0 0.2rem;
 }
 
 .scalar {
-  color: var(--accent-amber);
+  color: var(--accent-orange);
   font-weight: 700;
 }
 
 .math-desc {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .equation-box {
-  background: rgba(7, 10, 15, 0.85);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem 1rem;
-  font-size: 0.72rem;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.74rem;
   line-height: 1.7;
   color: var(--text-primary);
 }
 
 .equation-box.global {
-  border-left: 3px solid var(--accent-cyan);
+  border-left: 3px solid var(--accent-orange);
 }
 
 .params-strip {
   display: flex;
   justify-content: space-between;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-subtle);
-  padding-top: 0.75rem;
+  padding-top: 0.85rem;
   flex-wrap: wrap;
   gap: 0.5rem;
 }

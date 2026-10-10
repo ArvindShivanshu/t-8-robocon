@@ -78,7 +78,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>SURGE VELOCITY (Vx - FORWARD/BACK):</span>
-                  <span className="kin-val text-cyan">{vx >= 0 ? `+${vx.toFixed(2)}` : vx.toFixed(2)} m/s</span>
+                  <span className="kin-val text-orange">{vx >= 0 ? `+${vx.toFixed(2)}` : vx.toFixed(2)} m/s</span>
                 </div>
                 <input 
                   type="range" 
@@ -96,7 +96,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>SWAY VELOCITY (Vy - LATERAL STRAFE):</span>
-                  <span className="kin-val text-cyan">{vy >= 0 ? `+${vy.toFixed(2)}` : vy.toFixed(2)} m/s</span>
+                  <span className="kin-val text-orange">{vy >= 0 ? `+${vy.toFixed(2)}` : vy.toFixed(2)} m/s</span>
                 </div>
                 <input 
                   type="range" 
@@ -114,7 +114,7 @@ export default function KinematicsEngine() {
               <div className="kin-slider-block">
                 <div className="kin-slider-header mono">
                   <span>YAW RATE (ω - IN-PLACE ROTATION):</span>
-                  <span className="kin-val text-amber">{omega >= 0 ? `+${omega.toFixed(2)}` : omega.toFixed(2)} rad/s</span>
+                  <span className="kin-val text-orange">{omega >= 0 ? `+${omega.toFixed(2)}` : omega.toFixed(2)} rad/s</span>
                 </div>
                 <input 
                   type="range" 

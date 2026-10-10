@@ -1,7 +1,7 @@
 .footer-root {
-  background: var(--bg-secondary);
+  background: #ffffff;
   border-top: 1px solid var(--border-subtle);
-  padding: 5rem 0 7rem 0; /* padding at bottom accounts for the persistent HUD bar */
+  padding: 5rem 0 7rem 0;
   position: relative;
   z-index: 10;
 }
@@ -29,25 +29,30 @@
   position: relative;
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05));
-  border: 1px solid var(--accent-cyan);
+  background: var(--accent-orange-subtle);
+  border: 1px solid rgba(234, 88, 12, 0.35);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px var(--accent-cyan-glow);
   cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.footer-brand-badge:hover {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 15px var(--accent-orange-glow);
 }
 
 .footer-brand-title {
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .footer-brand-desc {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.6;
 }
@@ -56,12 +61,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(0, 240, 255, 0.06);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  padding: 0.3rem 0.65rem;
-  border-radius: 4px;
-  font-size: 0.68rem;
-  color: var(--accent-cyan);
+  background: var(--accent-orange-subtle);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  color: var(--accent-orange);
+  font-weight: 700;
   width: fit-content;
 }
 
@@ -69,7 +75,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent-cyan);
+  background: var(--accent-orange);
 }
 
 /* Links Col */
@@ -84,21 +90,21 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
 .footer-links-list button {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
 }
 
 .footer-links-list button:hover {
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
   transform: translateX(4px);
 }
 
@@ -106,7 +112,7 @@
 .divisions-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .division-item {
@@ -115,13 +121,13 @@
 }
 
 .div-code {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
 }
 
 .div-desc {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
@@ -136,7 +142,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
 }
 
@@ -146,32 +152,33 @@
 }
 
 .hq-brief {
-  font-size: 0.68rem;
-  color: var(--accent-amber);
+  font-size: 0.7rem;
+  color: var(--accent-orange);
   margin-top: 0.25rem;
+  font-weight: 600;
 }
 
 .footer-back-top-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.65rem 1rem;
-  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   width: fit-content;
   transition: all 0.2s ease;
 }
 
 .footer-back-top-btn:hover {
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan);
-  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  background: var(--accent-orange-subtle);
 }
 
 /* Bottom Bar */
@@ -181,7 +188,7 @@
   align-items: center;
   border-top: 1px solid var(--border-subtle);
   padding-top: 2rem;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
   flex-wrap: wrap;
   gap: 1rem;
@@ -191,14 +198,15 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--accent-cyan);
+  color: var(--accent-orange);
+  font-weight: 600;
 }
 
 .bottom-center .dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent-cyan);
+  background: var(--accent-orange);
 }
 
 @media (max-width: 992px) {
