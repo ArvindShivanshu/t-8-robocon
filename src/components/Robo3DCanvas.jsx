@@ -46,8 +46,6 @@ export default function Robo3DCanvas({
     targetTheta: 0.72,
     targetPhi: 1.15,
     targetRadius: 780,
-    explode: 0,
-    targetExplode: 0,
   });
 
   const activeStepRef = useRef(activeStep);
@@ -83,10 +81,10 @@ export default function Robo3DCanvas({
     sceneRef.current = scene;
     const bgDark = new THREE.Color(0x000000);
     scene.background = bgDark;
-    scene.fog = new THREE.Fog(0x000000, 950, 2800);
+    scene.fog = new THREE.Fog(0x000000, 2200, 7500);
 
     // 2. Camera
-    const camera = new THREE.PerspectiveCamera(38, width / height, 1, 4000);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 1, 9000);
     cameraRef.current = camera;
     camera.position.set(450, 400, 550);
     camera.lookAt(0, 20, 0);
@@ -130,32 +128,32 @@ export default function Robo3DCanvas({
     fillLight.position.set(0, -180, 350);
     scene.add(fillLight);
 
-    // 5. Floor Grid: Subtle Minimalist Hairline Arena Grid (aligned with bottom of omni wheels at Y = -67.5)
-    const gridHelper = new THREE.GridHelper(3600, 72, 0x333338, 0x141416);
+    // 5. Floor Grid: Expanded Minimalist Hairline Arena Grid (aligned with bottom of omni wheels at Y = -67.5)
+    const gridHelper = new THREE.GridHelper(8000, 160, 0x333338, 0x141416);
     gridHelper.position.y = -67.5;
     scene.add(gridHelper);
 
-    // 6. Navigation Path Waypoints & Catmull-Rom Simulation Trajectory
+    // 6. Navigation Path Waypoints & Catmull-Rom Simulation Trajectory (Expansive 6.2m Arena Course)
     const waypoints = [
-      new THREE.Vector3(0, 0, -320),   // 00 Origin Datum
-      new THREE.Vector3(220, 0, -160), // 01 45° Omni Chassis Strafe
-      new THREE.Vector3(280, 0, 100),  // 02 Drivetrain Vectoring
-      new THREE.Vector3(80, 0, 300),   // 03 Sensor Deck EKF Arc
-      new THREE.Vector3(-200, 0, 240), // 04 Titanium Risers Corridor
-      new THREE.Vector3(-260, 0, -60), // 05 Vibranium Payload Station
-      new THREE.Vector3(0, 0, 0),      // 06 Center Stage Exploded BOM
+      new THREE.Vector3(-800, 0, -1400), // 00 Origin Datum Depot
+      new THREE.Vector3(-700, 0, -500),  // 01 45° Omni Chassis Strafe Aisle
+      new THREE.Vector3(0, 0, 100),      // 02 Central Intersect & Drivetrain Vectoring
+      new THREE.Vector3(900, 0, 700),    // 03 East Storage Arc & Sensor Deck Odometry
+      new THREE.Vector3(1200, 0, -300),  // 04 High-Bay Corridor & Titanium Risers
+      new THREE.Vector3(500, 0, -1100),  // 05 Cargo Bay & Payload Station
+      new THREE.Vector3(0, 0, 0),        // 06 Destination Docking Bay
     ];
     const simPath = new THREE.CatmullRomCurve3(waypoints, false, 'catmullrom', 0.5);
 
     // Glowing Tactical Path Ribbon on the Floor Grid
-    const pathPoints = simPath.getPoints(240).map((pt) => new THREE.Vector3(pt.x, -67.0, pt.z));
+    const pathPoints = simPath.getPoints(360).map((pt) => new THREE.Vector3(pt.x, -67.0, pt.z));
     const pathGeo = new THREE.BufferGeometry().setFromPoints(pathPoints);
     const pathMat = new THREE.LineDashedMaterial({
       color: 0x00f0ff,
-      dashSize: 22,
-      gapSize: 14,
+      dashSize: 32,
+      gapSize: 18,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.55,
     });
     const pathLine = new THREE.Line(pathGeo, pathMat);
     pathLine.computeLineDistances();
@@ -165,12 +163,12 @@ export default function Robo3DCanvas({
     waypoints.forEach((wp, idx) => {
       const isOriginOrEnd = idx === 0 || idx === 6;
       const wpRing = new THREE.Mesh(
-        new THREE.RingGeometry(isOriginOrEnd ? 22 : 14, isOriginOrEnd ? 24 : 16, 32),
+        new THREE.RingGeometry(isOriginOrEnd ? 28 : 18, isOriginOrEnd ? 31 : 20, 32),
         new THREE.MeshBasicMaterial({
-          color: idx === 6 ? 0xff4d4d : 0x00f0ff,
+          color: idx === 6 ? 0x22c55e : (idx === 0 ? 0xffffff : 0x00f0ff),
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.35,
+          opacity: 0.4,
         })
       );
       wpRing.rotation.x = -Math.PI / 2;
@@ -178,12 +176,12 @@ export default function Robo3DCanvas({
       scene.add(wpRing);
 
       const wpDot = new THREE.Mesh(
-        new THREE.CircleGeometry(2.5, 16),
+        new THREE.CircleGeometry(3.5, 16),
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.6,
         })
       );
       wpDot.rotation.x = -Math.PI / 2;
@@ -600,12 +598,12 @@ export default function Robo3DCanvas({
       orb.theta += (orb.targetTheta - orb.theta) * 0.06;
       orb.phi += (orb.targetPhi - orb.phi) * 0.06;
       orb.radius += (orb.targetRadius - orb.radius) * 0.06;
-      orb.explode += (orb.targetExplode - orb.explode) * 0.08;
 
+      // Solid Assembly: Robot parts remain fully assembled (zero explosion)
       if (cargoBoxRef.current && risersRef.current && deckRef.current) {
-        cargoBoxRef.current.position.y = 47 + orb.explode * 58;
-        risersRef.current.position.y = orb.explode * 28;
-        deckRef.current.position.y = -18 - orb.explode * 18;
+        cargoBoxRef.current.position.y = 47;
+        risersRef.current.position.y = 0;
+        deckRef.current.position.y = -18;
       }
 
       // Gentle Arc Reactor breathing pulse
@@ -621,8 +619,9 @@ export default function Robo3DCanvas({
       const progressDelta = simProgressRef.current - prevProgress;
 
       // 2. Wheels physically rotate when scrolling (forward on scroll down, reverse on scroll up, stopping when idle)
+      // Scaled to 185 for accurate rolling speed across the 6.2m arena track
       if (Math.abs(progressDelta) > 0.00002) {
-        wheelVelocityRef.current = progressDelta * 85;
+        wheelVelocityRef.current = progressDelta * 185;
       } else {
         wheelVelocityRef.current *= 0.82;
       }
@@ -638,17 +637,16 @@ export default function Robo3DCanvas({
       const robotPos = simPath.getPointAt(p);
       robotRoot.position.set(robotPos.x, 0, robotPos.z);
 
-      // 4. Realistic steering yaw aligned with path curve, blending straight at explosion
+      // 4. Realistic steering yaw aligned with path curve at all times
       const tangent = simPath.getTangentAt(p);
       const pathHeading = Math.atan2(tangent.x, tangent.z);
-      const finalYaw = THREE.MathUtils.lerp(pathHeading, 0, Math.pow(orb.explode, 1.4));
-      robotRoot.rotation.y = finalYaw;
+      robotRoot.rotation.y = pathHeading;
       robotRoot.updateMatrixWorld(true);
 
       // 5. Dynamic camera tracking following the moving robot
       const targetCenter = new THREE.Vector3(
         robotPos.x,
-        robotPos.y + 15 + orb.explode * 28,
+        robotPos.y + 15,
         robotPos.z
       );
 
@@ -671,15 +669,6 @@ export default function Robo3DCanvas({
         if (w > 0 && h > 0) {
           const raw = curStep.anchor;
           const v = new THREE.Vector3(raw.x, raw.y, raw.z);
-
-          // Apply vertical offsets for exploded view
-          if (curStep.partGroup === 'cargo' && cargoBoxRef.current) {
-            v.y += (cargoBoxRef.current.position.y - 47);
-          } else if (curStep.partGroup === 'risers' && risersRef.current) {
-            v.y += risersRef.current.position.y;
-          } else if (curStep.partGroup === 'deck' && deckRef.current) {
-            v.y += (deckRef.current.position.y - (-18));
-          }
 
           if (beaconGroupRef.current) {
             beaconGroupRef.current.position.copy(v);
@@ -801,7 +790,6 @@ export default function Robo3DCanvas({
     orb.targetTheta = step.theta;
     orb.targetPhi = step.phi;
     orb.targetRadius = step.radius;
-    orb.targetExplode = step.explode || 0;
   }, [activeStep, steps, freeOrbit]);
 
   // Render Modes

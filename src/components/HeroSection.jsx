@@ -113,18 +113,18 @@ export default function HeroSection({
     },
     {
       label: '06',
-      title: 'EXPLODED ARMOR BOM',
-      shortTitle: 'MODULAR ASSEMBLY',
-      desc: 'Technical exploded breakdown of all modular sub-assemblies along axes',
-      spec: 'MODULAR CAD BOM // ZERO-COLLISION EXPLODE',
-      partGroup: 'cargo',
-      anchor: { x: 60, y: 55, z: 90 },
+      title: 'AUTONOMOUS DOCKING',
+      shortTitle: 'DOCKING DATUM',
+      desc: 'Precision laser-guided alignment into destination docking bay with zero-drift positioning',
+      spec: '±2.5mm PRECISION // RETURN-TO-DOCK LOCK',
+      partGroup: 'root',
+      anchor: { x: 50, y: 55, z: 120 },
       theta: 0.85,
       phi: 1.10,
-      radius: 820,
-      explode: 1,
+      radius: 780,
+      explode: 0,
       p: 0.93,
-      pose: { x: 0, y: 1600, theta: 0, motion: 'EXPLODED_BOM' }
+      pose: { x: 0, y: 1600, theta: 0, motion: 'DOCKING_LOCKED' }
     },
   ];
 
