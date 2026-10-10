@@ -247,7 +247,10 @@ export default function HeroSection({
         </div>
 
         {/* Scroll Cue */}
-        <div className="hero-scroll-cue">
+        <div
+          className="hero-scroll-cue"
+          style={{ opacity: scrollProgress > 0.05 ? 0 : 1, transition: 'opacity 0.35s ease', pointerEvents: 'none' }}
+        >
           <ChevronDown size={18} className="prompt-chevron" />
         </div>
       </div>

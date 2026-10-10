@@ -18,6 +18,7 @@ export default function Robo3DCanvas({
 
   // Continuous simulation progress & wheel physics
   const simProgressRef = useRef(0);
+  const robotPathProgressRef = useRef(0);
   const wheelVelocityRef = useRef(0);
 
   // References
@@ -81,13 +82,22 @@ export default function Robo3DCanvas({
     sceneRef.current = scene;
     const bgDark = new THREE.Color(0x000000);
     scene.background = bgDark;
-    scene.fog = new THREE.Fog(0x000000, 2200, 7500);
+    scene.fog = new THREE.Fog(0x000000, 5500, 14000);
 
-    // 2. Camera
-    const camera = new THREE.PerspectiveCamera(38, width / height, 1, 9000);
+    // 2. Camera: Initial Wide Overview Vista showing entire arena circuit
+    const camera = new THREE.PerspectiveCamera(38, width / height, 1, 16000);
     cameraRef.current = camera;
-    camera.position.set(450, 400, 550);
-    camera.lookAt(0, 20, 0);
+
+    const initArenaCenter = new THREE.Vector3(0, 15, -100);
+    const initOverviewR = 3900;
+    const initOverviewPhi = 45 * Math.PI / 180;
+    const initOverviewTheta = -20 * Math.PI / 180;
+    camera.position.set(
+      initArenaCenter.x + initOverviewR * Math.sin(initOverviewPhi) * Math.sin(initOverviewTheta),
+      initArenaCenter.y + initOverviewR * Math.cos(initOverviewPhi),
+      initArenaCenter.z + initOverviewR * Math.sin(initOverviewPhi) * Math.cos(initOverviewTheta)
+    );
+    camera.lookAt(initArenaCenter);
 
     // 3. Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -145,48 +155,132 @@ export default function Robo3DCanvas({
     ];
     const simPath = new THREE.CatmullRomCurve3(waypoints, false, 'catmullrom', 0.5);
 
+    // Dual Glowing Tactical AGV Track: Illuminated floor runway ribbon + dashed centerline
+    const ribbonSamples = simPath.getPoints(360);
+    const ribbonPositions = [];
+    const ribbonIndices = [];
+    const ribbonWidth = 24;
+
+    for (let i = 0; i < ribbonSamples.length; i++) {
+      const pt = ribbonSamples[i];
+      const t = i / (ribbonSamples.length - 1);
+      const tangent = simPath.getTangentAt(Math.max(0.0001, Math.min(0.9999, t))).normalize();
+      const nx = -tangent.z;
+      const nz = tangent.x;
+
+      ribbonPositions.push(
+        pt.x - nx * (ribbonWidth * 0.5), -67.3, pt.z - nz * (ribbonWidth * 0.5),
+        pt.x + nx * (ribbonWidth * 0.5), -67.3, pt.z + nz * (ribbonWidth * 0.5)
+      );
+
+      if (i < ribbonSamples.length - 1) {
+        const v0 = i * 2;
+        const v1 = i * 2 + 1;
+        const v2 = (i + 1) * 2;
+        const v3 = (i + 1) * 2 + 1;
+        ribbonIndices.push(v0, v1, v2, v1, v3, v2);
+      }
+    }
+
+    const ribbonGeo = new THREE.BufferGeometry();
+    ribbonGeo.setAttribute('position', new THREE.Float32BufferAttribute(ribbonPositions, 3));
+    ribbonGeo.setIndex(ribbonIndices);
+    ribbonGeo.computeVertexNormals();
+
+    const ribbonMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.25,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const ribbonMesh = new THREE.Mesh(ribbonGeo, ribbonMat);
+    scene.add(ribbonMesh);
+
     // Glowing Tactical Path Ribbon on the Floor Grid
-    const pathPoints = simPath.getPoints(360).map((pt) => new THREE.Vector3(pt.x, -67.0, pt.z));
+    const pathPoints = ribbonSamples.map((pt) => new THREE.Vector3(pt.x, -67.0, pt.z));
     const pathGeo = new THREE.BufferGeometry().setFromPoints(pathPoints);
     const pathMat = new THREE.LineDashedMaterial({
       color: 0x00f0ff,
       dashSize: 32,
       gapSize: 18,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.85,
     });
     const pathLine = new THREE.Line(pathGeo, pathMat);
     pathLine.computeLineDistances();
     scene.add(pathLine);
 
-    // Tactical Waypoint Floor Rings along the Trajectory
-    waypoints.forEach((wp, idx) => {
+    // Tactical Waypoint Stations along the Trajectory
+    // 00 Start Depot Launchpad (Where the 3D model is parked)
+    const depotRing = new THREE.Mesh(
+      new THREE.RingGeometry(38, 42, 36),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.75 })
+    );
+    depotRing.rotation.x = -Math.PI / 2;
+    depotRing.position.set(waypoints[0].x, -67.2, waypoints[0].z);
+    scene.add(depotRing);
+
+    const depotOuterRing = new THREE.Mesh(
+      new THREE.RingGeometry(70, 73, 48),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.45 })
+    );
+    depotOuterRing.rotation.x = -Math.PI / 2;
+    depotOuterRing.position.set(waypoints[0].x, -67.2, waypoints[0].z);
+    scene.add(depotOuterRing);
+
+    const depotGlow = new THREE.Mesh(
+      new THREE.CircleGeometry(70, 36),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.12, depthWrite: false })
+    );
+    depotGlow.rotation.x = -Math.PI / 2;
+    depotGlow.position.set(waypoints[0].x, -67.35, waypoints[0].z);
+    scene.add(depotGlow);
+
+    // Waypoints 01 to 05 (Aisle Transit Stations)
+    for (let idx = 1; idx < 6; idx++) {
+      const wp = waypoints[idx];
       const wpRing = new THREE.Mesh(
-        new THREE.RingGeometry(20, 22.5, 32),
-        new THREE.MeshBasicMaterial({
-          color: idx === 6 ? 0x22c55e : (idx === 0 ? 0xffffff : 0x00f0ff),
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.45,
-        })
+        new THREE.RingGeometry(22, 25, 32),
+        new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
       );
       wpRing.rotation.x = -Math.PI / 2;
       wpRing.position.set(wp.x, -67.2, wp.z);
       scene.add(wpRing);
 
       const wpDot = new THREE.Mesh(
-        new THREE.CircleGeometry(3, 16),
-        new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.65,
-        })
+        new THREE.CircleGeometry(4, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
       );
       wpDot.rotation.x = -Math.PI / 2;
       wpDot.position.set(wp.x, -67.1, wp.z);
       scene.add(wpDot);
-    });
+    }
+
+    // 06 Destination Dock Station
+    const dockRing = new THREE.Mesh(
+      new THREE.RingGeometry(38, 42, 36),
+      new THREE.MeshBasicMaterial({ color: 0x22c55e, side: THREE.DoubleSide, transparent: true, opacity: 0.75 })
+    );
+    dockRing.rotation.x = -Math.PI / 2;
+    dockRing.position.set(waypoints[6].x, -67.2, waypoints[6].z);
+    scene.add(dockRing);
+
+    const dockOuterRing = new THREE.Mesh(
+      new THREE.RingGeometry(70, 73, 48),
+      new THREE.MeshBasicMaterial({ color: 0x22c55e, side: THREE.DoubleSide, transparent: true, opacity: 0.45 })
+    );
+    dockOuterRing.rotation.x = -Math.PI / 2;
+    dockOuterRing.position.set(waypoints[6].x, -67.2, waypoints[6].z);
+    scene.add(dockOuterRing);
+
+    const dockGlow = new THREE.Mesh(
+      new THREE.CircleGeometry(70, 36),
+      new THREE.MeshBasicMaterial({ color: 0x22c55e, side: THREE.DoubleSide, transparent: true, opacity: 0.12, depthWrite: false })
+    );
+    dockGlow.rotation.x = -Math.PI / 2;
+    dockGlow.position.set(waypoints[6].x, -67.35, waypoints[6].z);
+    scene.add(dockGlow);
 
     // 6. Materials: Stark Industries Titanium & Hot-Rod Red
     const materials = {
@@ -612,15 +706,24 @@ export default function Robo3DCanvas({
       }
 
       // 1. Simulation progress along trajectory driven by scroll
-      const targetProgress = Math.max(0, Math.min(1, scrollProgressRef.current || 0));
-      const prevProgress = simProgressRef.current;
-      simProgressRef.current += (targetProgress - simProgressRef.current) * 0.08;
-      const progressDelta = simProgressRef.current - prevProgress;
+      const rawScroll = Math.max(0, Math.min(1, scrollProgressRef.current || 0));
+      // Smoothly interpolate scroll progress for silky physics
+      simProgressRef.current += (rawScroll - simProgressRef.current) * 0.08;
+      const s = simProgressRef.current;
 
-      // 2. Wheels physically rotate when scrolling (forward on scroll down, reverse on scroll up, stopping when idle)
-      // Scaled to 185 for accurate rolling speed across the 6.2m arena track
-      if (Math.abs(progressDelta) > 0.00002) {
-        wheelVelocityRef.current = progressDelta * 185;
+      // Camera Zoom Factor: smooth transition from wide overview (s = 0) to close-up tracking (s >= 0.16)
+      const zoomBlend = freeOrbit ? 1.0 : THREE.MathUtils.smoothstep(s, 0.0, 0.16);
+
+      // Path Movement: robot stays at start depot during initial camera zoom-in (s in [0, 0.05])
+      // then accelerates and travels smoothly along the path (s in [0.05, 1.0])
+      const pathP = s <= 0.05 ? 0 : Math.min(1, (s - 0.05) / 0.95);
+      const prevPathP = robotPathProgressRef.current || 0;
+      robotPathProgressRef.current = pathP;
+      const pathDelta = pathP - prevPathP;
+
+      // 2. Wheels physically rotate when the robot is moving along the path
+      if (Math.abs(pathDelta) > 0.00002) {
+        wheelVelocityRef.current = pathDelta * 195;
       } else {
         wheelVelocityRef.current *= 0.82;
       }
@@ -632,27 +735,34 @@ export default function Robo3DCanvas({
       }
 
       // 3. Drive robot along Catmull-Rom simulation path
-      const p = Math.max(0, Math.min(1, simProgressRef.current));
-      const robotPos = simPath.getPointAt(p);
+      const robotPos = simPath.getPointAt(pathP);
       robotRoot.position.set(robotPos.x, 0, robotPos.z);
 
       // 4. Realistic steering yaw aligned with path curve at all times
-      const tangent = simPath.getTangentAt(p);
+      const tangent = simPath.getTangentAt(pathP);
       const pathHeading = Math.atan2(tangent.x, tangent.z);
       robotRoot.rotation.y = pathHeading;
       robotRoot.updateMatrixWorld(true);
 
-      // 5. Dynamic camera tracking following the moving robot
-      const targetCenter = new THREE.Vector3(
-        robotPos.x,
-        robotPos.y + 15,
-        robotPos.z
-      );
+      // 5. Cinematic Camera:
+      // In overview (zoomBlend = 0): camera is at overview coordinates looking at arena center
+      // On scroll (zoomBlend -> 1): camera dives down, smoothly centering on and tracking the robot
+      const overviewCenter = new THREE.Vector3(0, 15, -100);
+      const robotCenter = new THREE.Vector3(robotPos.x, robotPos.y + 15, robotPos.z);
+      const targetCenter = new THREE.Vector3().lerpVectors(overviewCenter, robotCenter, zoomBlend);
 
-      const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
-      const cx = targetCenter.x + orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
-      const cy = targetCenter.y + orb.radius * Math.cos(clampedPhi);
-      const cz = targetCenter.z + orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
+      const overviewRadius = 3900;
+      const overviewPhi = 45 * Math.PI / 180;   // 0.785 rad
+      const overviewTheta = -20 * Math.PI / 180; // -0.349 rad
+
+      const effectiveRadius = THREE.MathUtils.lerp(overviewRadius, orb.radius, zoomBlend);
+      const effectivePhi = THREE.MathUtils.lerp(overviewPhi, orb.phi, zoomBlend);
+      const effectiveTheta = THREE.MathUtils.lerp(overviewTheta, orb.theta, zoomBlend);
+
+      const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, effectivePhi));
+      const cx = targetCenter.x + effectiveRadius * Math.sin(clampedPhi) * Math.sin(effectiveTheta);
+      const cy = targetCenter.y + effectiveRadius * Math.cos(clampedPhi);
+      const cz = targetCenter.z + effectiveRadius * Math.sin(clampedPhi) * Math.cos(effectiveTheta);
 
       camera.position.set(cx, cy, cz);
       camera.lookAt(targetCenter);
@@ -746,8 +856,10 @@ export default function Robo3DCanvas({
               // Leader line: Anchor -> Elbow -> Underline shelf
               linePathRef.current.setAttribute('d', `M ${ax} ${ay} L ${ex} ${ey} L ${sx} ${ey}`);
               cardRef.current.style.transform = `translate3d(${cardX}px, ${cardY}px, 0)`;
-              cardRef.current.style.opacity = '1';
-              if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = '1';
+              // Smoothly fade in callout card as camera zooms in onto the model
+              const cardOpacity = zoomBlend > 0.4 ? Math.min(1, (zoomBlend - 0.4) / 0.4) : 0;
+              cardRef.current.style.opacity = `${cardOpacity}`;
+              if (calloutSvgRef.current) calloutSvgRef.current.style.opacity = `${cardOpacity}`;
             }
           } else {
             if (cardRef.current) cardRef.current.style.opacity = '0';
