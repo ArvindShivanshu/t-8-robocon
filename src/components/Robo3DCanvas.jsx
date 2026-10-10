@@ -1231,23 +1231,36 @@ export default function Robo3DCanvas({
             const ax = (v.x * 0.5 + 0.5) * w;
             const ay = (-v.y * 0.5 + 0.5) * h;
 
-            const cardW = 230;
-            const cardH = 88;
+            const isMobile = w < 768;
+            const cardW = isMobile ? Math.min(210, w - 28) : 230;
+            const cardH = isMobile ? 80 : 88;
 
             const isLeft = ax > (w > 992 ? w - 280 : w) * 0.45;
             const dirX = isLeft ? -1 : 1;
 
-            const elbowDistX = 40;
-            const elbowDistY = ay > h * 0.5 ? -38 : 38;
+            const elbowDistX = isMobile ? 24 : 40;
+            const elbowDistY = ay > h * 0.5 ? (isMobile ? -28 : -38) : (isMobile ? 28 : 38);
 
             let ey = ay + elbowDistY;
             // Prevent card from clipping top or bottom screen boundaries
-            ey = Math.max(cardH + 40, Math.min(h - 40, ey));
-            const ex = ax + dirX * elbowDistX;
-            const sx = ex + dirX * cardW;
+            ey = Math.max(cardH + 75, Math.min(h - 85, ey));
+            let ex = ax + dirX * elbowDistX;
+            let sx = ex + dirX * cardW;
 
             // Card rests directly on top of the horizontal shelf line
-            const cardX = isLeft ? sx : ex;
+            let cardX = isLeft ? sx : ex;
+            // Responsive mobile clamping: card stays strictly inside screen margins
+            if (cardX < 12) {
+              const shift = 12 - cardX;
+              cardX += shift;
+              sx += shift;
+              ex += shift;
+            } else if (cardX + cardW > w - 12) {
+              const shift = (cardX + cardW) - (w - 12);
+              cardX -= shift;
+              sx -= shift;
+              ex -= shift;
+            }
             const cardY = ey - cardH - 2;
 
             if (linePathRef.current && reticleDotRef.current && cardRef.current) {

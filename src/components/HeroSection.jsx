@@ -7,6 +7,7 @@ import {
   Zap
 } from 'lucide-react';
 import Robo3DCanvas from './Robo3DCanvas';
+import ParticleText from './ParticleText';
 import './HeroSection.css';
 
 export default function HeroSection({ 
@@ -198,6 +199,50 @@ export default function HeroSection({
         {/* Stark Atmospheric Energy Glows */}
         <div className="hero-arc-ambient" />
         <div className="hero-crimson-ambient" />
+
+        {/* Hero Particle Title Overlay - Vanishes dynamically as user scrolls */}
+        <div 
+          className="hero-particle-title-wrap"
+          style={{
+            opacity: scrollProgress > 0.05 ? 0 : 1,
+            pointerEvents: scrollProgress > 0.05 ? 'none' : 'auto',
+            transform: `translate(-50%, ${-scrollProgress * 450}px)`,
+            transition: 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          <div className="hero-particle-kicker">
+            <span className="kicker-pulse-dot" />
+            <span>ROBOCON 2026 // PROBLEM STATEMENT 08</span>
+          </div>
+          <div className="hero-particle-text-container">
+            <ParticleText
+              text="T-8 ROBOCON"
+              particleSize={2.2}
+              density={3.2}
+              color="#ffffff"
+              highlightColor="#00f0ff"
+              scatter={160}
+              gatherDuration={1500}
+              stagger={380}
+              idleDrift={1.2}
+              curveLoop={true}
+              enableHover={false}
+              pointerRepel={0}
+              repelRadius={0}
+              trigger="mount"
+              fontSize="clamp(2.5rem, 8vw, 6.2rem)"
+              fontWeight={900}
+              glow={true}
+              scrollProgress={scrollProgress}
+            />
+          </div>
+          <p className="hero-particle-subtitle">
+            Holonomic 4-Wheel 45° Mobile Platform • 5kg High-Stowage AGV Twin
+          </p>
+          <div className="hero-particle-scroll-prompt">
+            <span className="scroll-prompt-text">SCROLL TO DIVE INTO DIGITAL TWIN</span>
+          </div>
+        </div>
 
         {/* 3D CAD Canvas */}
         <Robo3DCanvas 

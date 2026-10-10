@@ -244,3 +244,131 @@
     bottom: 1.5rem;
   }
 }
+
+/* Hero Particle Title Overlay */
+.hero-particle-title-wrap {
+  position: absolute;
+  top: 13%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  pointer-events: none;
+  text-align: center;
+}
+
+.hero-particle-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #00f0ff;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.4rem;
+  backdrop-filter: blur(8px);
+}
+
+.kicker-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+  animation: reticlePulse 2s infinite ease-out;
+}
+
+.hero-particle-text-container {
+  width: 100%;
+  height: 160px;
+  max-height: 22vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-particle-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  margin-top: 0.4rem;
+  max-width: 640px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+}
+
+.hero-particle-scroll-prompt {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  font-size: 0.64rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .hero-particle-title-wrap {
+    top: 9%;
+    width: 95%;
+  }
+  .hero-particle-text-container {
+    height: 120px;
+  }
+  .hero-particle-kicker {
+    font-size: 0.62rem;
+    padding: 0.25rem 0.65rem;
+    letter-spacing: 0.08em;
+  }
+  .hero-particle-subtitle {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .hero-particle-scroll-prompt {
+    display: none;
+  }
+  .hero-mode-dock {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 1.25rem;
+    padding: 0.25rem 0.4rem;
+    gap: 0.25rem;
+    max-width: 95%;
+    overflow-x: auto;
+  }
+  .hud-mode-pill {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.68rem;
+  }
+  .cad-callout-card {
+    width: 210px;
+    padding: 0.65rem 0.75rem;
+  }
+  .callout-step-title {
+    font-size: 0.72rem;
+  }
+  .callout-step-desc {
+    font-size: 0.65rem;
+  }
+  .callout-spec-badge {
+    font-size: 0.55rem;
+  }
+}
+

@@ -224,3 +224,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .subsystems-section-root {
+    padding: 4.5rem 0 4rem 0;
+  }
+  .subsystem-tabs-row {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .subsystem-tab-btn {
+    padding: 0.85rem 1rem;
+  }
+  .subsystem-detail-card {
+    padding: 1.25rem;
+    gap: 1.5rem;
+  }
+  .detail-header-block {
+    padding-bottom: 1.25rem;
+  }
+  .specs-data-card {
+    padding: 1rem;
+  }
+}

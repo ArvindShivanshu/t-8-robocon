@@ -153,3 +153,26 @@
   color: var(--text-secondary);
   line-height: 1.6;
 }
+
+@media (max-width: 640px) {
+  .specs-section-root {
+    padding: 4.5rem 0 4rem 0;
+  }
+  .specs-matrix-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .specs-cat-card {
+    padding: 1.25rem;
+  }
+  .faq-title {
+    font-size: 1.15rem;
+  }
+  .faq-q-text {
+    font-size: 0.88rem;
+  }
+  .faq-answer-text {
+    font-size: 0.82rem;
+  }
+}
