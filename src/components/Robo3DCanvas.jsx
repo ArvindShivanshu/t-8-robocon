@@ -35,8 +35,9 @@ export default function Robo3DCanvas({
   const dimsGroupRef = useRef(null);
   const arcCoreRef = useRef(null);
   const materialsRef = useRef({});
-  const highlightsRef = useRef({ chassis: 0, motors: 0, deck: 0, risers: 0, cargo: 0, root: 0 });
+  const highlightsRef = useRef({ chassis: 0, motors: 0, deck: 0, risers: 0, cargo: 0, docking: 0, root: 0 });
   const edgeMatsRef = useRef({});
+  const wireMatsRef = useRef({});
 
   // Spherical camera orbit state
   const orbitRef = useRef({
@@ -352,6 +353,21 @@ export default function Robo3DCanvas({
         emissive: 0xe62429,
         emissiveIntensity: 0.8,
       }),
+      dockingHousing: new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        metalness: 0.88,
+        roughness: 0.2,
+      }),
+      dockingLaser: new THREE.MeshStandardMaterial({
+        color: 0x22c55e,
+        emissive: 0x22c55e,
+        emissiveIntensity: 1.5,
+      }),
+      dockingTarget: new THREE.MeshStandardMaterial({
+        color: 0x475569,
+        metalness: 0.82,
+        roughness: 0.28,
+      }),
       dimLineMat: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
         linewidth: 2,
@@ -373,7 +389,7 @@ export default function Robo3DCanvas({
     contactRing.position.y = -67.2;
     robotRoot.add(contactRing);
 
-    // --- High-Tech CAD Component Edge Contours (Glowing Stark Cyan) ---
+    // --- High-Tech CAD Component Edge Contours (Glowing Stark Cyan & Emerald Docking) ---
     const edgeMats = {
       chassis: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
@@ -381,6 +397,9 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
       motors: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
@@ -388,6 +407,9 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
       deck: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
@@ -395,6 +417,9 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
       risers: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
@@ -402,6 +427,9 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
       cargo: new THREE.LineBasicMaterial({
         color: 0x00f0ff,
@@ -409,6 +437,9 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
       docking: new THREE.LineBasicMaterial({
         color: 0x22c55e,
@@ -416,17 +447,123 @@ export default function Robo3DCanvas({
         opacity: 0,
         depthTest: true,
         depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
+      }),
+      root: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
       }),
     };
     edgeMatsRef.current = edgeMats;
 
-    const addEdgeWire = (mesh, groupKey, threshold = 20) => {
-      if (!mesh || !mesh.geometry) return;
-      const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
-      const wire = new THREE.LineSegments(edges, edgeMats[groupKey]);
-      wire.renderOrder = 10;
-      mesh.add(wire);
+    // --- Holographic CAD Wireframe Lattice Shells for High-Contrast Visibility ---
+    const wireMats = {
+      chassis: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      motors: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      deck: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      risers: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      cargo: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      docking: new THREE.MeshBasicMaterial({
+        color: 0x22c55e,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
+      root: new THREE.MeshBasicMaterial({
+        color: 0x00f0ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      }),
     };
+    wireMatsRef.current = wireMats;
+
+    // Dual-Layer CAD Highlight: Edges + Wireframe Lattice
+    const addCadHighlight = (mesh, groupKey, threshold = 20) => {
+      if (!mesh || !mesh.geometry) return;
+      // 1. Sharp silhouette & feature edges with negative polygon offset
+      const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
+      const edgeLine = new THREE.LineSegments(edges, edgeMats[groupKey] || edgeMats.root);
+      edgeLine.renderOrder = 20;
+      mesh.add(edgeLine);
+
+      // 2. Holographic CAD wireframe lattice shell scaled 1.003
+      const wireMesh = new THREE.Mesh(mesh.geometry, wireMats[groupKey] || wireMats.root);
+      wireMesh.scale.set(1.003, 1.003, 1.003);
+      wireMesh.renderOrder = 15;
+      mesh.add(wireMesh);
+    };
+
+    // Alias for existing call sites
+    const addEdgeWire = addCadHighlight;
 
     // --- Base Chassis Frame (Titanium Alloy) ---
     const chassisGroup = new THREE.Group();
@@ -720,6 +857,63 @@ export default function Robo3DCanvas({
     addEdgeWire(payloadPkg, 'cargo');
     cargoBinGroup.add(payloadPkg);
 
+    // --- Autonomous Docking Datum Module (Laser Alignment & Bay Lock) ---
+    const dockingGroup = new THREE.Group();
+    dockingGroup.position.set(0, -30, 124);
+    robotRoot.add(dockingGroup);
+
+    // CNC-machined titanium docking receiver bracket mounted on front rail
+    const datumBracket = new THREE.Mesh(
+      new THREE.BoxGeometry(84, 18, 14),
+      materials.dockingHousing
+    );
+    datumBracket.position.set(0, 4, 7);
+    datumBracket.castShadow = true;
+    addCadHighlight(datumBracket, 'docking');
+    dockingGroup.add(datumBracket);
+
+    // Left optical alignment target lens
+    const leftTarget = new THREE.Mesh(
+      new THREE.CylinderGeometry(5.5, 5.5, 6, 16),
+      materials.dockingTarget
+    );
+    leftTarget.rotation.x = Math.PI / 2;
+    leftTarget.position.set(-26, 4, 14);
+    addCadHighlight(leftTarget, 'docking');
+    dockingGroup.add(leftTarget);
+
+    // Right optical alignment target lens
+    const rightTarget = new THREE.Mesh(
+      new THREE.CylinderGeometry(5.5, 5.5, 6, 16),
+      materials.dockingTarget
+    );
+    rightTarget.rotation.x = Math.PI / 2;
+    rightTarget.position.set(26, 4, 14);
+    addCadHighlight(rightTarget, 'docking');
+    dockingGroup.add(rightTarget);
+
+    // Central precision laser datum beacon emitter
+    const laserCore = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.5, 4.5, 8, 20),
+      materials.dockingLaser
+    );
+    laserCore.rotation.x = Math.PI / 2;
+    laserCore.position.set(0, 4, 15);
+    addCadHighlight(laserCore, 'docking');
+    dockingGroup.add(laserCore);
+
+    // Dual forward-facing docking lock guide pins
+    [-14, 14].forEach((xOff) => {
+      const pin = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.5, 2.5, 14, 12),
+        materials.chassisTitanium
+      );
+      pin.rotation.x = Math.PI / 2;
+      pin.position.set(xOff, 4, 18);
+      addCadHighlight(pin, 'docking');
+      dockingGroup.add(pin);
+    });
+
     // --- 3D Dimension Annotation Lines (`↔ 260 mm`) ---
     const dimsGroup = new THREE.Group();
     dimsGroup.visible = showDims;
@@ -876,6 +1070,7 @@ export default function Robo3DCanvas({
         deck: (activePart === 'deck' && cardOpacity > 0.05) ? cardOpacity : 0,
         risers: (activePart === 'risers' && cardOpacity > 0.05) ? cardOpacity : 0,
         cargo: (activePart === 'cargo' && cardOpacity > 0.05) ? cardOpacity : 0,
+        docking: (activePart === 'docking' && cardOpacity > 0.05) ? cardOpacity : 0,
         root: (activePart === 'root' && cardOpacity > 0.05) ? cardOpacity : 0,
       };
 
@@ -885,46 +1080,42 @@ export default function Robo3DCanvas({
       hl.deck += (targetHighlights.deck - hl.deck) * 0.16;
       hl.risers += (targetHighlights.risers - hl.risers) * 0.16;
       hl.cargo += (targetHighlights.cargo - hl.cargo) * 0.16;
+      hl.docking += (targetHighlights.docking - hl.docking) * 0.16;
       hl.root += (targetHighlights.root - hl.root) * 0.16;
 
       const hlPulse = 0.70 + 0.30 * Math.sin(elapsed * 5.5);
 
-      // Dynamic Edge Wireframe Opacities for Razor-Sharp CAD Highlighting
-      if (edgeMatsRef.current.cargo) {
-        edgeMatsRef.current.chassis.opacity = hl.chassis * hlPulse;
-        edgeMatsRef.current.motors.opacity = hl.motors * hlPulse;
-        edgeMatsRef.current.deck.opacity = hl.deck * hlPulse;
-        edgeMatsRef.current.risers.opacity = hl.risers * hlPulse;
-        edgeMatsRef.current.cargo.opacity = hl.cargo * hlPulse;
-        edgeMatsRef.current.docking.opacity = (curStepIdx === 6 ? hl.root : 0) * hlPulse;
-      }
+      // Dynamic Edge & Wireframe Lattice Opacities for Razor-Sharp CAD Highlighting
+      const highlightGroups = ['chassis', 'motors', 'deck', 'risers', 'cargo', 'docking'];
+      highlightGroups.forEach((g) => {
+        const val = hl[g] * hlPulse;
+        if (edgeMatsRef.current[g]) edgeMatsRef.current[g].opacity = val;
+        if (wireMatsRef.current[g]) wireMatsRef.current[g].opacity = val * 0.85;
+      });
+      // Global digital twin holographic wireframe on step 00
+      if (edgeMatsRef.current.root) edgeMatsRef.current.root.opacity = hl.root * hlPulse * 0.45;
+      if (wireMatsRef.current.root) wireMatsRef.current.root.opacity = hl.root * hlPulse * 0.35;
 
-      // Surface Emissive Highlighting: High-contrast Electric Cyan for instant visibility
-      // Chassis frame rails & 45° corner gussets
+      // Surface Emissive Highlighting: High-contrast Electric Cyan & Emerald Green for instant visibility
+      // 1. Chassis frame rails & 45° corner gussets
       if (hl.chassis > 0.01) {
         materials.chassisTitanium.emissive.setHex(0x00f0ff);
-        materials.chassisTitanium.emissiveIntensity = hl.chassis * hlPulse * 0.85;
-      } else if (hl.root > 0.01 && curStepIdx === 6) {
-        materials.chassisTitanium.emissive.setHex(0x22c55e); // Green lock-on dock highlight
-        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.75;
-      } else if (hl.root > 0.01) {
-        materials.chassisTitanium.emissive.setHex(0x00f0ff); // Step 00 digital twin highlight
-        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.35;
+        materials.chassisTitanium.emissiveIntensity = hl.chassis * hlPulse * 1.5;
       } else {
         materials.chassisTitanium.emissive.setHex(0x000000);
         materials.chassisTitanium.emissiveIntensity = 0;
       }
 
-      // Motors & omni drivetrain (4x planetary motors + 4x 45° omni wheels)
+      // 2. Motors & omni drivetrain (4x planetary motors + 4x 45° omni wheels)
       if (hl.motors > 0.01) {
         materials.motorBody.emissive.setHex(0x00f0ff);
-        materials.motorBody.emissiveIntensity = hl.motors * hlPulse * 0.95;
+        materials.motorBody.emissiveIntensity = hl.motors * hlPulse * 1.6;
         materials.omniHub.emissive.setHex(0x00f0ff);
-        materials.omniHub.emissiveIntensity = hl.motors * hlPulse * 0.95;
+        materials.omniHub.emissiveIntensity = hl.motors * hlPulse * 1.6;
         materials.motorShaft.emissive.setHex(0x00f0ff);
-        materials.motorShaft.emissiveIntensity = hl.motors * hlPulse * 0.85;
+        materials.motorShaft.emissiveIntensity = hl.motors * hlPulse * 1.5;
         materials.omniRoller.emissive.setHex(0x00b4d8);
-        materials.omniRoller.emissiveIntensity = hl.motors * hlPulse * 0.45;
+        materials.omniRoller.emissiveIntensity = hl.motors * hlPulse * 1.0;
       } else {
         materials.motorBody.emissive.setHex(0x000000);
         materials.motorBody.emissiveIntensity = 0;
@@ -936,14 +1127,14 @@ export default function Robo3DCanvas({
         materials.omniRoller.emissiveIntensity = 0;
       }
 
-      // Carbon base deck, PCB board & electronics odometry
+      // 3. Carbon base deck, PCB board & electronics odometry
       if (hl.deck > 0.01) {
         materials.deckCarbon.emissive.setHex(0x00f0ff);
-        materials.deckCarbon.emissiveIntensity = hl.deck * hlPulse * 0.65;
+        materials.deckCarbon.emissiveIntensity = hl.deck * hlPulse * 1.0;
         materials.pcbBoard.emissive.setHex(0x00f0ff);
-        materials.pcbBoard.emissiveIntensity = hl.deck * hlPulse * 1.15;
+        materials.pcbBoard.emissiveIntensity = hl.deck * hlPulse * 1.8;
         materials.pcbChip.emissive.setHex(0x00f0ff);
-        materials.pcbChip.emissiveIntensity = hl.deck * hlPulse * 0.85;
+        materials.pcbChip.emissiveIntensity = hl.deck * hlPulse * 1.5;
       } else {
         materials.deckCarbon.emissive.setHex(0x000000);
         materials.deckCarbon.emissiveIntensity = 0;
@@ -953,21 +1144,21 @@ export default function Robo3DCanvas({
         materials.pcbChip.emissiveIntensity = 0;
       }
 
-      // 4x Load-bearing Titanium Riser Columns
+      // 4. 4x Load-bearing Titanium Riser Columns
       if (hl.risers > 0.01) {
         materials.riserColumn.emissive.setHex(0x00f0ff);
-        materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.45;
+        materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.8;
       } else {
         materials.riserColumn.emissive.setHex(0x000000);
         materials.riserColumn.emissiveIntensity = 0;
       }
 
-      // Cargo containment bin (Crimson) & 5kg Vibranium payload (Gold)
+      // 5. Cargo containment bin (Crimson) & 5kg Vibranium payload (Gold)
       if (hl.cargo > 0.01) {
         materials.cargoBinStark.emissive.setHex(0x00f0ff);
-        materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 0.55;
+        materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 1.6;
         materials.cargoPayloadGold.emissive.setHex(0x00f0ff);
-        materials.cargoPayloadGold.emissiveIntensity = hl.cargo * hlPulse * 0.65;
+        materials.cargoPayloadGold.emissiveIntensity = hl.cargo * hlPulse * 1.8;
       } else {
         materials.cargoBinStark.emissive.setHex(0x000000);
         materials.cargoBinStark.emissiveIntensity = 0;
@@ -975,8 +1166,34 @@ export default function Robo3DCanvas({
         materials.cargoPayloadGold.emissiveIntensity = 0;
       }
 
+      // 6. Autonomous Docking Datum Module & Front Alignment Rail
+      if (hl.docking > 0.01) {
+        materials.dockingHousing.emissive.setHex(0x22c55e);
+        materials.dockingHousing.emissiveIntensity = hl.docking * hlPulse * 2.0;
+        materials.dockingLaser.emissive.setHex(0x00ff88);
+        materials.dockingLaser.emissiveIntensity = hl.docking * hlPulse * 2.8;
+        materials.dockingTarget.emissive.setHex(0x22c55e);
+        materials.dockingTarget.emissiveIntensity = hl.docking * hlPulse * 2.2;
+      } else {
+        materials.dockingHousing.emissive.setHex(0x000000);
+        materials.dockingHousing.emissiveIntensity = 0;
+        materials.dockingLaser.emissive.setHex(0x22c55e);
+        materials.dockingLaser.emissiveIntensity = 1.2;
+        materials.dockingTarget.emissive.setHex(0x000000);
+        materials.dockingTarget.emissiveIntensity = 0;
+      }
+
+      // Step 00 Digital Twin Arc Core Boost
+      if (hl.root > 0.01) {
+        materials.arcReactorGlow.emissiveIntensity = 1.2 + hl.root * hlPulse * 1.8;
+      }
+
       if (beaconGroupRef.current) {
         beaconGroupRef.current.visible = cardOpacity > 0.05;
+        const isDocking = activePart === 'docking';
+        const beaconColor = isDocking ? 0x22c55e : 0x00f0ff;
+        beaconPulseRing.material.color.setHex(beaconColor);
+        if (beaconOuterRing) beaconOuterRing.material.color.setHex(beaconColor);
       }
 
       if (curStep && curStep.anchor && container && camera && cardOpacity > 0.05) {
@@ -1033,9 +1250,11 @@ export default function Robo3DCanvas({
             if (linePathRef.current && reticleDotRef.current && cardRef.current) {
               reticleDotRef.current.setAttribute('cx', ax);
               reticleDotRef.current.setAttribute('cy', ay);
+              reticleDotRef.current.style.fill = activePart === 'docking' ? '#22c55e' : '#00f0ff';
               if (reticlePulseRef.current) {
                 reticlePulseRef.current.setAttribute('cx', ax);
                 reticlePulseRef.current.setAttribute('cy', ay);
+                reticlePulseRef.current.style.stroke = activePart === 'docking' ? '#22c55e' : '#00f0ff';
               }
               if (terminalDotRef.current) {
                 terminalDotRef.current.setAttribute('cx', sx);
