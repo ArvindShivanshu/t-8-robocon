@@ -49,12 +49,12 @@ export default function Robo3DCanvas({
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // 1. Scene with Titanium Slate Base
+    // 1. Scene with Pure Studio Black Base
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    const bgTitanium = new THREE.Color(0x101624);
-    scene.background = bgTitanium;
-    scene.fog = new THREE.Fog(0x101624, 850, 2600);
+    const bgDark = new THREE.Color(0x000000);
+    scene.background = bgDark;
+    scene.fog = new THREE.Fog(0x000000, 950, 2800);
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(38, width / height, 1, 4000);
@@ -75,15 +75,15 @@ export default function Robo3DCanvas({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.05;
     container.replaceChildren(renderer.domElement);
 
-    // 4. Lighting: Dramatic Stark Industries Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+    // 4. Lighting: Clean High-End Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
     // Key Light
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
     keyLight.position.set(450, 700, 450);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
@@ -91,40 +91,28 @@ export default function Robo3DCanvas({
     keyLight.shadow.bias = -0.0001;
     scene.add(keyLight);
 
-    // Hot-Rod Crimson Rim Light
-    const crimsonRim = new THREE.DirectionalLight(0xe62429, 2.8);
-    crimsonRim.position.set(-450, 300, -350);
-    scene.add(crimsonRim);
+    // Soft Studio Rim Light
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    rimLight.position.set(-450, 300, -350);
+    scene.add(rimLight);
 
-    // Arc Gold Fill Light
-    const goldFill = new THREE.DirectionalLight(0xf59e0b, 1.8);
-    goldFill.position.set(0, -180, 350);
-    scene.add(goldFill);
+    // Soft Studio Fill Light
+    const fillLight = new THREE.DirectionalLight(0x94a3b8, 1.2);
+    fillLight.position.set(0, -180, 350);
+    scene.add(fillLight);
 
-    // Arc Core Point Light
-    const arcLight = new THREE.PointLight(0x00f0ff, 2.0, 300);
-    arcLight.position.set(0, 15, 0);
-    scene.add(arcLight);
-
-    // 5. Floor Grid: Stark Tactical Grid with Arc Rings
-    const gridHelper = new THREE.GridHelper(1300, 32, 0xe62429, 0x1f2b3e);
+    // 5. Floor Grid: Subtle Minimalist Hairline Grid
+    const gridHelper = new THREE.GridHelper(1400, 28, 0x333338, 0x141416);
     gridHelper.position.y = -115;
     scene.add(gridHelper);
 
-    // Arc Reactor Concentric Target Rings on the Floor
-    const ringGeo1 = new THREE.RingGeometry(220, 222, 64);
-    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+    // Subtle Concentric Studio Datum Ring on the Floor
+    const ringGeo1 = new THREE.RingGeometry(220, 221.5, 64);
+    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.15 });
     const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
     ring1.rotation.x = -Math.PI / 2;
     ring1.position.y = -114.6;
     scene.add(ring1);
-
-    const ringGeo2 = new THREE.RingGeometry(110, 112, 64);
-    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xe62429, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
-    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ring2.rotation.x = -Math.PI / 2;
-    ring2.position.y = -114.5;
-    scene.add(ring2);
 
     // 6. Materials: Stark Industries Titanium & Hot-Rod Red
     const materials = {

@@ -1,7 +1,7 @@
 .footer-root {
-  background: var(--bg-secondary);
+  background: #000000;
   border-top: 1px solid var(--border-subtle);
-  padding: 5rem 0 7rem 0;
+  padding: 5rem 0 6rem 0;
   position: relative;
   z-index: 10;
 }
@@ -27,54 +27,49 @@
 
 .footer-brand-badge {
   position: relative;
-  width: 44px;
-  height: 44px;
-  background: rgba(230, 36, 41, 0.12);
-  border: 1px solid rgba(230, 36, 41, 0.4);
-  border-radius: var(--radius-sm);
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 0 15px rgba(230, 36, 41, 0.2);
+  transition: all 0.2s ease;
 }
 
 .footer-brand-badge:hover {
-  border-color: var(--accent-crimson);
-  box-shadow: 0 0 25px var(--accent-crimson-glow);
-  transform: translateY(-2px);
+  border-color: #ffffff;
 }
 
 .brand-code {
   font-family: var(--font-display);
-  font-weight: 900;
-  color: var(--accent-gold);
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
 }
 
 .brand-pulse {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   top: 4px;
   right: 4px;
-  background: var(--accent-crimson);
+  background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 6px var(--accent-crimson);
-  animation: pulseBeacon 2s infinite ease-in-out;
 }
 
 .footer-brand-title {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 500;
   color: #ffffff;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.01em;
 }
 
 .footer-brand-desc {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.6;
 }
@@ -83,30 +78,29 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(0, 240, 255, 0.1);
-  border: 1px solid rgba(0, 240, 255, 0.35);
-  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 0.35rem 0.75rem;
   border-radius: var(--radius-pill);
-  font-size: 0.7rem;
-  color: var(--accent-arc);
-  font-weight: 700;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-weight: 500;
   width: fit-content;
 }
 
 .footer-status-pill .dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--accent-arc);
-  box-shadow: 0 0 8px var(--accent-arc);
+  background: #ffffff;
 }
 
 /* Links Col */
 .footer-col-title {
-  font-size: 0.72rem;
-  color: var(--accent-gold);
+  font-size: 0.68rem;
+  color: var(--text-muted);
   margin-bottom: 1.25rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .footer-links-list {
@@ -120,15 +114,14 @@
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s ease;
+  transition: color 0.18s ease;
 }
 
 .footer-links-list button:hover {
-  color: var(--accent-crimson);
-  transform: translateX(4px);
+  color: #ffffff;
 }
 
 /* Divisions Col */
@@ -144,13 +137,13 @@
 }
 
 .div-code {
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--accent-gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .div-desc {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
@@ -165,44 +158,42 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
 }
 
 .hq-name {
-  font-weight: 700;
+  font-weight: 500;
   color: #ffffff;
 }
 
 .hq-brief {
-  font-size: 0.7rem;
-  color: var(--accent-crimson);
+  font-size: 0.68rem;
+  color: var(--text-muted);
   margin-top: 0.25rem;
-  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .footer-back-top-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.65rem 1.1rem;
-  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-xs);
   cursor: pointer;
   width: fit-content;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 
 .footer-back-top-btn:hover {
-  border-color: var(--accent-crimson);
-  color: var(--accent-crimson);
-  background: rgba(230, 36, 41, 0.12);
-  box-shadow: 0 4px 15px rgba(230, 36, 41, 0.25);
+  border-color: #ffffff;
+  color: #ffffff;
 }
 
 /* Bottom Bar */
@@ -222,21 +213,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--accent-gold);
-  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .bottom-center .dot {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: var(--accent-crimson);
-  box-shadow: 0 0 6px var(--accent-crimson);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .bottom-right {
-  color: var(--accent-crimson);
-  font-weight: 700;
+  color: var(--text-muted);
 }
 
 @media (max-width: 992px) {

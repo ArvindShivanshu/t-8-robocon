@@ -245,12 +245,12 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         });
       }
 
-      // DRAW CANVAS: Stark Tactical Titanium Slate Warehouse Floor
-      ctx.fillStyle = '#101726';
+      // DRAW CANVAS: Minimal Studio Warehouse Floor (Terafab Style)
+      ctx.fillStyle = '#08080a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Floor Grid
-      ctx.strokeStyle = 'rgba(230, 36, 41, 0.07)';
+      // Floor Grid (Subtle Hairlines)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < canvas.width; x += gridSize) {
@@ -266,80 +266,57 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         ctx.stroke();
       }
 
-      // Stark Arc Reactor Origin Marker (400, 300)
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
-      ctx.lineWidth = 1.5;
+      // Minimal Datum Origin Marker (400, 300)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(400, 300, 26, 0, Math.PI * 2);
+      ctx.arc(400, 300, 20, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
-      ctx.setLineDash([3, 3]);
+      ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(400, 300, 16, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = '#00f0ff';
-      ctx.beginPath();
-      ctx.arc(400, 300, 3.5, 0, Math.PI * 2);
+      ctx.arc(400, 300, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#f59e0b';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.font = '10px "JetBrains Mono"';
-      ctx.fillText('STARK DATUM (0, 0)', 412, 296);
+      ctx.fillText('(0, 0) DATUM ORIGIN', 412, 296);
 
-      // Draw Warehouse Obstacles & Racks (Stark Titanium Storage Pods)
+      // Draw Warehouse Obstacles & Racks (Minimalist Architectural Blocks)
       obstacles.forEach((obs) => {
-        ctx.fillStyle = 'rgba(22, 32, 50, 0.92)';
-        ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
-        ctx.lineWidth = 1.5;
+        ctx.fillStyle = '#111114';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
         ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
         ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
 
         // Rack Label
-        ctx.fillStyle = '#f8fafc';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.font = '9px "JetBrains Mono"';
-        ctx.fillText(obs.label, obs.x + 8, obs.y + 22);
-
-        // Tactical Corner Triangles
-        ctx.fillStyle = 'rgba(230, 36, 41, 0.6)';
-        ctx.beginPath();
-        ctx.moveTo(obs.x, obs.y);
-        ctx.lineTo(obs.x + 8, obs.y);
-        ctx.lineTo(obs.x, obs.y + 8);
-        ctx.closePath();
-        ctx.fill();
-
-        // Subtle diagonal stripe inside restricted zone
-        ctx.strokeStyle = 'rgba(230, 36, 41, 0.15)';
-        ctx.beginPath();
-        ctx.moveTo(obs.x, obs.y);
-        ctx.lineTo(obs.x + obs.w, obs.y + obs.h);
-        ctx.stroke();
+        ctx.fillText(obs.label, obs.x + 10, obs.y + 20);
       });
 
-      // Draw Breadcrumb Path Trail (Stark Hot-Rod Crimson)
+      // Draw Breadcrumb Path Trail (Clean Hairline Path)
       if (r.trail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(r.trail[0].x, r.trail[0].y);
         for (let i = 1; i < r.trail.length; i++) {
           ctx.lineTo(r.trail[i].x, r.trail[i].y);
         }
-        ctx.strokeStyle = '#e62429';
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Draw Robot Sprite (Mark-VIII Holonomic Mobile Platform)
+      // Draw Robot Sprite (Minimal Holonomic Mobile Platform)
       ctx.save();
       ctx.translate(r.x, r.y);
       ctx.rotate(r.theta);
 
-      // Chassis Base Rect (Stark Titanium Plate)
-      ctx.fillStyle = '#1e293b';
-      ctx.strokeStyle = '#e62429';
-      ctx.lineWidth = 2;
+      // Chassis Base Rect
+      ctx.fillStyle = '#1c1c20';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
       ctx.fillRect(-24, -26, 48, 52);
       ctx.strokeRect(-24, -26, 48, 52);
 
@@ -355,48 +332,40 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
         ctx.save();
         ctx.translate(w.x, w.y);
         ctx.rotate(w.rot);
-        ctx.fillStyle = '#0f172a';
-        ctx.strokeStyle = '#f59e0b';
+        ctx.fillStyle = '#0a0a0c';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.lineWidth = 1;
         ctx.fillRect(-4, -9, 8, 18);
         ctx.strokeRect(-4, -9, 8, 18);
         ctx.restore();
       });
 
-      // Cargo Container (Mark-VIII Crimson Bed)
-      ctx.fillStyle = 'rgba(230, 36, 41, 0.25)';
-      ctx.strokeStyle = '#e62429';
-      ctx.lineWidth = 1.2;
+      // Cargo Container (Center Tray)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 1;
       ctx.fillRect(-18, -20, 36, 40);
       ctx.strokeRect(-18, -20, 36, 40);
 
-      // Center Arc Core Glow
-      ctx.fillStyle = '#00f0ff';
-      ctx.beginPath();
-      ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 5kg Payload Inside Cargo Tray (Arc Gold)
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(-12, -14, 24, 16);
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 7px "JetBrains Mono"';
+      // Payload Text Inside Tray
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8px "JetBrains Mono"';
       ctx.textAlign = 'center';
-      ctx.fillText(`${payloadKg.toFixed(1)}k`, 0, -4);
+      ctx.fillText(`${payloadKg.toFixed(1)}kg`, 0, 3);
 
       // Heading Vector (Pointing forward)
-      ctx.strokeStyle = '#00f0ff';
-      ctx.fillStyle = '#00f0ff';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.fillStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(0, -22);
-      ctx.lineTo(0, -38);
+      ctx.lineTo(0, -36);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.moveTo(-4, -34);
-      ctx.lineTo(0, -42);
-      ctx.lineTo(4, -34);
+      ctx.moveTo(-3, -33);
+      ctx.lineTo(0, -40);
+      ctx.lineTo(3, -33);
       ctx.closePath();
       ctx.fill();
 

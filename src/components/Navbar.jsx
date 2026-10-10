@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Settings, 
   Menu, 
   X, 
-  ChevronRight,
-  Zap,
-  ShieldAlert
+  ChevronRight
 } from 'lucide-react';
 import './Navbar.css';
 
@@ -18,7 +15,7 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      const sections = ['cad', 'timeline', 'mandates', 'subsystems', 'team', 'gallery', 'faq'];
+      const sections = ['cad', 'mandates', 'timeline', 'kinematics', 'subsystems', 'gallery', 'team'];
       for (const id of sections) {
         const el = document.getElementById(id);
         if (el) {
@@ -36,13 +33,13 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
   }, []);
 
   const navLinks = [
-    { id: 'cad', label: '3D CAD' },
-    { id: 'timeline', label: 'Timeline' },
+    { id: 'cad', label: 'Digital Twin' },
     { id: 'mandates', label: 'Mandates' },
+    { id: 'timeline', label: 'Arena Sim' },
+    { id: 'kinematics', label: 'Kinematics' },
     { id: 'subsystems', label: 'Subsystems' },
-    { id: 'team', label: 'Team' },
-    { id: 'gallery', label: 'Gallery' },
-    { id: 'faq', label: 'FAQ' },
+    { id: 'gallery', label: 'Blueprints' },
+    { id: 'team', label: 'Specs & FAQ' },
   ];
 
   const scrollTo = (id) => {
@@ -54,75 +51,53 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
   };
 
   return (
-    <header className={`aaruush-nav ${scrolled ? 'scrolled' : ''}`}>
+    <header className={`terafab-nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-container-wrapper">
         <div className="nav-bar-inner">
-          {/* Left Brand: Stark Industries / SRM Robocon */}
+          {/* Left Brand Wordmark */}
           <div className="nav-brand-lockup" onClick={() => scrollTo('cad')}>
-            <div className="brand-arc-symbol">
-              <Zap size={18} className="symbol-arc-core" />
-            </div>
-            <div className="brand-text-block">
-              <span className="brand-org-name">STARK INDUSTRIES</span>
-              <span className="brand-team-div">SRM ROBOCON</span>
-            </div>
+            <span className="brand-logo-mark">T-8</span>
+            <span className="brand-sep">/</span>
+            <span className="brand-name">ROBOCON</span>
           </div>
 
-          {/* Center Floating Pill Menu */}
+          {/* Center Minimalist Links */}
           <nav className="nav-center-menu">
-            <div className="nav-center-pill">
+            <div className="nav-links-track">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
                 return (
                   <button
                     key={link.id}
                     onClick={() => scrollTo(link.id)}
-                    className={`nav-pill-item ${isActive ? 'active' : ''}`}
+                    className={`nav-link-btn ${isActive ? 'active' : ''}`}
                     id={`nav-link-${link.id}`}
                   >
                     <span>{link.label}</span>
-                    {isActive && <span className="nav-link-dot" />}
                   </button>
                 );
               })}
             </div>
           </nav>
 
-          {/* Right Actions */}
+          {/* Right Action */}
           <div className="nav-right-actions">
-            {/* Theme Toggle Utility Button */}
             <button
-              onClick={onToggleTheme}
-              className="aaruush-util-btn"
-              title={currentTheme === 'blueprint' ? 'Switch to Stark Tactical' : 'Technical Blueprint Mode'}
-              aria-label="Toggle Theme"
-              id="theme-toggle-btn"
+              onClick={() => scrollTo('timeline')}
+              className="nav-cta-btn"
+              id="nav-model-btn"
             >
-              <Settings size={16} />
+              LAUNCH SIMULATOR
             </button>
-
-            {/* Stark Protocol CTA */}
-            <div className="nav-action-lockup">
-              <a
-                href="#cad"
-                onClick={(e) => { e.preventDefault(); scrollTo('cad'); }}
-                className="aaruush-primary-btn stark-btn"
-                id="nav-model-btn"
-              >
-                <span className="nav-pulse-beacon" />
-                <span>MARK-VIII PROTOCOL</span>
-              </a>
-              <span className="nav-action-tag mono">*AVENGERS TECH '25</span>
-            </div>
 
             {/* Mobile Drawer Trigger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="aaruush-mobile-btn"
+              className="nav-mobile-btn"
               aria-label="Toggle Navigation Menu"
               id="mobile-nav-toggle"
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
@@ -130,26 +105,22 @@ export default function Navbar({ currentTheme, onToggleTheme }) {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="aaruush-mobile-drawer">
-          <div className="mobile-drawer-inner">
-            <span className="mobile-drawer-label mono">// AVENGERS PROTOCOL INDEX</span>
-            <div className="mobile-links-list">
-              {navLinks.map((link, idx) => {
-                const isActive = activeSection === link.id;
-                return (
-                  <button
-                    key={link.id}
-                    onClick={() => scrollTo(link.id)}
-                    className={`mobile-drawer-link ${isActive ? 'active' : ''}`}
-                  >
-                    <span className="mobile-link-idx mono">0{idx + 1}</span>
-                    <span className="mobile-link-text">{link.label}</span>
-                    {isActive && <span className="mobile-active-tag mono">LIVE</span>}
-                    <ChevronRight size={14} className="mobile-arrow" />
-                  </button>
-                );
-              })}
-            </div>
+        <div className="nav-mobile-drawer">
+          <div className="mobile-links-list">
+            {navLinks.map((link, idx) => {
+              const isActive = activeSection === link.id;
+              return (
+                <button
+                  key={link.id}
+                  onClick={() => scrollTo(link.id)}
+                  className={`mobile-drawer-link ${isActive ? 'active' : ''}`}
+                >
+                  <span className="mobile-link-idx mono">0{idx + 1}</span>
+                  <span className="mobile-link-text">{link.label}</span>
+                  <ChevronRight size={14} className="mobile-arrow" />
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
