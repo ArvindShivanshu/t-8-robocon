@@ -947,20 +947,23 @@ export default function Robo3DCanvas({
 
     const beaconPulseRing = new THREE.Mesh(
       new THREE.RingGeometry(8, 10.5, 32),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.9, depthTest: false })
     );
+    beaconPulseRing.renderOrder = 999;
     beaconGroup.add(beaconPulseRing);
 
     const beaconOuterRing = new THREE.Mesh(
       new THREE.RingGeometry(18, 19.5, 32),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.55, depthTest: false })
     );
+    beaconOuterRing.renderOrder = 999;
     beaconGroup.add(beaconOuterRing);
 
     const beaconCenterDot = new THREE.Mesh(
       new THREE.CircleGeometry(3.5, 24),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 1.0 })
+      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 1.0, depthTest: false })
     );
+    beaconCenterDot.renderOrder = 1000;
     beaconGroup.add(beaconCenterDot);
 
     // 8. Animation Loop
