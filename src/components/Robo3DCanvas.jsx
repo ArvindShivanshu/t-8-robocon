@@ -36,6 +36,7 @@ export default function Robo3DCanvas({
   const arcCoreRef = useRef(null);
   const materialsRef = useRef({});
   const highlightsRef = useRef({ chassis: 0, motors: 0, deck: 0, risers: 0, cargo: 0, root: 0 });
+  const edgeMatsRef = useRef({});
 
   // Spherical camera orbit state
   const orbitRef = useRef({
@@ -372,6 +373,61 @@ export default function Robo3DCanvas({
     contactRing.position.y = -67.2;
     robotRoot.add(contactRing);
 
+    // --- High-Tech CAD Component Edge Contours (Glowing Stark Cyan) ---
+    const edgeMats = {
+      chassis: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+      motors: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+      deck: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+      risers: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+      cargo: new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+      docking: new THREE.LineBasicMaterial({
+        color: 0x22c55e,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        depthWrite: false,
+      }),
+    };
+    edgeMatsRef.current = edgeMats;
+
+    const addEdgeWire = (mesh, groupKey, threshold = 20) => {
+      if (!mesh || !mesh.geometry) return;
+      const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
+      const wire = new THREE.LineSegments(edges, edgeMats[groupKey]);
+      wire.renderOrder = 10;
+      mesh.add(wire);
+    };
+
     // --- Base Chassis Frame (Titanium Alloy) ---
     const chassisGroup = new THREE.Group();
     robotRoot.add(chassisGroup);
@@ -384,25 +440,30 @@ export default function Robo3DCanvas({
     const leftRail = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameThickness, frameLength - 60), railMat);
     leftRail.position.set(-frameWidth / 2 + 6, -30, 0);
     leftRail.castShadow = true;
+    addEdgeWire(leftRail, 'chassis');
     chassisGroup.add(leftRail);
 
     const rightRail = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameThickness, frameLength - 60), railMat);
     rightRail.position.set(frameWidth / 2 - 6, -30, 0);
     rightRail.castShadow = true;
+    addEdgeWire(rightRail, 'chassis');
     chassisGroup.add(rightRail);
 
     const frontRail = new THREE.Mesh(new THREE.BoxGeometry(frameWidth - 60, frameThickness, frameThickness), railMat);
     frontRail.position.set(0, -30, frameLength / 2 - 6);
     frontRail.castShadow = true;
+    addEdgeWire(frontRail, 'chassis');
     chassisGroup.add(frontRail);
 
     const backRail = new THREE.Mesh(new THREE.BoxGeometry(frameWidth - 60, frameThickness, frameThickness), railMat);
     backRail.position.set(0, -30, -frameLength / 2 + 6);
     backRail.castShadow = true;
+    addEdgeWire(backRail, 'chassis');
     chassisGroup.add(backRail);
 
     const crossRail = new THREE.Mesh(new THREE.BoxGeometry(frameWidth - 60, frameThickness, frameThickness), railMat);
     crossRail.position.set(0, -30, 0);
+    addEdgeWire(crossRail, 'chassis');
     chassisGroup.add(crossRail);
 
     // Corner Gussets
@@ -417,11 +478,11 @@ export default function Robo3DCanvas({
       const gusset = new THREE.Mesh(new THREE.BoxGeometry(45, frameThickness, frameThickness), railMat);
       gusset.position.set(corner.x, -30, corner.z);
       gusset.rotation.y = corner.rot;
+      addEdgeWire(gusset, 'chassis');
       chassisGroup.add(gusset);
     });
 
     // --- 4x DC Motors & 4x Omni Wheels at 45° ---
-    // All 4 motors mount to 45° corner gusset rails, with motor bodies pointing inward and drive shafts pointing diagonally outward
     const motors = [];
     const wheels = [];
 
@@ -446,6 +507,7 @@ export default function Robo3DCanvas({
       motorBody.rotation.x = Math.PI / 2;
       motorBody.position.z = -20;
       motorBody.castShadow = true;
+      addEdgeWire(motorBody, 'motors');
       motorAssembly.add(motorBody);
 
       // Aluminum mounting clamp securing motor to 45° corner frame rail
@@ -454,6 +516,7 @@ export default function Robo3DCanvas({
         materials.chassisTitanium
       );
       mountBracket.position.set(0, 0, 5);
+      addEdgeWire(mountBracket, 'chassis');
       motorAssembly.add(mountBracket);
 
       // Gold output drive shaft pointing outward through corner rail
@@ -463,6 +526,7 @@ export default function Robo3DCanvas({
       );
       shaft.rotation.x = Math.PI / 2;
       shaft.position.z = 24;
+      addEdgeWire(shaft, 'motors');
       motorAssembly.add(shaft);
 
       // Double-row 45° omni wheel assembly mounted at the corner
@@ -476,6 +540,7 @@ export default function Robo3DCanvas({
       );
       hub.rotation.x = Math.PI / 2;
       hub.castShadow = true;
+      addEdgeWire(hub, 'motors');
       wheelGroup.add(hub);
 
       const rollerCount = 10;
@@ -519,6 +584,7 @@ export default function Robo3DCanvas({
       materials.deckCarbon
     );
     carbonPlate.castShadow = true;
+    addEdgeWire(carbonPlate, 'deck');
     deckGroup.add(carbonPlate);
 
     // Electronics PCB Board
@@ -531,6 +597,7 @@ export default function Robo3DCanvas({
       new THREE.BoxGeometry(150, 3, 110),
       materials.pcbBoard
     );
+    addEdgeWire(pcb, 'deck');
     pcbGroup.add(pcb);
 
     // Glowing Arc Core on the Deck
@@ -540,10 +607,12 @@ export default function Robo3DCanvas({
     );
     arcCore.position.set(0, 4, 0);
     arcCoreRef.current = arcCore;
+    addEdgeWire(arcCore, 'deck');
     pcbGroup.add(arcCore);
 
     const mcuChip = new THREE.Mesh(new THREE.BoxGeometry(28, 5, 28), materials.pcbChip);
     mcuChip.position.set(-40, 4, 0);
+    addEdgeWire(mcuChip, 'deck');
     pcbGroup.add(mcuChip);
 
     const heatsinkMat = new THREE.MeshStandardMaterial({
@@ -553,6 +622,7 @@ export default function Robo3DCanvas({
     });
     const heatsink = new THREE.Mesh(new THREE.BoxGeometry(20, 14, 28), heatsinkMat);
     heatsink.position.set(40, 8, 0);
+    addEdgeWire(heatsink, 'deck');
     pcbGroup.add(heatsink);
 
     // --- 4x Vertical Riser Columns (Titanium) ---
@@ -575,27 +645,29 @@ export default function Robo3DCanvas({
       );
       riser.position.set(pos.x, 15, pos.z);
       riser.castShadow = true;
+      addEdgeWire(riser, 'risers');
       risersGroup.add(riser);
 
-      // Top mounting flange boss - sits perfectly flush against the underside of the cargo box
+      // Top mounting flange boss - sits flush against underside of cargo box
       const topFlange = new THREE.Mesh(
         new THREE.CylinderGeometry(11, 11, 2, 20),
         materials.riserColumn
       );
       topFlange.position.set(pos.x, 44, pos.z);
+      addEdgeWire(topFlange, 'risers');
       risersGroup.add(topFlange);
 
-      // Bottom mounting flange boss - anchored to the chassis frame / deck
+      // Bottom mounting flange boss - anchored to chassis frame
       const btmFlange = new THREE.Mesh(
         new THREE.CylinderGeometry(11, 11, 2, 20),
         materials.riserColumn
       );
       btmFlange.position.set(pos.x, -14, pos.z);
+      addEdgeWire(btmFlange, 'risers');
       risersGroup.add(btmFlange);
     });
 
     // --- Upper Payload Cargo Bin (Stark Hot-Rod Crimson Red) ---
-    // Positioned at Y = 47 so bottom face (thickness 4: Y in [-2, +2]) rests exactly at Y = 45 flush on top of the risers
     const cargoBinGroup = new THREE.Group();
     cargoBoxRef.current = cargoBinGroup;
     cargoBinGroup.position.set(0, 47, 0);
@@ -606,6 +678,7 @@ export default function Robo3DCanvas({
       materials.cargoBinStark
     );
     binBottom.castShadow = true;
+    addEdgeWire(binBottom, 'cargo');
     cargoBinGroup.add(binBottom);
 
     const wallHeight = 55;
@@ -613,23 +686,28 @@ export default function Robo3DCanvas({
 
     const frontWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBinStark);
     frontWall.position.set(0, wallHeight / 2, 125);
+    addEdgeWire(frontWall, 'cargo');
     cargoBinGroup.add(frontWall);
 
     const backWall = new THREE.Mesh(new THREE.BoxGeometry(230, wallHeight, wallThick), materials.cargoBinStark);
     backWall.position.set(0, wallHeight / 2, -125);
+    addEdgeWire(backWall, 'cargo');
     cargoBinGroup.add(backWall);
 
     const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBinStark);
     leftWall.position.set(-115, wallHeight / 2, 0);
+    addEdgeWire(leftWall, 'cargo');
     cargoBinGroup.add(leftWall);
 
     const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThick, wallHeight, 250), materials.cargoBinStark);
     rightWall.position.set(115, wallHeight / 2, 0);
+    addEdgeWire(rightWall, 'cargo');
     cargoBinGroup.add(rightWall);
 
     // Gold Rim Trim around Top Edge
     const trimFront = new THREE.Mesh(new THREE.BoxGeometry(232, 2, 6), materials.cargoPayloadGold);
     trimFront.position.set(0, wallHeight, 125);
+    addEdgeWire(trimFront, 'cargo');
     cargoBinGroup.add(trimFront);
 
     // 5kg Vibranium-Gold Cargo Box
@@ -639,6 +717,7 @@ export default function Robo3DCanvas({
     );
     payloadPkg.position.set(0, 25, 0);
     payloadPkg.castShadow = true;
+    addEdgeWire(payloadPkg, 'cargo');
     cargoBinGroup.add(payloadPkg);
 
     // --- 3D Dimension Annotation Lines (`↔ 260 mm`) ---
@@ -667,20 +746,26 @@ export default function Robo3DCanvas({
     );
     dimsGroup.add(rightTick);
 
-    // --- 3D Holographic Callout Target Beacon ---
+    // --- 3D Holographic Callout Target Beacon with Concentric Reticle Rings ---
     const beaconGroup = new THREE.Group();
     beaconGroupRef.current = beaconGroup;
     robotRoot.add(beaconGroup);
 
     const beaconPulseRing = new THREE.Mesh(
-      new THREE.RingGeometry(3.5, 5.5, 32),
-      materials.arcReactorGlow
+      new THREE.RingGeometry(8, 10.5, 32),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
     );
     beaconGroup.add(beaconPulseRing);
 
+    const beaconOuterRing = new THREE.Mesh(
+      new THREE.RingGeometry(18, 19.5, 32),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+    );
+    beaconGroup.add(beaconOuterRing);
+
     const beaconCenterDot = new THREE.Mesh(
-      new THREE.CircleGeometry(2.2, 24),
-      materials.arcReactorGlow
+      new THREE.CircleGeometry(3.5, 24),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 1.0 })
     );
     beaconGroup.add(beaconCenterDot);
 
@@ -795,24 +880,35 @@ export default function Robo3DCanvas({
       };
 
       const hl = highlightsRef.current;
-      hl.chassis += (targetHighlights.chassis - hl.chassis) * 0.14;
-      hl.motors += (targetHighlights.motors - hl.motors) * 0.14;
-      hl.deck += (targetHighlights.deck - hl.deck) * 0.14;
-      hl.risers += (targetHighlights.risers - hl.risers) * 0.14;
-      hl.cargo += (targetHighlights.cargo - hl.cargo) * 0.14;
-      hl.root += (targetHighlights.root - hl.root) * 0.14;
+      hl.chassis += (targetHighlights.chassis - hl.chassis) * 0.16;
+      hl.motors += (targetHighlights.motors - hl.motors) * 0.16;
+      hl.deck += (targetHighlights.deck - hl.deck) * 0.16;
+      hl.risers += (targetHighlights.risers - hl.risers) * 0.16;
+      hl.cargo += (targetHighlights.cargo - hl.cargo) * 0.16;
+      hl.root += (targetHighlights.root - hl.root) * 0.16;
 
-      const hlPulse = 0.55 + 0.18 * Math.sin(elapsed * 5.5);
+      const hlPulse = 0.70 + 0.30 * Math.sin(elapsed * 5.5);
 
+      // Dynamic Edge Wireframe Opacities for Razor-Sharp CAD Highlighting
+      if (edgeMatsRef.current.cargo) {
+        edgeMatsRef.current.chassis.opacity = hl.chassis * hlPulse;
+        edgeMatsRef.current.motors.opacity = hl.motors * hlPulse;
+        edgeMatsRef.current.deck.opacity = hl.deck * hlPulse;
+        edgeMatsRef.current.risers.opacity = hl.risers * hlPulse;
+        edgeMatsRef.current.cargo.opacity = hl.cargo * hlPulse;
+        edgeMatsRef.current.docking.opacity = (curStepIdx === 6 ? hl.root : 0) * hlPulse;
+      }
+
+      // Surface Emissive Highlighting: High-contrast Electric Cyan for instant visibility
       // Chassis frame rails & 45° corner gussets
       if (hl.chassis > 0.01) {
-        materials.chassisTitanium.emissive.setHex(0x00e5ff);
+        materials.chassisTitanium.emissive.setHex(0x00f0ff);
         materials.chassisTitanium.emissiveIntensity = hl.chassis * hlPulse * 0.85;
       } else if (hl.root > 0.01 && curStepIdx === 6) {
         materials.chassisTitanium.emissive.setHex(0x22c55e); // Green lock-on dock highlight
-        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.55;
+        materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.75;
       } else if (hl.root > 0.01) {
-        materials.chassisTitanium.emissive.setHex(0x00e5ff); // Step 00 digital twin highlight
+        materials.chassisTitanium.emissive.setHex(0x00f0ff); // Step 00 digital twin highlight
         materials.chassisTitanium.emissiveIntensity = hl.root * hlPulse * 0.35;
       } else {
         materials.chassisTitanium.emissive.setHex(0x000000);
@@ -821,14 +917,14 @@ export default function Robo3DCanvas({
 
       // Motors & omni drivetrain (4x planetary motors + 4x 45° omni wheels)
       if (hl.motors > 0.01) {
-        materials.motorBody.emissive.setHex(0x00e5ff);
+        materials.motorBody.emissive.setHex(0x00f0ff);
         materials.motorBody.emissiveIntensity = hl.motors * hlPulse * 0.95;
-        materials.omniHub.emissive.setHex(0x00e5ff);
+        materials.omniHub.emissive.setHex(0x00f0ff);
         materials.omniHub.emissiveIntensity = hl.motors * hlPulse * 0.95;
-        materials.motorShaft.emissive.setHex(0xffb800);
-        materials.motorShaft.emissiveIntensity = hl.motors * hlPulse * 0.8;
+        materials.motorShaft.emissive.setHex(0x00f0ff);
+        materials.motorShaft.emissiveIntensity = hl.motors * hlPulse * 0.85;
         materials.omniRoller.emissive.setHex(0x00b4d8);
-        materials.omniRoller.emissiveIntensity = hl.motors * hlPulse * 0.5;
+        materials.omniRoller.emissiveIntensity = hl.motors * hlPulse * 0.45;
       } else {
         materials.motorBody.emissive.setHex(0x000000);
         materials.motorBody.emissiveIntensity = 0;
@@ -842,12 +938,12 @@ export default function Robo3DCanvas({
 
       // Carbon base deck, PCB board & electronics odometry
       if (hl.deck > 0.01) {
-        materials.deckCarbon.emissive.setHex(0x00e5ff);
+        materials.deckCarbon.emissive.setHex(0x00f0ff);
         materials.deckCarbon.emissiveIntensity = hl.deck * hlPulse * 0.65;
-        materials.pcbBoard.emissive.setHex(0x00e5ff);
-        materials.pcbBoard.emissiveIntensity = hl.deck * hlPulse * 1.1;
-        materials.pcbChip.emissive.setHex(0x00e5ff);
-        materials.pcbChip.emissiveIntensity = hl.deck * hlPulse * 0.7;
+        materials.pcbBoard.emissive.setHex(0x00f0ff);
+        materials.pcbBoard.emissiveIntensity = hl.deck * hlPulse * 1.15;
+        materials.pcbChip.emissive.setHex(0x00f0ff);
+        materials.pcbChip.emissiveIntensity = hl.deck * hlPulse * 0.85;
       } else {
         materials.deckCarbon.emissive.setHex(0x000000);
         materials.deckCarbon.emissiveIntensity = 0;
@@ -859,8 +955,8 @@ export default function Robo3DCanvas({
 
       // 4x Load-bearing Titanium Riser Columns
       if (hl.risers > 0.01) {
-        materials.riserColumn.emissive.setHex(0x00e5ff);
-        materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.35;
+        materials.riserColumn.emissive.setHex(0x00f0ff);
+        materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.45;
       } else {
         materials.riserColumn.emissive.setHex(0x000000);
         materials.riserColumn.emissiveIntensity = 0;
@@ -868,10 +964,10 @@ export default function Robo3DCanvas({
 
       // Cargo containment bin (Crimson) & 5kg Vibranium payload (Gold)
       if (hl.cargo > 0.01) {
-        materials.cargoBinStark.emissive.setHex(0xff2233);
-        materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 0.85;
-        materials.cargoPayloadGold.emissive.setHex(0xffaa00);
-        materials.cargoPayloadGold.emissiveIntensity = hl.cargo * hlPulse * 1.1;
+        materials.cargoBinStark.emissive.setHex(0x00f0ff);
+        materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 0.55;
+        materials.cargoPayloadGold.emissive.setHex(0x00f0ff);
+        materials.cargoPayloadGold.emissiveIntensity = hl.cargo * hlPulse * 0.65;
       } else {
         materials.cargoBinStark.emissive.setHex(0x000000);
         materials.cargoBinStark.emissiveIntensity = 0;
@@ -893,7 +989,14 @@ export default function Robo3DCanvas({
           if (beaconGroupRef.current) {
             beaconGroupRef.current.position.copy(v);
             beaconPulseRing.quaternion.copy(camera.quaternion);
+            if (beaconOuterRing) beaconOuterRing.quaternion.copy(camera.quaternion);
             beaconCenterDot.quaternion.copy(camera.quaternion);
+            const beaconScale = 1.0 + 0.25 * Math.sin(elapsed * 6);
+            beaconPulseRing.scale.set(beaconScale, beaconScale, 1);
+            if (beaconOuterRing) {
+              const outerScale = 1.0 + 0.15 * Math.cos(elapsed * 4);
+              beaconOuterRing.scale.set(outerScale, outerScale, 1);
+            }
           }
 
           // Transform to world space
