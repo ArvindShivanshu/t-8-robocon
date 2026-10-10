@@ -101,9 +101,9 @@ export default function Robo3DCanvas({
     fillLight.position.set(0, -180, 350);
     scene.add(fillLight);
 
-    // 5. Floor Grid: Subtle Minimalist Hairline Grid
+    // 5. Floor Grid: Subtle Minimalist Hairline Grid (aligned with bottom of omni wheels at Y = -67.5)
     const gridHelper = new THREE.GridHelper(1400, 28, 0x333338, 0x141416);
-    gridHelper.position.y = -115;
+    gridHelper.position.y = -67.5;
     scene.add(gridHelper);
 
     // Subtle Concentric Studio Datum Ring on the Floor
@@ -111,7 +111,7 @@ export default function Robo3DCanvas({
     const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.15 });
     const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
     ring1.rotation.x = -Math.PI / 2;
-    ring1.position.y = -114.6;
+    ring1.position.y = -67.2;
     scene.add(ring1);
 
     // 6. Materials: Stark Industries Titanium & Hot-Rod Red
@@ -243,14 +243,15 @@ export default function Robo3DCanvas({
     });
 
     // --- 4x DC Motors & 4x Omni Wheels at 45° ---
+    // All 4 motors mount to 45° corner gusset rails, with motor bodies pointing inward and drive shafts pointing diagonally outward
     const motors = [];
     const wheels = [];
 
     const motorConfigs = [
-      { id: 'FL', x: -90, z: 90, angle: Math.PI / 4 },
-      { id: 'FR', x: 90, z: 90, angle: -Math.PI / 4 },
-      { id: 'RL', x: -90, z: -90, angle: 3 * Math.PI / 4 },
-      { id: 'RR', x: 90, z: -90, angle: -3 * Math.PI / 4 },
+      { id: 'FL', x: -85, z: 95, angle: -Math.PI / 4 },
+      { id: 'FR', x: 85, z: 95, angle: Math.PI / 4 },
+      { id: 'RL', x: -85, z: -95, angle: -3 * Math.PI / 4 },
+      { id: 'RR', x: 85, z: -95, angle: 3 * Math.PI / 4 },
     ];
 
     motorConfigs.forEach((cfg) => {
@@ -259,26 +260,36 @@ export default function Robo3DCanvas({
       motorAssembly.rotation.y = cfg.angle;
       chassisGroup.add(motorAssembly);
 
+      // High-torque DC motor body pointing inward under chassis frame
       const motorBody = new THREE.Mesh(
         new THREE.CylinderGeometry(15, 15, 65, 24),
         materials.motorBody
       );
       motorBody.rotation.x = Math.PI / 2;
-      motorBody.position.z = -15;
+      motorBody.position.z = -20;
       motorBody.castShadow = true;
       motorAssembly.add(motorBody);
 
-      // Gold shaft ring
+      // Aluminum mounting clamp securing motor to 45° corner frame rail
+      const mountBracket = new THREE.Mesh(
+        new THREE.BoxGeometry(34, 18, 16),
+        materials.chassisTitanium
+      );
+      mountBracket.position.set(0, 0, 5);
+      motorAssembly.add(mountBracket);
+
+      // Gold output drive shaft pointing outward through corner rail
       const shaft = new THREE.Mesh(
-        new THREE.CylinderGeometry(4, 4, 35, 16),
+        new THREE.CylinderGeometry(4, 4, 38, 16),
         materials.motorShaft
       );
       shaft.rotation.x = Math.PI / 2;
-      shaft.position.z = 25;
+      shaft.position.z = 24;
       motorAssembly.add(shaft);
 
+      // Double-row 45° omni wheel assembly mounted at the corner
       const wheelGroup = new THREE.Group();
-      wheelGroup.position.set(0, 0, 52);
+      wheelGroup.position.set(0, 0, 48);
       motorAssembly.add(wheelGroup);
 
       const hub = new THREE.Mesh(
