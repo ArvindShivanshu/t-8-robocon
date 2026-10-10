@@ -40,9 +40,9 @@ export default function HeroSection({
     {
       label: '01',
       title: '45° OMNI CHASSIS',
-      shortTitle: 'TITANIUM CHASSIS',
-      desc: 'Aerospace titanium alloy frame with 45° motor gusset mounts minimizing aisle envelope',
-      spec: '240 × 260 mm // TITANIUM GUSSET FRAME',
+      shortTitle: 'ALUMINUM CHASSIS',
+      desc: 'Precision aluminum alloy frame with 45° motor gusset mounts minimizing aisle envelope',
+      spec: '240 × 260 mm // ALUMINUM GUSSET FRAME',
       partGroup: 'chassis',
       anchor: { x: 100, y: -30, z: 80 },
       theta: 1.05,
@@ -84,8 +84,8 @@ export default function HeroSection({
     },
     {
       label: '04',
-      title: 'TITANIUM RISERS',
-      shortTitle: 'TITANIUM RISERS',
+      title: 'ALUMINUM RISERS',
+      shortTitle: 'ALUMINUM RISERS',
       desc: '4x 60mm cylindrical load-bearing standoffs distributing up to 5kg payload directly to chassis rails',
       spec: '4x 60mm COLUMNS // ZERO-GAP FLUSH MOUNT',
       partGroup: 'risers',

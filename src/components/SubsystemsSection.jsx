@@ -17,7 +17,7 @@ export default function SubsystemsSection() {
       title: 'Mechanical Kinematics & Structure',
       tag: 'MECHANICAL ARCHITECTURE',
       icon: <Wrench size={20} />,
-      lead: 'Custom titanium-aluminum alloy chassis designed for 45° holonomic omni mobility and 5kg cargo containment.',
+      lead: 'Custom precision aluminum alloy chassis designed for 45° holonomic omni mobility and 5kg cargo containment.',
       features: [
         {
           name: '45° Omni-Wheel Geometry',

@@ -15,7 +15,7 @@ const defaultRow2 = [
   { tag: 'LINEAR SPEED', label: '1.45 M/S (5.22 KM/H)' },
   { tag: 'YAW VELOCITY', label: '3.14 RAD/S (180°/SEC)' },
   { tag: 'DRIVE MOTORS', label: '4X PLANETARY GEARED (30:1)' },
-  { tag: 'CHASSIS', label: '260 × 260 MM TITANIUM-ALUMINUM' },
+  { tag: 'CHASSIS', label: '260 × 260 MM STRUCTURAL ALUMINUM' },
   { tag: 'COMMUNICATION', label: '2.4 GHZ LOW-LATENCY WIRELESS' },
 ];
 

@@ -285,10 +285,10 @@ export default function Robo3DCanvas({
     dockGlow.position.set(waypoints[6].x, -67.35, waypoints[6].z);
     scene.add(dockGlow);
 
-    // 6. Materials: Stark Industries Titanium & Hot-Rod Red
+    // 6. Materials: Structural Aluminum Alloy & Hot-Rod Red
     const materials = {
-      chassisTitanium: new THREE.MeshStandardMaterial({
-        color: 0x334155, // Aeronautic Titanium Alloy
+      chassisAluminum: new THREE.MeshStandardMaterial({
+        color: 0x334155, // Aeronautic Aluminum Alloy
         metalness: 0.88,
         roughness: 0.25,
       }),
@@ -318,7 +318,7 @@ export default function Robo3DCanvas({
         metalness: 0.9,
       }),
       riserColumn: new THREE.MeshStandardMaterial({
-        color: 0xd4d4d8, // Polished Titanium Risers
+        color: 0xd4d4d8, // Polished Aluminum Risers
         metalness: 0.92,
         roughness: 0.12,
       }),
@@ -373,6 +373,7 @@ export default function Robo3DCanvas({
         linewidth: 2,
       }),
     };
+    materials.chassisTitanium = materials.chassisAluminum;
     materialsRef.current = materials;
 
     // 7. BUILD ROBOT HIERARCHY
@@ -565,7 +566,7 @@ export default function Robo3DCanvas({
     // Alias for existing call sites
     const addEdgeWire = addCadHighlight;
 
-    // --- Base Chassis Frame (Titanium Alloy) ---
+    // --- Base Chassis Frame (Aluminum Alloy) ---
     const chassisGroup = new THREE.Group();
     robotRoot.add(chassisGroup);
 
@@ -762,7 +763,7 @@ export default function Robo3DCanvas({
     addEdgeWire(heatsink, 'deck');
     pcbGroup.add(heatsink);
 
-    // --- 4x Vertical Riser Columns (Titanium) ---
+    // --- 4x Vertical Riser Columns (Aluminum) ---
     const risersGroup = new THREE.Group();
     risersRef.current = risersGroup;
     robotRoot.add(risersGroup);
@@ -862,7 +863,7 @@ export default function Robo3DCanvas({
     dockingGroup.position.set(0, -30, 124);
     robotRoot.add(dockingGroup);
 
-    // CNC-machined titanium docking receiver bracket mounted on front rail
+    // CNC-machined aluminum docking receiver bracket mounted on front rail
     const datumBracket = new THREE.Mesh(
       new THREE.BoxGeometry(84, 18, 14),
       materials.dockingHousing
@@ -1147,7 +1148,7 @@ export default function Robo3DCanvas({
         materials.pcbChip.emissiveIntensity = 0;
       }
 
-      // 4. 4x Load-bearing Titanium Riser Columns
+      // 4. 4x Load-bearing Aluminum Riser Columns
       if (hl.risers > 0.01) {
         materials.riserColumn.emissive.setHex(0x00f0ff);
         materials.riserColumn.emissiveIntensity = hl.risers * hlPulse * 1.8;

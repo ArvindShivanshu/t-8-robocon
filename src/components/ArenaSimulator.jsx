@@ -471,7 +471,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
               <div className="legend-item"><span className="legend-color crimson"></span><span>CRIMSON TRAIL</span></div>
               <div className="legend-item"><span className="legend-color cyan"></span><span>ARC VECTOR (θ)</span></div>
               <div className="legend-item"><span className="legend-color gold"></span><span>5KG GOLD PAYLOAD</span></div>
-              <div className="legend-item"><span className="legend-color rack"></span><span>TITANIUM RACKS</span></div>
+              <div className="legend-item"><span className="legend-color rack"></span><span>STORAGE RACKS</span></div>
             </div>
           </div>
 

@@ -49,9 +49,6 @@ export default function TeamSection() {
       <div className="container team-container">
         {/* Section Header Matching User Reference */}
         <div className="team-header-center">
-          <div className="team-badge-pill">
-            <span>Team</span>
-          </div>
           <h2 className="team-title-headline">Your Team, Our Passion</h2>
           <p className="team-description-text">
             There are many variations of available but the majority have
