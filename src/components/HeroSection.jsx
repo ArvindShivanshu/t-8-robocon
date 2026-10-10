@@ -19,7 +19,7 @@ export default function HeroSection({
   const [freeOrbit, setFreeOrbit] = useState(false);
   const heroRootRef = useRef(null);
 
-  // 7 Sequence steps with component anchors for dynamic CAD callout leader lines
+  // 7 Sequence steps with constant camera radius (no zooming during scroll)
   const steps = [
     {
       label: '00',
@@ -30,7 +30,7 @@ export default function HeroSection({
       anchor: { x: -60, y: 50, z: 90 },
       theta: 0.72,
       phi: 1.15,
-      radius: 820,
+      radius: 780,
       explode: 0,
       p: 0,
       pose: { x: 0, y: 0, theta: 0, motion: 'ORIGIN_DATUM' }
@@ -44,7 +44,7 @@ export default function HeroSection({
       anchor: { x: -114, y: -30, z: 30 },
       theta: 1.08,
       phi: 0.92,
-      radius: 560,
+      radius: 780,
       explode: 0,
       p: 0.16,
       pose: { x: 350, y: 0, theta: 0, motion: 'HOLONOMIC_STRAFE' }
@@ -58,7 +58,7 @@ export default function HeroSection({
       anchor: { x: -119, y: -30, z: 129 },
       theta: 1.48,
       phi: 0.80,
-      radius: 480,
+      radius: 780,
       explode: 0,
       p: 0.32,
       pose: { x: 520, y: 380, theta: 45, motion: 'DIAGONAL_45°' }
@@ -72,7 +72,7 @@ export default function HeroSection({
       anchor: { x: 0, y: -4, z: 0 },
       theta: 1.88,
       phi: 1.06,
-      radius: 550,
+      radius: 780,
       explode: 0,
       p: 0.49,
       pose: { x: 740, y: 740, theta: 90, motion: 'YAW_TRANSIT' }
@@ -86,7 +86,7 @@ export default function HeroSection({
       anchor: { x: -90, y: 44, z: 90 },
       theta: 2.32,
       phi: 0.88,
-      radius: 460,
+      radius: 780,
       explode: 0,
       p: 0.66,
       pose: { x: 620, y: 1100, theta: 135, motion: 'AISLE_TRANSIT' }
@@ -100,7 +100,7 @@ export default function HeroSection({
       anchor: { x: 0, y: 72, z: 20 },
       theta: 2.74,
       phi: 0.78,
-      radius: 500,
+      radius: 780,
       explode: 0,
       p: 0.82,
       pose: { x: 300, y: 1450, theta: 180, motion: 'PAYLOAD_LOADED' }
@@ -114,7 +114,7 @@ export default function HeroSection({
       anchor: { x: 0, y: 140, z: 0 },
       theta: 0.85,
       phi: 1.12,
-      radius: 920,
+      radius: 780,
       explode: 1,
       p: 0.93,
       pose: { x: 0, y: 1600, theta: 0, motion: 'EXPLODED_BOM' }

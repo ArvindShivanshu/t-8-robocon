@@ -33,10 +33,10 @@ export default function Robo3DCanvas({
     prevY: 0,
     theta: 0.72,
     phi: 1.15,
-    radius: 820,
+    radius: 780,
     targetTheta: 0.72,
     targetPhi: 1.15,
-    targetRadius: 820,
+    targetRadius: 780,
     explode: 0,
     targetExplode: 0,
   });

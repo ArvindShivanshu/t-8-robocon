@@ -53,19 +53,6 @@ export default function CadGallery() {
         'Balanced mass distribution to avoid wheel slip',
         'Designed specifically for restricted workspace aisles'
       ]
-    },
-    {
-      id: 'mandate',
-      title: 'Problem Statement 8 Official Mandate',
-      tag: 'CHALLENGE SPECIFICATION // COMPETITION BRIEF',
-      image: '/assets/cad/problem-statement.png',
-      caption: 'Official Problem Statement 8 defining the warehouse operator controls, restricted workspace translation, 5kg payload handling, and mandatory persistent (X, Y, θ) coordinate feedback.',
-      annotations: [
-        '5kg payload manual carrying capacity',
-        'Multi-directional movement in restricted workspace',
-        'Keep track of distance travelled and relative position',
-        'Demands x, y coordinates and angle displayed at all times'
-      ]
     }
   ];
 
