@@ -6,8 +6,8 @@ export default function SpecificationsFaq() {
     { category: 'Physical & Structural', items: [
       { param: 'Chassis Dimensions', value: '260 mm (L) x 260 mm (W) x 175 mm (H)' },
       { param: 'Dry Platform Mass', value: '3.25 kg' },
-      { param: 'Rated Manual Payload', value: '5.00 kg (Full Capacity)' },
-      { param: 'Maximum Loaded Mass', value: '8.25 kg' },
+      { param: 'Rated Manual Payload', value: '15.00 kg (Full Capacity)' },
+      { param: 'Maximum Loaded Mass', value: '18.25 kg' },
       { param: 'Cargo Bin Interior', value: '230 mm x 250 mm x 55 mm' },
       { param: 'Riser Standoff Height', value: '60 mm (4x Cylindrical Columns)' },
     ]},
@@ -32,7 +32,7 @@ export default function SpecificationsFaq() {
       { param: 'Battery Pack', value: '14.8V 4S LiPo 4200 mAh' },
       { param: 'Motor Drivers', value: 'Dual High-Current MOSFET H-Bridges' },
       { param: 'Microcontroller', value: '32-Bit ARM Cortex-M4 / ESP32-S3' },
-      { param: 'Operational Runtime', value: '45+ Minutes Under Full 5kg Load' },
+      { param: 'Operational Runtime', value: '45+ Minutes Under Full 15kg Load' },
     ]}
   ];
 

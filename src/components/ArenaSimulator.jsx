@@ -37,7 +37,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
   const [activeKeys, setActiveKeys] = useState({});
   const [joystickActive, setJoystickActive] = useState(false);
   const [joystickPos, setJoystickPos] = useState({ x: 0, y: 0 });
-  const [payloadKg, setPayloadKg] = useState(5.0);
+  const [payloadKg, setPayloadKg] = useState(15.0);
   const [speedMultiplier, setSpeedMultiplier] = useState(1.0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const autoPlayStepRef = useRef(0);
@@ -168,8 +168,8 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       animationId = requestAnimationFrame(render);
       const r = robotRef.current;
 
-      // Inertia calculation based on 5kg payload (higher payload = slight inertia smoothing)
-      const inertiaFactor = 1.0 - (payloadKg / 5.0) * 0.15;
+      // Inertia calculation based on 15kg payload (higher payload = slight inertia smoothing)
+      const inertiaFactor = 1.0 - (payloadKg / 15.0) * 0.15;
       const speed = 3.2 * speedMultiplier * inertiaFactor;
       const rotSpeed = 0.045;
 
@@ -416,7 +416,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
           <h2 className="section-title">Restricted Workspace Flight & Telemetry Sim</h2>
           <p className="section-subtitle">
             Interact with the Mark-VIII holonomic platform in real-time. Navigate confined aisles, 
-            test 45° lateral strafe, zero datum coordinates, and simulate 5 kg payload inertia.
+            test 45° lateral strafe, zero datum coordinates, and simulate 15 kg payload inertia.
           </p>
         </div>
 
@@ -466,7 +466,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
             <div className="arena-legend mono">
               <div className="legend-item"><span className="legend-color crimson"></span><span>CRIMSON TRAIL</span></div>
               <div className="legend-item"><span className="legend-color cyan"></span><span>ARC VECTOR (θ)</span></div>
-              <div className="legend-item"><span className="legend-color gold"></span><span>5KG GOLD PAYLOAD</span></div>
+              <div className="legend-item"><span className="legend-color gold"></span><span>15KG GOLD PAYLOAD</span></div>
               <div className="legend-item"><span className="legend-color rack"></span><span>STORAGE RACKS</span></div>
             </div>
           </div>
@@ -590,7 +590,7 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
               </div>
             </div>
 
-            {/* 5kg Payload Weight Slider */}
+            {/* 15kg Payload Weight Slider */}
             <div className="slider-control-group">
               <div className="slider-header mono">
                 <span>PAYLOAD LOAD:</span>
@@ -599,14 +599,14 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
               <input 
                 type="range" 
                 min="0.0" 
-                max="5.0" 
+                max="15.0" 
                 step="0.5" 
                 value={payloadKg}
                 onChange={(e) => setPayloadKg(parseFloat(e.target.value))}
                 className="custom-range-slider"
                 id="payload-weight-slider"
               />
-              <span className="mono slider-hint">MANDATED CAPACITY: 0 to 5.0 kg</span>
+              <span className="mono slider-hint">MANDATED CAPACITY: 0 to 15.0 kg</span>
             </div>
 
             {/* Keyboard shortcut legend */}

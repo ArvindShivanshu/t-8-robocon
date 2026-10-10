@@ -17,7 +17,7 @@ export default function TelemetryHUD({ telemetry, onResetOrigin, onTareDistance 
     y = 0,
     theta = 0,
     distance = 0,
-    payload = 5.0,
+    payload = 15.0,
     velocity = 0,
     motionState = 'IDLE',
   } = telemetry || {};

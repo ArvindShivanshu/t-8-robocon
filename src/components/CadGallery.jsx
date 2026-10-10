@@ -31,12 +31,12 @@ export default function CadGallery() {
     {
       id: 'side',
       title: 'Side Elevation & Payload Risers',
-      tag: 'STRUCTURAL ELEVATION // 5KG CARGO BIN',
+      tag: 'STRUCTURAL ELEVATION // 15KG CARGO BIN',
       image: '/assets/cad/cad-side-view.png',
       caption: 'Side elevation CAD view showing the elevated sheet metal cargo bin mounted on 4 cylindrical load-bearing risers, with the electronics controller deck nestled below.',
       annotations: [
         '4x Load-bearing vertical cylindrical risers',
-        'Upper sheet-metal containment bin (5kg capacity)',
+        'Upper sheet-metal containment bin (15kg capacity)',
         'Electronics PCB deck with low center of gravity',
         'Clean ground clearance over warehouse floor seams'
       ]

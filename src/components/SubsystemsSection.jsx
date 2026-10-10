@@ -17,14 +17,14 @@ export default function SubsystemsSection() {
       title: 'Mechanical Kinematics & Structure',
       tag: 'MECHANICAL ARCHITECTURE',
       icon: <Wrench size={20} />,
-      lead: 'Custom precision aluminum alloy chassis designed for 45° holonomic omni mobility and 5kg cargo containment.',
+      lead: 'Custom precision aluminum alloy chassis designed for 45° holonomic omni mobility and 15kg cargo containment.',
       features: [
         {
           name: '45° Omni-Wheel Geometry',
           desc: 'Symmetric 45° wheel vectors deliver equal translation authority across surge and sway axes.'
         },
         {
-          name: '5kg Payload Cargo Bin & Risers',
+          name: '15kg Payload Cargo Bin & Risers',
           desc: 'High-strength aluminum tray supported by 4 cylindrical standoffs, optimizing vertical load distribution.'
         },
         {
@@ -71,7 +71,7 @@ export default function SubsystemsSection() {
       features: [
         {
           name: 'Planetary Geared DC Motors',
-          desc: 'Metal-gear 30:1 reduction delivers 28 kg-cm stall torque per motor under full 5 kg load.'
+          desc: 'Metal-gear 30:1 reduction delivers 28 kg-cm stall torque per motor under full 15 kg load.'
         },
         {
           name: 'Dual High-Current H-Bridges',

@@ -1,4 +1,4 @@
-# T-8 ROBOCON // OMNI-CARRIER 5K
+# T-8 ROBOCON // OMNI-CARRIER 15K
 
 Official interactive web platform and 3D digital twin for **Robocon Team 8 (T-8 Robocon)**, built with React, Vite, and Three.js. Tailored specifically for **Problem Statement 8**.
 
@@ -6,16 +6,16 @@ Official interactive web platform and 3D digital twin for **Robocon Team 8 (T-8 
 
 ## 🏆 Problem Statement 8 Brief
 
-> *A warehouse operator controls a mobile platform which can carry up to 5kgs manually inside a restricted workspace where movement in several directions is useful. The platform should be able to translate and reposition itself while keeping track of how far it has travelled and where it believes it is relative to its starting point. The challenge is to combine intuitive manual control with dependable motion and position estimation. The operator demands the x, y coordinates as well as the angle of the mobile platform to be displayed at all times.*
+> *A warehouse operator controls a mobile platform which can carry up to 15kgs manually inside a restricted workspace where movement in several directions is useful. The platform should be able to translate and reposition itself while keeping track of how far it has travelled and where it believes it is relative to its starting point. The challenge is to combine intuitive manual control with dependable motion and position estimation. The operator demands the x, y coordinates as well as the angle of the mobile platform to be displayed at all times.*
 
 ---
 
 ## 🚀 Key Features
 
 1. **3D CAD Digital Twin with Scroll Choreography**:
-   - High-fidelity Three.js procedural model matching the CAD blueprints: 4-wheel 45° omni-drive chassis, aluminum perimeter rails, wooden mounting plate, electronics PCB with status LEDs, 4 vertical cylindrical risers, and the 5 kg payload cargo container bin.
+   - High-fidelity Three.js procedural model matching the CAD blueprints: 4-wheel 45° omni-drive chassis, aluminum perimeter rails, wooden mounting plate, electronics PCB with status LEDs, 4 vertical cylindrical risers, and the 15 kg payload cargo container bin.
    - Smooth scroll choreography: translates laterally, executes 45° diagonal passages, and spins in-place on yaw axis as the user scrolls.
-   - Interactive orbit controls, **Exploded Assembly View toggle**, Wireframe mode, and 5kg cargo load toggle.
+   - Interactive orbit controls, **Exploded Assembly View toggle**, Wireframe mode, and 15kg cargo load toggle.
 
 2. **Persistent Telemetry HUD (Operator Mandate)**:
    - Always-visible floating telemetry bar continuously displaying:
@@ -23,7 +23,7 @@ Official interactive web platform and 3D digital twin for **Robocon Team 8 (T-8 
      - Real-time **$Y$ coordinate** ($mm$ and $m$)
      - Real-time **Heading Angle $\theta$** ($^\circ$ with rotating compass widget and radians)
      - **Odometer** total distance traveled ($m$) and linear velocity ($m/s$)
-     - **5.0 kg Payload Monitor** with rated capacity indicator
+     - **15.0 kg Payload Monitor** with rated capacity indicator
      - Local datum zeroing (`ZERO ORIGIN`) and odometer tare buttons
 
 3. **Interactive Warehouse Arena & Manual Drive Simulator**:
@@ -31,7 +31,7 @@ Official interactive web platform and 3D digital twin for **Robocon Team 8 (T-8 
    - **Virtual 360° Touch Joystick** for direct analog holonomic translation.
    - **Keyboard teleoperation** (`W/A/S/D` or Arrow keys for translation, `Q/E` for in-place rotation).
    - Real-time breadcrumb trajectory trail drawing on the arena floor.
-   - Dynamic 0.0 - 5.0 kg payload inertia slider.
+   - Dynamic 0.0 - 15.0 kg payload inertia slider.
    - Automated maneuvers: Square strafe, 45° diagonal aisle transit, 360° yaw spin.
 
 4. **4-Wheel 45° Holonomic Inverse Kinematics Engine**:

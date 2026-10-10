@@ -329,7 +329,7 @@ export default function Robo3DCanvas({
         side: THREE.DoubleSide,
       }),
       cargoPayloadGold: new THREE.MeshStandardMaterial({
-        color: 0xf59e0b, // Vibranium Gold 5kg Payload
+        color: 0xf59e0b, // Vibranium Gold 15kg Payload
         metalness: 0.75,
         roughness: 0.28,
       }),
@@ -848,7 +848,7 @@ export default function Robo3DCanvas({
     addEdgeWire(trimFront, 'cargo');
     cargoBinGroup.add(trimFront);
 
-    // 5kg Vibranium-Gold Cargo Box
+    // 15kg Vibranium-Gold Cargo Box
     const payloadPkg = new THREE.Mesh(
       new THREE.BoxGeometry(160, 45, 170),
       materials.cargoPayloadGold
@@ -1157,7 +1157,7 @@ export default function Robo3DCanvas({
         materials.riserColumn.emissiveIntensity = 0;
       }
 
-      // 5. Cargo containment bin (Crimson) & 5kg Vibranium payload (Gold)
+      // 5. Cargo containment bin (Crimson) & 15kg Vibranium payload (Gold)
       if (hl.cargo > 0.01) {
         materials.cargoBinStark.emissive.setHex(0x00f0ff);
         materials.cargoBinStark.emissiveIntensity = hl.cargo * hlPulse * 1.6;

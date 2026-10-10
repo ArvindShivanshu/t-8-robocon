@@ -23,7 +23,7 @@ export default function App() {
     theta: 0,          // degrees
     distance: 0.0,     // meters
     velocity: 0.0,     // m/s
-    payload: 5.0,      // kg
+    payload: 15.0,     // kg
     motionState: 'IDLE',
     source: 'STANDBY',
   });
@@ -78,11 +78,11 @@ export default function App() {
     }));
   }, []);
 
-  // Set payload weight (0.0 to 5.0 kg)
+  // Set payload weight (0.0 to 15.0 kg)
   const handleSetPayload = useCallback((kg) => {
     setTelemetry((prev) => ({
       ...prev,
-      payload: Math.max(0, Math.min(5.0, kg)),
+      payload: Math.max(0, Math.min(15.0, kg)),
     }));
   }, []);
 
@@ -110,7 +110,7 @@ export default function App() {
 
         {/* React Bits: Flowing Curved Loop */}
         <CurvedLoop 
-          marqueeText="4-WHEEL 45° HOLONOMIC OMNI • 100HZ SENSOR FUSION • ZERO TURNING RADIUS • 5.0 KG PAYLOAD TWIN •"
+          marqueeText="4-WHEEL 45° HOLONOMIC OMNI • 100HZ SENSOR FUSION • ZERO TURNING RADIUS • 15.0 KG PAYLOAD TWIN •"
           curveAmount={140}
           speed={1.8}
         />
@@ -130,7 +130,7 @@ export default function App() {
         {/* React Bits: Kinetic Scroll Velocity Typography */}
         <ScrollVelocity 
           texts={[
-            '4-WHEEL 45° HOLONOMIC OMNI • 360° TRANSLATIONAL AGILITY • 5.0 KG PAYLOAD CAPACITY •',
+            '4-WHEEL 45° HOLONOMIC OMNI • 360° TRANSLATIONAL AGILITY • 15.0 KG PAYLOAD CAPACITY •',
             '100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • DIGITAL TWIN TELEMETRY •'
           ]}
           velocity={32}

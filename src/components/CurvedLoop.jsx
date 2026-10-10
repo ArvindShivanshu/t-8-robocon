@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo, useId } from 'react';
 import './CurvedLoop.css';
 
 export default function CurvedLoop({
-  marqueeText = '4-WHEEL 45° HOLONOMIC AGV • 100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • 5KG LOAD TWIN •',
+  marqueeText = '4-WHEEL 45° HOLONOMIC AGV • 100HZ EKF SENSOR FUSION • ZERO TURNING RADIUS • 15KG LOAD TWIN •',
   speed = 1.8,
   curveAmount = 140,
   direction = 'left',

@@ -13,10 +13,10 @@ export default function MandatesSection() {
     },
     {
       num: '02',
-      title: '5.0 kg Payload Capacity',
+      title: '15.0 kg Payload Capacity',
       lead: 'Elevated cargo containment bin on 4 vertical risers with low center of gravity.',
       metricLabel: 'Rated Load',
-      metricVal: '5.0 kg (50 N)',
+      metricVal: '15.0 kg (150 N)',
       category: 'Structure'
     },
     {

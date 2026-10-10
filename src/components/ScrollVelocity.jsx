@@ -107,7 +107,7 @@ function VelocityRow({
 
 export default function ScrollVelocity({
   texts = [
-    'HOLONOMIC 45° OMNI-DRIVE • 360° TRANSLATION • 5KG LOAD TWIN •',
+    'HOLONOMIC 45° OMNI-DRIVE • 360° TRANSLATION • 15KG LOAD TWIN •',
     '100HZ SENSOR FUSION • ZERO TURNING RADIUS • DIGITAL TWIN HUD •'
   ],
   velocity = 35,
