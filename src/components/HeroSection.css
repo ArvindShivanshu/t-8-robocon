@@ -78,105 +78,6 @@
   margin: 0 0.15rem;
 }
 
-/* Right Side Vertical Step Navigation */
-/* Right Side Vertical Step Rail Navigation (Minimalist CAD Index) */
-.hero-cad-step-nav {
-  position: absolute;
-  top: 50%;
-  right: 2.2rem;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  z-index: 25;
-  pointer-events: auto;
-  background: rgba(10, 10, 14, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  padding: 0.45rem;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-}
-
-.step-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.35rem 0.65rem;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.18s ease;
-  width: 100%;
-}
-
-.step-nav-indicator {
-  width: 3px;
-  height: 12px;
-  border-radius: 1.5px;
-  background: rgba(255, 255, 255, 0.15);
-  transition: all 0.18s ease;
-  flex-shrink: 0;
-}
-
-.step-nav-num {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #71717a;
-  letter-spacing: 0.06em;
-  transition: color 0.18s ease;
-}
-
-.step-nav-label {
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: #a1a1aa;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  text-transform: uppercase;
-  transition: color 0.18s ease;
-}
-
-.step-nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.step-nav-item:hover .step-nav-num {
-  color: #d4d4d8;
-}
-
-.step-nav-item:hover .step-nav-label {
-  color: #ffffff;
-}
-
-.step-nav-item:hover .step-nav-indicator {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.step-nav-item.active {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.step-nav-item.active .step-nav-indicator {
-  background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-  height: 14px;
-}
-
-.step-nav-item.active .step-nav-num {
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.step-nav-item.active .step-nav-label {
-  color: #ffffff;
-  font-weight: 600;
-}
-
 /* 2D Projected CAD Callout Overlay */
 .cad-callout-overlay {
   position: absolute;
@@ -333,9 +234,6 @@
 }
 
 @media (max-width: 992px) {
-  .hero-cad-step-nav {
-    display: none;
-  }
   .cad-callout-card {
     width: 250px;
     padding: 0.75rem 0.9rem;

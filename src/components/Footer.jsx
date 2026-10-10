@@ -12,7 +12,10 @@ import './Footer.css';
 export default function Footer({ onScrollTop }) {
   const scrollTo = (id) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: 'instant' });
+    }
   };
 
   return (

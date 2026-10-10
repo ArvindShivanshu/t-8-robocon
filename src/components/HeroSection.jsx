@@ -128,6 +128,8 @@ export default function HeroSection({
     },
   ];
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   // Scroll event listener tracking progress through the 360vh corridor
   useEffect(() => {
     const handleScroll = () => {
@@ -140,6 +142,7 @@ export default function HeroSection({
 
       const scrolledDist = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolledDist / totalDist));
+      setScrollProgress(progress);
 
       if (!freeOrbit) {
         let currentIdx = 0;
@@ -183,7 +186,7 @@ export default function HeroSection({
 
     window.scrollTo({
       top: targetScrollY,
-      behavior: 'smooth'
+      behavior: 'instant'
     });
   };
 
@@ -199,6 +202,7 @@ export default function HeroSection({
         {/* 3D CAD Canvas */}
         <Robo3DCanvas 
           activeStep={activeStep}
+          scrollProgress={scrollProgress}
           renderMode={renderMode}
           showDims={showDims}
           freeOrbit={freeOrbit}
@@ -241,28 +245,6 @@ export default function HeroSection({
             <span>{freeOrbit ? 'Orbit Active' : 'Free Orbit'}</span>
           </button>
         </div>
-
-        {/* Right Side Vertical Step Rail Navigation (Minimalist Architectural CAD Index) */}
-        <div className="hero-cad-step-nav" aria-label="CAD Subsystem Index">
-          <div className="step-nav-track-bar" />
-          {steps.map((step, idx) => {
-            const isActive = activeStep === idx;
-            return (
-              <button
-                key={step.label}
-                onClick={() => goToStep(idx)}
-                className={`step-nav-item ${isActive ? 'active' : ''}`}
-                id={`step-pill-${step.label}`}
-                title={step.desc}
-              >
-                <span className="step-nav-indicator" />
-                <span className="step-nav-num mono">{step.label}</span>
-                <span className="step-nav-label mono">{step.shortTitle || step.title}</span>
-              </button>
-            );
-          })}
-        </div>
-
 
         {/* Scroll Cue */}
         <div className="hero-scroll-cue">

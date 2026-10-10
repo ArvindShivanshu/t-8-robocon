@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
-import TelemetryHUD from './components/TelemetryHUD';
 import HeroSection from './components/HeroSection';
 import MandatesSection from './components/MandatesSection';
 import ArenaSimulator from './components/ArenaSimulator';
@@ -85,7 +84,7 @@ export default function App() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   return (
@@ -130,14 +129,6 @@ export default function App() {
 
       {/* Footer */}
       <Footer onScrollTop={scrollToTop} />
-
-      {/* Persistent Floating Telemetry HUD (Operator Mandate: Displayed at all times) */}
-      <TelemetryHUD 
-        telemetry={telemetry}
-        onResetOrigin={handleResetOrigin}
-        onTareDistance={handleTareDistance}
-        onSetPayload={handleSetPayload}
-      />
     </div>
   );
 }

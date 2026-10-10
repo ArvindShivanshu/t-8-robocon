@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 export default function Robo3DCanvas({
   activeStep = 0,
+  scrollProgress = 0,
   renderMode = 'shaded',
   showDims = true,
   freeOrbit = false,
@@ -10,6 +11,14 @@ export default function Robo3DCanvas({
   steps = []
 }) {
   const mountRef = useRef(null);
+  const scrollProgressRef = useRef(scrollProgress);
+  useEffect(() => {
+    scrollProgressRef.current = scrollProgress;
+  }, [scrollProgress]);
+
+  // Continuous simulation progress & wheel physics
+  const simProgressRef = useRef(0);
+  const wheelVelocityRef = useRef(0);
 
   // References
   const sceneRef = useRef(null);
@@ -121,18 +130,66 @@ export default function Robo3DCanvas({
     fillLight.position.set(0, -180, 350);
     scene.add(fillLight);
 
-    // 5. Floor Grid: Subtle Minimalist Hairline Grid (aligned with bottom of omni wheels at Y = -67.5)
-    const gridHelper = new THREE.GridHelper(1400, 28, 0x333338, 0x141416);
+    // 5. Floor Grid: Subtle Minimalist Hairline Arena Grid (aligned with bottom of omni wheels at Y = -67.5)
+    const gridHelper = new THREE.GridHelper(3600, 72, 0x333338, 0x141416);
     gridHelper.position.y = -67.5;
     scene.add(gridHelper);
 
-    // Subtle Concentric Studio Datum Ring on the Floor
-    const ringGeo1 = new THREE.RingGeometry(220, 221.5, 64);
-    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.15 });
-    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
-    ring1.rotation.x = -Math.PI / 2;
-    ring1.position.y = -67.2;
-    scene.add(ring1);
+    // 6. Navigation Path Waypoints & Catmull-Rom Simulation Trajectory
+    const waypoints = [
+      new THREE.Vector3(0, 0, -320),   // 00 Origin Datum
+      new THREE.Vector3(220, 0, -160), // 01 45° Omni Chassis Strafe
+      new THREE.Vector3(280, 0, 100),  // 02 Drivetrain Vectoring
+      new THREE.Vector3(80, 0, 300),   // 03 Sensor Deck EKF Arc
+      new THREE.Vector3(-200, 0, 240), // 04 Titanium Risers Corridor
+      new THREE.Vector3(-260, 0, -60), // 05 Vibranium Payload Station
+      new THREE.Vector3(0, 0, 0),      // 06 Center Stage Exploded BOM
+    ];
+    const simPath = new THREE.CatmullRomCurve3(waypoints, false, 'catmullrom', 0.5);
+
+    // Glowing Tactical Path Ribbon on the Floor Grid
+    const pathPoints = simPath.getPoints(240).map((pt) => new THREE.Vector3(pt.x, -67.0, pt.z));
+    const pathGeo = new THREE.BufferGeometry().setFromPoints(pathPoints);
+    const pathMat = new THREE.LineDashedMaterial({
+      color: 0x00f0ff,
+      dashSize: 22,
+      gapSize: 14,
+      transparent: true,
+      opacity: 0.45,
+    });
+    const pathLine = new THREE.Line(pathGeo, pathMat);
+    pathLine.computeLineDistances();
+    scene.add(pathLine);
+
+    // Tactical Waypoint Floor Rings along the Trajectory
+    waypoints.forEach((wp, idx) => {
+      const isOriginOrEnd = idx === 0 || idx === 6;
+      const wpRing = new THREE.Mesh(
+        new THREE.RingGeometry(isOriginOrEnd ? 22 : 14, isOriginOrEnd ? 24 : 16, 32),
+        new THREE.MeshBasicMaterial({
+          color: idx === 6 ? 0xff4d4d : 0x00f0ff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.35,
+        })
+      );
+      wpRing.rotation.x = -Math.PI / 2;
+      wpRing.position.set(wp.x, -67.2, wp.z);
+      scene.add(wpRing);
+
+      const wpDot = new THREE.Mesh(
+        new THREE.CircleGeometry(2.5, 16),
+        new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.5,
+        })
+      );
+      wpDot.rotation.x = -Math.PI / 2;
+      wpDot.position.set(wp.x, -67.1, wp.z);
+      scene.add(wpDot);
+    });
 
     // 6. Materials: Stark Industries Titanium & Hot-Rod Red
     const materials = {
@@ -213,6 +270,15 @@ export default function Robo3DCanvas({
     const robotRoot = new THREE.Group();
     robotRootRef.current = robotRoot;
     scene.add(robotRoot);
+
+    // Dynamic ground datum ring that moves across the floor with the robot
+    const contactRing = new THREE.Mesh(
+      new THREE.RingGeometry(160, 161.5, 64),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.15 })
+    );
+    contactRing.rotation.x = -Math.PI / 2;
+    contactRing.position.y = -67.2;
+    robotRoot.add(contactRing);
 
     // --- Base Chassis Frame (Titanium Alloy) ---
     const chassisGroup = new THREE.Group();
@@ -548,18 +614,51 @@ export default function Robo3DCanvas({
         materials.arcReactorGlow.emissiveIntensity = pulse;
       }
 
+      // 1. Simulation progress along trajectory driven by scroll
+      const targetProgress = Math.max(0, Math.min(1, scrollProgressRef.current || 0));
+      const prevProgress = simProgressRef.current;
+      simProgressRef.current += (targetProgress - simProgressRef.current) * 0.08;
+      const progressDelta = simProgressRef.current - prevProgress;
+
+      // 2. Wheels physically rotate when scrolling (forward on scroll down, reverse on scroll up, stopping when idle)
+      if (Math.abs(progressDelta) > 0.00002) {
+        wheelVelocityRef.current = progressDelta * 85;
+      } else {
+        wheelVelocityRef.current *= 0.82;
+      }
+
+      if (Math.abs(wheelVelocityRef.current) > 0.0001) {
+        wheels.forEach((w) => {
+          w.rotation.z += wheelVelocityRef.current;
+        });
+      }
+
+      // 3. Drive robot along Catmull-Rom simulation path
+      const p = Math.max(0, Math.min(1, simProgressRef.current));
+      const robotPos = simPath.getPointAt(p);
+      robotRoot.position.set(robotPos.x, 0, robotPos.z);
+
+      // 4. Realistic steering yaw aligned with path curve, blending straight at explosion
+      const tangent = simPath.getTangentAt(p);
+      const pathHeading = Math.atan2(tangent.x, tangent.z);
+      const finalYaw = THREE.MathUtils.lerp(pathHeading, 0, Math.pow(orb.explode, 1.4));
+      robotRoot.rotation.y = finalYaw;
+      robotRoot.updateMatrixWorld(true);
+
+      // 5. Dynamic camera tracking following the moving robot
+      const targetCenter = new THREE.Vector3(
+        robotPos.x,
+        robotPos.y + 15 + orb.explode * 28,
+        robotPos.z
+      );
+
       const clampedPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orb.phi));
-      const cx = orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
-      const cy = orb.radius * Math.cos(clampedPhi);
-      const cz = orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
+      const cx = targetCenter.x + orb.radius * Math.sin(clampedPhi) * Math.sin(orb.theta);
+      const cy = targetCenter.y + orb.radius * Math.cos(clampedPhi);
+      const cz = targetCenter.z + orb.radius * Math.sin(clampedPhi) * Math.cos(orb.theta);
 
       camera.position.set(cx, cy, cz);
-      // Smoothly shift camera lookAt upwards during explosion so top cargo box is never cut off
-      camera.lookAt(0, 15 + orb.explode * 28, 0);
-
-      wheels.forEach((w) => {
-        w.rotation.z += delta * 1.3;
-      });
+      camera.lookAt(targetCenter);
 
       // 3D-to-2D CAD Callout Leader Line projection
       const curSteps = stepsRef.current || [];
