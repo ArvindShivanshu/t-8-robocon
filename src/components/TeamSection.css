@@ -147,7 +147,23 @@
   width: 100%;
   aspect-ratio: 1 / 1.02;
   overflow: hidden;
-  background: #141724;
+  background: #0d0f17;
+}
+
+/* Bottom shelf guard: covers bottom 24px of photo with solid card background.
+   Guarantees that in the 8px space below the floating pill, NO person photo or clothing
+   is ever shown—only the pure, dark background of the card.
+   The shelf sits behind the solid white pill (z-index: 3), hiding the boundary completely. */
+.team-photo-wrap::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: #0d0f17;
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Ambient background glow inside card that activates on hover */
@@ -195,28 +211,28 @@
   z-index: 2;
 }
 
-/* White Name Block Docked to Bottom of Card */
+/* Floating Frosted Bottom Pill with 8px space around it */
 .team-floating-pill {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
   background: #ffffff;
-  border-radius: 12px 12px 17px 17px;
-  padding: 0.58rem 0.72rem;
+  border-radius: 11px;
+  padding: 0.52rem 0.68rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.35rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   transition: box-shadow 0.3s ease;
   z-index: 3;
 }
 
 .team-member-card:hover .team-floating-pill {
   background: #ffffff;
-  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42);
 }
 
 /* Info Column */

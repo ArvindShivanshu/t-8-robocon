@@ -200,39 +200,53 @@ export default function HeroSection({
         <div className="hero-arc-ambient" />
         <div className="hero-crimson-ambient" />
 
-        {/* Hero Particle Title Overlay - Vanishes smoothly as user scrolls */}
-        <div 
-          className="hero-particle-title-wrap"
-          style={{
-            opacity: Math.max(0, 1 - (scrollProgress / 0.14)),
-            pointerEvents: scrollProgress > 0.12 ? 'none' : 'auto',
-            transform: `translate(-50%, ${-scrollProgress * 280}px)`,
-            transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          <div className="hero-particle-text-container">
-            <ParticleText
-              text="T-8 ROBOCON"
-              particleSize={2.2}
-              density={3.2}
-              color="#ffffff"
-              highlightColor="#00f0ff"
-              scatter={160}
-              gatherDuration={1800}
-              stagger={420}
-              idleDrift={1.2}
-              curveLoop={true}
-              enableHover={false}
-              pointerRepel={0}
-              repelRadius={0}
-              trigger="mount"
-              fontSize="clamp(2.5rem, 8vw, 6.2rem)"
-              fontWeight={900}
-              glow={true}
-              scrollProgress={scrollProgress}
-            />
-          </div>
-        </div>
+        {/* Hero Particle Title Overlay - Vanishes on scroll in, reappears when CAD fully zooms out at end */}
+        {(() => {
+          const introOpacity = Math.max(0, 1 - (scrollProgress / 0.14));
+          const outroOpacity = scrollProgress >= 0.85 
+            ? Math.min(1, Math.max(0, (scrollProgress - 0.85) / 0.10)) 
+            : 0;
+          const titleOpacity = Math.max(introOpacity, outroOpacity);
+          const titleY = scrollProgress <= 0.5
+            ? -Math.min(1, scrollProgress / 0.14) * 45
+            : (1 - outroOpacity) * 35;
+          const isInteractive = introOpacity > 0.1 || outroOpacity > 0.1;
+
+          return (
+            <div 
+              className="hero-particle-title-wrap"
+              style={{
+                opacity: titleOpacity,
+                pointerEvents: isInteractive ? 'auto' : 'none',
+                transform: `translate(-50%, ${titleY}px)`,
+                transition: 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <div className="hero-particle-text-container">
+                <ParticleText
+                  text="T-8 ROBOCON"
+                  particleSize={2.2}
+                  density={3.2}
+                  color="#ffffff"
+                  highlightColor="#00f0ff"
+                  scatter={160}
+                  gatherDuration={1800}
+                  stagger={420}
+                  idleDrift={1.2}
+                  curveLoop={true}
+                  enableHover={false}
+                  pointerRepel={0}
+                  repelRadius={0}
+                  trigger="mount"
+                  fontSize="clamp(2.5rem, 8vw, 6.2rem)"
+                  fontWeight={900}
+                  glow={true}
+                  scrollProgress={scrollProgress}
+                />
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 3D CAD Canvas */}
         <Robo3DCanvas 

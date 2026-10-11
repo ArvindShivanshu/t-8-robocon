@@ -137,16 +137,31 @@ const ParticleText = ({
     };
 
     const render = (now) => {
-      // Calculate scroll vanishing ratio - slow, cinematic ease
+      // Calculate scroll vanishing ratio & outro resurface when CAD fully zooms out
       const s = scrollRef.current || 0;
-      const vanishThreshold = 0.14;
-      const sRatio = clamp(s / vanishThreshold, 0, 1);
-      const scrollFade = Math.cos(sRatio * Math.PI * 0.5); // Smooth 1 -> 0 cosine falloff
-      const scatterExpand = Math.pow(sRatio, 1.4); // Gentle initial acceleration
+      const introRatio = clamp(s / 0.14, 0, 1);
+      const introFade = Math.cos(introRatio * Math.PI * 0.5); // Smooth 1 -> 0 cosine falloff
+      const introScatter = Math.pow(introRatio, 1.4); // Gentle initial acceleration
+
+      // Outro resurface when CAD zooms back out to arena overview at end of scroll
+      const outroProgress = clamp((s - 0.85) / 0.10, 0, 1);
+      const outroFade = Math.sin(outroProgress * Math.PI * 0.5); // Smooth 0 -> 1 sine rise
+      const outroScatter = Math.pow(1 - outroProgress, 1.4);
+
+      let scrollFade = 0;
+      let scatterExpand = 0;
+
+      if (s <= 0.5) {
+        scrollFade = introFade;
+        scatterExpand = introScatter;
+      } else {
+        scrollFade = outroFade;
+        scatterExpand = outroScatter;
+      }
 
       ctx.clearRect(0, 0, width, height);
 
-      // If user has scrolled past threshold, do not draw
+      // If user has scrolled past threshold and not in outro, do not draw
       if (scrollFade <= 0.001) {
         animationFrame = window.requestAnimationFrame(render);
         return;
