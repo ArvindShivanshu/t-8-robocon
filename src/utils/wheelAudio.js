@@ -1,22 +1,36 @@
-// Web Audio API Real-time Synthesis of AGV Holonomic Wheel & Planetary Gearbox Sound
-// Zero external assets, zero latency, dynamically modulated by velocity
+// Ultra-Realistic Physics-Based Vehicle Audio Engine
+// Models a 15kg autonomous mobile robot (AGV) with 4-wheel omni/mecanum drive
+// Features:
+// 1. Studio-grade stereo acoustic floor roll + planetary motor drivetrain
+// 2. Continuous momentum & inertia smoothing (eliminates scroll notch stutter)
+// 3. Critically damped acoustic filtering (Q = 0.707, zero resonant ringing or whistling)
+// 4. Natural pitch modulation (bounded between 0.82x and 1.32x for authentic vehicle acoustics)
 
 class WheelSoundEngine {
   constructor() {
     this.ctx = null;
     this.isInitialized = false;
-    this.masterGain = null;
-    this.motorOsc = null;
-    this.motorOsc2 = null;
-    this.motorGain = null;
-    this.rumbleFilter = null;
-    this.rumbleGain = null;
-    this.noiseNode = null;
-    this.lastSpeed = 0;
+    this.audioBuffer = null;
+    this.bufferSource = null;
+    this.gainNode = null;
+    this.filterNode = null;
+    this.isPlaying = false;
+    this.isLoadingBuffer = false;
+
+    // Physics momentum state
     this.sources = {
       scroll: 0,
       simulator: 0,
     };
+    this.targetSpeed = 0;
+    this.smoothedSpeed = 0;
+    this.rafId = null;
+
+    // Fallback synth nodes (smooth pink-noise mechanical rumble)
+    this.synthGain = null;
+    this.synthNoiseNode = null;
+    this.synthFilter = null;
+    this.synthMotorOsc = null;
   }
 
   init() {
@@ -26,75 +40,117 @@ class WheelSoundEngine {
       if (!AudioContextClass) return;
       this.ctx = new AudioContextClass();
 
-      // Master output gain
-      this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-      this.masterGain.connect(this.ctx.destination);
+      // Master Gain Node
+      this.gainNode = this.ctx.createGain();
+      this.gainNode.gain.setValueAtTime(0.00001, this.ctx.currentTime);
 
-      // --- 1. Motor / Planetary Gearbox Whine ---
-      // Primary gear mesh tone
-      this.motorOsc = this.ctx.createOscillator();
-      this.motorOsc.type = 'triangle';
-      this.motorOsc.frequency.setValueAtTime(90, this.ctx.currentTime);
+      // Critically Damped Lowpass Filter (Q = 0.707 Butterworth - natural acoustic absorption, zero whistle)
+      this.filterNode = this.ctx.createBiquadFilter();
+      this.filterNode.type = 'lowpass';
+      this.filterNode.frequency.setValueAtTime(450, this.ctx.currentTime);
+      this.filterNode.Q.setValueAtTime(0.707, this.ctx.currentTime);
 
-      // Harmonic overtone
-      this.motorOsc2 = this.ctx.createOscillator();
-      this.motorOsc2.type = 'sine';
-      this.motorOsc2.frequency.setValueAtTime(180, this.ctx.currentTime);
+      this.filterNode.connect(this.gainNode);
+      this.gainNode.connect(this.ctx.destination);
 
-      this.motorGain = this.ctx.createGain();
-      this.motorGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
+      // Initialize warm mechanical synthesis fallback (active while WAV buffer loads)
+      this.initSynthFallback();
 
-      // Low-pass filter to keep gear whine authentic, warm and industrial
-      const motorFilter = this.ctx.createBiquadFilter();
-      motorFilter.type = 'lowpass';
-      motorFilter.frequency.setValueAtTime(1400, this.ctx.currentTime);
-
-      this.motorOsc.connect(motorFilter);
-      this.motorOsc2.connect(motorFilter);
-      motorFilter.connect(this.motorGain);
-      this.motorGain.connect(this.masterGain);
-
-      this.motorOsc.start();
-      this.motorOsc2.start();
-
-      // --- 2. Wheel-Floor Rolling Texture (Filtered Pink Noise) ---
-      const bufferSize = this.ctx.sampleRate * 2; // 2 seconds seamless loop
-      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        b0 = 0.99886 * b0 + white * 0.0555179;
-        b1 = 0.99332 * b1 + white * 0.0750759;
-        b2 = 0.96900 * b2 + white * 0.1538520;
-        b3 = 0.86650 * b3 + white * 0.3104856;
-        b4 = 0.55000 * b4 + white * 0.5329522;
-        b5 = -0.7616 * b5 - white * 0.0168980;
-        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.055;
-        b6 = white * 0.115926;
-      }
-
-      this.noiseNode = this.ctx.createBufferSource();
-      this.noiseNode.buffer = noiseBuffer;
-      this.noiseNode.loop = true;
-
-      this.rumbleFilter = this.ctx.createBiquadFilter();
-      this.rumbleFilter.type = 'bandpass';
-      this.rumbleFilter.Q.setValueAtTime(1.6, this.ctx.currentTime);
-      this.rumbleFilter.frequency.setValueAtTime(120, this.ctx.currentTime);
-
-      this.rumbleGain = this.ctx.createGain();
-      this.rumbleGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-
-      this.noiseNode.connect(this.rumbleFilter);
-      this.rumbleFilter.connect(this.rumbleGain);
-      this.rumbleGain.connect(this.masterGain);
-
-      this.noiseNode.start();
       this.isInitialized = true;
+
+      // Start continuous physics momentum update loop
+      this.startPhysicsLoop();
+
+      // Load high-fidelity stereo mechanical wheel rolling sample
+      const audioUrl = `${import.meta.env.BASE_URL || '/'}assets/audio/wheel_rolling.wav`.replace('//', '/');
+      this.loadAudioSample(audioUrl);
     } catch (err) {
-      console.warn('AudioContext failed to initialize:', err);
+      console.warn('WheelSoundEngine init error:', err);
+    }
+  }
+
+  initSynthFallback() {
+    if (!this.ctx) return;
+    try {
+      this.synthGain = this.ctx.createGain();
+      this.synthGain.gain.setValueAtTime(0.00001, this.ctx.currentTime);
+      this.synthGain.connect(this.ctx.destination);
+
+      // Low frequency mechanical frame resonance
+      this.synthMotorOsc = this.ctx.createOscillator();
+      this.synthMotorOsc.type = 'sine';
+      this.synthMotorOsc.frequency.setValueAtTime(115, this.ctx.currentTime);
+
+      const oscFilter = this.ctx.createBiquadFilter();
+      oscFilter.type = 'lowpass';
+      oscFilter.frequency.setValueAtTime(320, this.ctx.currentTime);
+      oscFilter.Q.setValueAtTime(0.707, this.ctx.currentTime);
+
+      this.synthMotorOsc.connect(oscFilter);
+      oscFilter.connect(this.synthGain);
+      this.synthMotorOsc.start();
+
+      // Granular mechanical floor friction noise (Brownian/Pink filtered)
+      const bufSize = this.ctx.sampleRate * 2;
+      const noiseBuf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+      const data = noiseBuf.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufSize; i++) {
+        const white = Math.random() * 2 - 1;
+        lastOut = (lastOut + 0.02 * white) / 1.02; // Brown noise integrator
+        data[i] = lastOut * 1.8;
+      }
+      this.synthNoiseNode = this.ctx.createBufferSource();
+      this.synthNoiseNode.buffer = noiseBuf;
+      this.synthNoiseNode.loop = true;
+
+      this.synthFilter = this.ctx.createBiquadFilter();
+      this.synthFilter.type = 'bandpass';
+      this.synthFilter.Q.setValueAtTime(0.9, this.ctx.currentTime);
+      this.synthFilter.frequency.setValueAtTime(160, this.ctx.currentTime);
+
+      this.synthNoiseNode.connect(this.synthFilter);
+      this.synthFilter.connect(this.synthGain);
+      this.synthNoiseNode.start();
+    } catch (e) {
+      console.warn('Synth fallback init error:', e);
+    }
+  }
+
+  async loadAudioSample(url) {
+    if (this.isLoadingBuffer) return;
+    this.isLoadingBuffer = true;
+    try {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      if (!this.ctx) return;
+      this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
+      this.startBufferPlayback();
+    } catch (e) {
+      console.warn('Notice: Using dynamic mechanical physical synthesis fallback:', e);
+    } finally {
+      this.isLoadingBuffer = false;
+    }
+  }
+
+  startBufferPlayback() {
+    if (!this.ctx || !this.audioBuffer || this.isPlaying) return;
+    try {
+      this.bufferSource = this.ctx.createBufferSource();
+      this.bufferSource.buffer = this.audioBuffer;
+      this.bufferSource.loop = true;
+      this.bufferSource.playbackRate.setValueAtTime(1.0, this.ctx.currentTime);
+
+      this.bufferSource.connect(this.filterNode);
+      this.bufferSource.start();
+      this.isPlaying = true;
+
+      // Silence fallback synth once high-fidelity recording is active
+      if (this.synthGain) {
+        this.synthGain.gain.setValueAtTime(0.00001, this.ctx.currentTime);
+      }
+    } catch (err) {
+      console.warn('startBufferPlayback error:', err);
     }
   }
 
@@ -105,59 +161,98 @@ class WheelSoundEngine {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
+    if (this.audioBuffer && !this.isPlaying) {
+      this.startBufferPlayback();
+    }
   }
 
-  // Update speed for a named source ('scroll' or 'simulator')
-  // normalizedSpeed: 0 (stopped) up to ~1.0+ (fast motion)
-  setSpeed(source, normalizedSpeed) {
-    this.sources[source] = Math.max(0, normalizedSpeed || 0);
-    // Combine highest active speed
-    const combined = Math.max(this.sources.scroll, this.sources.simulator);
+  startPhysicsLoop() {
+    if (this.rafId) return;
 
-    if (combined > 0.01) {
+    const tick = () => {
+      this.updatePhysics();
+      this.rafId = requestAnimationFrame(tick);
+    };
+    this.rafId = requestAnimationFrame(tick);
+  }
+
+  updatePhysics() {
+    if (!this.isInitialized || !this.ctx) return;
+
+    const target = this.targetSpeed;
+    const current = this.smoothedSpeed;
+
+    // Asymmetric physics momentum:
+    // Fast attack (alpha = 0.16, ~70ms) for responsive throttle
+    // Gentle coast-down (alpha = 0.045, ~450ms) for realistic 15kg vehicle inertia
+    const alpha = target > current ? 0.16 : 0.045;
+    this.smoothedSpeed += (target - current) * alpha;
+
+    if (this.smoothedSpeed < 0.005) {
+      this.smoothedSpeed = 0;
+    }
+
+    this.applyAudioParams(this.smoothedSpeed);
+  }
+
+  setSpeed(source, speed) {
+    this.sources[source] = Math.max(0, speed || 0);
+    this.targetSpeed = Math.max(this.sources.scroll, this.sources.simulator);
+
+    if (this.targetSpeed > 0.01) {
       this.ensureRunning();
     }
-    this.applyAudioParams(combined);
   }
 
   applyAudioParams(speed) {
     if (!this.isInitialized || !this.ctx) return;
 
     const t = this.ctx.currentTime;
-    const s = Math.min(2.5, Math.max(0, speed));
+    const s = Math.min(2.0, Math.max(0, speed));
 
-    if (s < 0.01) {
-      // Smooth fade to silent
-      this.masterGain.gain.setTargetAtTime(0.00001, t, 0.08);
-      this.lastSpeed = 0;
+    if (s < 0.008) {
+      // Gentle fade to zero when completely stationary
+      if (this.gainNode) {
+        this.gainNode.gain.setTargetAtTime(0.00001, t, 0.10);
+      }
+      if (this.synthGain && !this.isPlaying) {
+        this.synthGain.gain.setTargetAtTime(0.00001, t, 0.10);
+      }
       return;
     }
 
-    // Volume scales with velocity (gentle curve so slow rolls are quiet, fast rolls are punchy)
-    const masterVol = Math.min(0.24, Math.pow(s, 0.65) * 0.20);
-    this.masterGain.gain.setTargetAtTime(masterVol, t, 0.04);
+    // Realistic volume curve:
+    // Soft, deep floor crawl (10% volume) -> solid punchy presence (25% volume)
+    const vol = Math.min(0.26, 0.05 + Math.pow(s, 0.70) * 0.18);
 
-    // Motor Gear Mesh Pitch: scales dynamically from ~85Hz to ~480Hz
-    // If fast scrolling, frequency shoots up producing that signature mechanical hum/whine!
-    const baseFreq = 85 + s * 165;
-    this.motorOsc.frequency.setTargetAtTime(baseFreq, t, 0.04);
-    this.motorOsc2.frequency.setTargetAtTime(baseFreq * 2.02, t, 0.04);
+    // Natural vehicle pitch modulation (strict realistic bounds):
+    // Slow crawl: 0.82x (heavy, deep mechanical thrum)
+    // Cruise speed (s = 1.0): 1.02x (natural acoustic recording)
+    // Top speed (s = 2.0): 1.28x (spooled high-torque electric drive)
+    const rate = Math.min(1.32, Math.max(0.80, 0.82 + s * 0.23));
 
-    // Motor balance
-    this.motorGain.gain.setTargetAtTime(0.68, t, 0.04);
+    // Butterworth acoustic absorption filter:
+    // Crawl: 420 Hz (muffled, solid chassis-floor contact)
+    // High speed: 2200 Hz (open, textured mechanical planetary purr)
+    const cutoff = Math.min(2600, 420 + s * 950);
 
-    // Floor Rumble texture: bandpass frequency shifts from 95Hz to 310Hz with speed
-    const rumbleFreq = 95 + s * 115;
-    this.rumbleFilter.frequency.setTargetAtTime(rumbleFreq, t, 0.05);
-    this.rumbleGain.gain.setTargetAtTime(0.85, t, 0.04);
-
-    this.lastSpeed = s;
+    if (this.isPlaying && this.bufferSource) {
+      this.gainNode.gain.setTargetAtTime(vol, t, 0.05);
+      this.bufferSource.playbackRate.setTargetAtTime(rate, t, 0.05);
+      this.filterNode.frequency.setTargetAtTime(cutoff, t, 0.05);
+    } else if (this.synthGain) {
+      // Mechanical synthesis fallback
+      this.synthGain.gain.setTargetAtTime(vol * 0.75, t, 0.06);
+      const synthPitch = 90 + s * 55;
+      this.synthMotorOsc.frequency.setTargetAtTime(synthPitch, t, 0.06);
+      this.synthFilter.frequency.setTargetAtTime(140 + s * 160, t, 0.06);
+    }
   }
 }
 
 export const wheelAudio = new WheelSoundEngine();
 
-// Auto-unlock AudioContext on first user interaction
+// Auto-unlock on first user interaction
 if (typeof window !== 'undefined') {
   const unlockEvents = ['scroll', 'wheel', 'keydown', 'pointerdown', 'touchstart'];
   const unlock = () => {
@@ -166,3 +261,4 @@ if (typeof window !== 'undefined') {
   };
   unlockEvents.forEach((evt) => window.addEventListener(evt, unlock, { passive: true }));
 }
+
