@@ -1114,29 +1114,34 @@ export default function Robo3DCanvas({
       const prevPathP = robotPathProgressRef.current || 0;
       robotPathProgressRef.current = pathP;
       const pathDelta = pathP - prevPathP;
-
-      // 2. Wheels physically rotate when the robot is moving or when user scrolls anywhere on the 3D model
       const pathDeltaMag = Math.abs(pathDelta);
-      const scrollSpeedInst = rawScrollDelta * 380;
-      const dynamicMotion = Math.max(scrollSpeedInst, pathDeltaMag * 195);
 
-      if (dynamicMotion > 0.0001) {
-        wheelVelocityRef.current = Math.max(wheelVelocityRef.current * 0.84, dynamicMotion);
+      // The bot moves ONLY while actively traveling along the simulation path (s in (0.12, 0.78) and pathDeltaMag > 0)
+      const isBotMoving = (s > 0.12 && s < 0.78 && pathDeltaMag > 0.00003);
+
+      if (isBotMoving) {
+        // Fast scroll = large delta = high speed; Slow scroll = low speed
+        const targetWheelVelocity = (pathDelta / 0.016) * 3.8;
+        wheelVelocityRef.current = Math.max(
+          wheelVelocityRef.current * 0.82,
+          Math.min(2.5, Math.abs(targetWheelVelocity))
+        ) * Math.sign(targetWheelVelocity || 1);
       } else {
-        wheelVelocityRef.current *= 0.88;
+        // Stop quickly when bot reaches destination dock or when scroll stops
+        wheelVelocityRef.current *= 0.72;
       }
 
       const wheelSpeedMag = Math.abs(wheelVelocityRef.current);
-      if (wheelSpeedMag > 0.0001) {
-        const dir = (rawScroll >= prevRaw) ? 1 : -1;
+
+      if (wheelSpeedMag > 0.001) {
         wheels.forEach((w) => {
-          w.rotation.z += wheelSpeedMag * dir * 0.22;
+          w.rotation.z += wheelVelocityRef.current * 0.28;
         });
       }
 
-      // Audio: wheel moving sound modulated by scroll velocity (fast scroll = fast sound)
-      if (wheelSpeedMag > 0.005) {
-        wheelAudio.setSpeed('scroll', wheelSpeedMag * 1.6);
+      // Audio: ONLY play when bot is actively moving!
+      if (isBotMoving && wheelSpeedMag > 0.01) {
+        wheelAudio.setSpeed('scroll', Math.min(2.5, wheelSpeedMag * 1.5));
       } else {
         wheelAudio.setSpeed('scroll', 0);
       }

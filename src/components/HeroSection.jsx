@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import Robo3DCanvas from './Robo3DCanvas';
 import ParticleText from './ParticleText';
-import { wheelAudio } from '../utils/wheelAudio';
 import './HeroSection.css';
 
 export default function HeroSection({ 
@@ -134,9 +133,6 @@ export default function HeroSection({
 
   // Scroll event listener tracking progress through the 360vh corridor
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let lastScrollTime = performance.now();
-
     const handleScroll = () => {
       const hero = heroRootRef.current;
       if (!hero) return;
@@ -148,21 +144,6 @@ export default function HeroSection({
       const scrolledDist = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolledDist / totalDist));
       setScrollProgress(progress);
-
-      // Measure real-time scroll speed for wheel sound
-      const now = performance.now();
-      const dt = Math.max(1, now - lastScrollTime);
-      const dy = Math.abs(window.scrollY - lastScrollY);
-      lastScrollY = window.scrollY;
-      lastScrollTime = now;
-
-      if (scrolledDist >= -150 && scrolledDist <= totalDist + 150) {
-        const pxPerSec = (dy / dt) * 1000;
-        const scrollSpeed = Math.min(2.5, pxPerSec / 320);
-        if (scrollSpeed > 0.015) {
-          wheelAudio.setSpeed('scroll', scrollSpeed * 1.5);
-        }
-      }
 
       if (!freeOrbit) {
         let currentIdx = 0;
@@ -190,25 +171,8 @@ export default function HeroSection({
       }
     };
 
-    const handleWheel = (e) => {
-      const hero = heroRootRef.current;
-      if (!hero) return;
-      const rect = hero.getBoundingClientRect();
-      if (rect.bottom > 0 && rect.top < window.innerHeight) {
-        const wheelSpeed = Math.min(2.5, Math.abs(e.deltaY) / 32);
-        if (wheelSpeed > 0.015) {
-          wheelAudio.setSpeed('scroll', wheelSpeed * 1.5);
-        }
-      }
-    };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('wheel', handleWheel, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('wheel', handleWheel);
-      wheelAudio.setSpeed('scroll', 0);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [freeOrbit, onTelemetryUpdate]);
 
   const goToStep = (index) => {
