@@ -261,10 +261,11 @@
 }
 
 .team-social-btn:hover {
-  background: #0f172a;
+  background: #0077b5;
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-color: #0077b5;
+  box-shadow: 0 2px 10px rgba(0, 119, 181, 0.35);
+  transform: none;
 }
 
 /* Responsive adjustments */

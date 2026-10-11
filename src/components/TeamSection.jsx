@@ -7,7 +7,6 @@ const teamMembers = [
     name: 'Sneha Mishra',
     role: 'MCSOCD',
     image: '/assets/team/team_member_1.png',
-    twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
   {
@@ -15,15 +14,13 @@ const teamMembers = [
     name: 'Swarli Sonawane',
     role: 'SAMBED',
     image: '/assets/team/team_member_2.png',
-    twitter: 'https://twitter.com',
-    linkedin: 'https://linkedin.com',
+    linkedin: 'https://www.linkedin.com/in/swarali-sonawane-498ab041b?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
   },
   {
     id: 'member-3',
     name: 'Sreyash Asutosh Sahu',
     role: 'SIESED',
     image: '/assets/team/team_member_3.png',
-    twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
   {
@@ -31,7 +28,6 @@ const teamMembers = [
     name: 'Siddharth Tripathi',
     role: 'SPACED',
     image: '/assets/team/team_member_4.png',
-    twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
   {
@@ -39,7 +35,6 @@ const teamMembers = [
     name: 'Shaik Raphy Azli',
     role: 'SAMBED',
     image: '/assets/team/team_member_5.png',
-    twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
   {
@@ -47,7 +42,6 @@ const teamMembers = [
     name: 'Rayan Raphy',
     role: 'SPACED',
     image: '/assets/team/team_member_6.png',
-    twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com',
   },
   {
@@ -55,8 +49,7 @@ const teamMembers = [
     name: 'Shivanshu Gupta',
     role: 'WebDev',
     image: '/assets/team/team_member_7.png',
-    twitter: 'https://twitter.com',
-    linkedin: 'https://linkedin.com',
+    linkedin: 'https://www.linkedin.com/in/shivanshu-gupta-arvind/',
   },
 ];
 
@@ -81,25 +74,6 @@ const renderMemberCard = (member, keyPrefix) => (
       </div>
 
       <div className="team-socials-row">
-        {/* X / Twitter Icon */}
-        <a
-          href={member.twitter}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="team-social-btn"
-          aria-label={`${member.name} on X`}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="12"
-            height="12"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-        </a>
-
         {/* LinkedIn Icon */}
         <a
           href={member.linkedin}

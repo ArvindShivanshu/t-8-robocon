@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { wheelAudio } from '../utils/wheelAudio';
 
 export default function Robo3DCanvas({
   activeStep = 0,
@@ -1018,11 +1019,15 @@ export default function Robo3DCanvas({
         wheelVelocityRef.current *= 0.82;
       }
 
-      if (Math.abs(wheelVelocityRef.current) > 0.0001) {
+      const wheelSpeedMag = Math.abs(wheelVelocityRef.current);
+      if (wheelSpeedMag > 0.0001) {
         wheels.forEach((w) => {
           w.rotation.z += wheelVelocityRef.current;
         });
       }
+
+      // Audio: wheel moving sound modulated by scroll velocity (faster scroll = faster & higher pitch sound)
+      wheelAudio.setSpeed('scroll', wheelSpeedMag * 1.5);
 
       // 3. Drive robot along Catmull-Rom simulation path
       const robotPos = simPath.getPointAt(pathP);
@@ -1338,6 +1343,7 @@ export default function Robo3DCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
+      wheelAudio.setSpeed('scroll', 0);
       renderer.dispose();
     };
   }, []);

@@ -18,6 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import './ArenaSimulator.css';
+import { wheelAudio } from '../utils/wheelAudio';
 
 export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
   const canvasRef = useRef(null);
@@ -209,6 +210,13 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
       r.y += dy;
       r.theta += r.omega;
 
+      // Real-time Wheel & Planetary Motor Sound Synthesis
+      const linearSpeed = Math.hypot(r.vx, r.vy);
+      const spinComponent = Math.abs(r.omega) * 22.0;
+      const totalSimSpeed = linearSpeed + spinComponent;
+      const normSimSpeed = totalSimSpeed > 0.05 ? Math.min(2.5, totalSimSpeed / 2.6) : 0;
+      wheelAudio.setSpeed('simulator', normSimSpeed);
+
       // Constrain inside arena boundary (800 x 600)
       r.x = Math.max(35, Math.min(canvas.width - 35, r.x));
       r.y = Math.max(35, Math.min(canvas.height - 35, r.y));
@@ -374,7 +382,10 @@ export default function ArenaSimulator({ onTelemetryUpdate, currentTheme }) {
 
     render();
 
-    return () => cancelAnimationFrame(animationId);
+    return () => {
+      cancelAnimationFrame(animationId);
+      wheelAudio.setSpeed('simulator', 0);
+    };
   }, [activeKeys, joystickActive, joystickPos, payloadKg, speedMultiplier, isAutoPlaying, currentTheme, onTelemetryUpdate]);
 
   // Touch / Mouse Joystick dragging
