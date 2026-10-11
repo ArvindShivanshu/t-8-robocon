@@ -234,9 +234,9 @@ export default function HeroSection({
                   stagger={420}
                   idleDrift={1.2}
                   curveLoop={true}
-                  enableHover={false}
-                  pointerRepel={0}
-                  repelRadius={0}
+                  enableHover={true}
+                  pointerRepel={32}
+                  repelRadius={95}
                   trigger="mount"
                   fontSize="clamp(2.5rem, 8vw, 6.2rem)"
                   fontWeight={900}

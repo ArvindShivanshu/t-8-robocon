@@ -58,9 +58,9 @@ const ParticleText = ({
   stagger = 380,
   idleDrift = 1.2,
   curveLoop = true,
-  enableHover = false,
-  pointerRepel = 0,
-  repelRadius = 0,
+  enableHover = true,
+  pointerRepel = 32,
+  repelRadius = 95,
   trigger = 'mount',
   fontSize = 'clamp(2.5rem, 8vw, 6.5rem)',
   fontWeight = 800,
@@ -99,6 +99,17 @@ const ParticleText = ({
     let height = 0;
     let dpr = 1;
 
+    // Interactive pointer state
+    const pointer = {
+      x: -9999,
+      y: -9999,
+      targetX: -9999,
+      targetY: -9999,
+      active: false,
+      radius: repelRadius || 95,
+      force: pointerRepel || 32,
+    };
+
     const startGather = (fromScatter = true) => {
       if (!particles.length) return;
 
@@ -115,6 +126,9 @@ const ParticleText = ({
 
         particle.startX = particle.x;
         particle.startY = particle.y;
+        particle.vx = 0;
+        particle.vy = 0;
+        particle.hoverRatio = 0;
         particle.delay = reducedMotion ? 0 : particle.seed * stagger;
       });
 
@@ -123,8 +137,17 @@ const ParticleText = ({
     };
 
     const drawParticle = (particle) => {
-      const size = particle.size;
-      ctx.fillStyle = particle.color;
+      let size = particle.size;
+      let pColor = particle.color;
+
+      if (particle.hoverRatio > 0.02) {
+        size = particle.size * (1 + particle.hoverRatio * 0.75);
+        if (particle.hoverRatio > 0.25) {
+          pColor = '#00f0ff';
+        }
+      }
+
+      ctx.fillStyle = pColor;
 
       if (size <= 2.1) {
         ctx.fillRect(particle.x - size / 2, particle.y - size / 2, size, size);
@@ -165,6 +188,28 @@ const ParticleText = ({
       if (scrollFade <= 0.001) {
         animationFrame = window.requestAnimationFrame(render);
         return;
+      }
+
+      // Smooth pointer coordinates towards target
+      if (pointer.active) {
+        pointer.x += (pointer.targetX - pointer.x) * 0.45;
+        pointer.y += (pointer.targetY - pointer.y) * 0.45;
+      } else {
+        pointer.x += (pointer.targetX - pointer.x) * 0.15;
+        pointer.y += (pointer.targetY - pointer.y) * 0.15;
+      }
+
+      // Draw interactive holographic arc aura under cursor if active
+      if (enableHover && pointer.active && pointer.x > -500 && glow && !reducedMotion && scrollFade > 0.05) {
+        const auraRadius = pointer.radius * 0.85;
+        const pGrad = ctx.createRadialGradient(pointer.x, pointer.y, 2, pointer.x, pointer.y, auraRadius);
+        pGrad.addColorStop(0, 'rgba(0, 240, 255, 0.25)');
+        pGrad.addColorStop(0.5, 'rgba(0, 240, 255, 0.08)');
+        pGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+        ctx.fillStyle = pGrad;
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, auraRadius, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       if (glow && !reducedMotion) {
@@ -211,9 +256,51 @@ const ParticleText = ({
           baseY += Math.sin(angle) * pushDist - scatterExpand * 45; // float gently upward
         }
 
-        const follow = reducedMotion ? 1 : 0.15;
-        particle.x += (baseX - particle.x) * follow;
-        particle.y += (baseY - particle.y) * follow;
+        if (reducedMotion) {
+          particle.x = baseX;
+          particle.y = baseY;
+        } else if (gathering) {
+          const follow = 0.15;
+          particle.x += (baseX - particle.x) * follow;
+          particle.y += (baseY - particle.y) * follow;
+          particle.vx = 0;
+          particle.vy = 0;
+        } else {
+          // Dynamic Hover Repulsion Physics
+          if (enableHover && pointer.active && pointer.x > -500 && scrollFade > 0.05) {
+            const dx = particle.x - pointer.x;
+            const dy = particle.y - pointer.y;
+            const dist = Math.hypot(dx, dy);
+            const maxDist = pointer.radius;
+
+            if (dist < maxDist && dist > 0.1) {
+              const factor = Math.pow(1 - dist / maxDist, 1.5);
+              const force = factor * pointer.force;
+              const nx = dx / dist;
+              const ny = dy / dist;
+
+              particle.vx += nx * force * 0.45;
+              particle.vy += ny * force * 0.45;
+
+              particle.hoverRatio = Math.max(particle.hoverRatio, factor);
+            }
+          }
+
+          // Elastic Spring Return to home position (baseX, baseY)
+          const springStiffness = 0.082;
+          const damping = 0.82;
+
+          particle.vx += (baseX - particle.x) * springStiffness;
+          particle.vy += (baseY - particle.y) * springStiffness;
+
+          particle.vx *= damping;
+          particle.vy *= damping;
+
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+
+          particle.hoverRatio *= 0.88;
+        }
 
         ctx.globalAlpha = clamp((0.35 + progress * 0.65) * scrollFade, 0, 1);
         drawParticle(particle);
@@ -234,6 +321,43 @@ const ParticleText = ({
         animationFrame = window.requestAnimationFrame(render);
       }
     };
+
+    const handlePointerMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.targetX = e.clientX - rect.left;
+      pointer.targetY = e.clientY - rect.top;
+      pointer.active = true;
+    };
+
+    const handlePointerLeave = () => {
+      pointer.active = false;
+      pointer.targetX = -9999;
+      pointer.targetY = -9999;
+    };
+
+    const handleClick = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      const shockRadius = (pointer.radius || 95) * 1.8;
+      const shockForce = (pointer.force || 32) * 1.6;
+
+      particles.forEach((p) => {
+        const dx = p.x - clickX;
+        const dy = p.y - clickY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < shockRadius && dist > 0.1) {
+          const factor = Math.pow(1 - dist / shockRadius, 1.2);
+          p.vx += (dx / dist) * shockForce * factor;
+          p.vy += (dy / dist) * shockForce * factor;
+          p.hoverRatio = 1.0;
+        }
+      });
+    };
+
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    canvas.addEventListener('click', handleClick);
 
     const sampleText = async () => {
       const currentBuild = ++buildId;
@@ -329,6 +453,9 @@ const ParticleText = ({
         return {
           x: reducedMotion ? target.x : startX,
           y: reducedMotion ? target.y : startY,
+          vx: 0,
+          vy: 0,
+          hoverRatio: 0,
           startX,
           startY,
           targetX: target.x,
@@ -375,6 +502,9 @@ const ParticleText = ({
 
     return () => {
       buildId += 1;
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerleave', handlePointerLeave);
+      canvas.removeEventListener('click', handleClick);
       resizeObserver.disconnect();
       reduceMotionQuery?.removeEventListener('change', handleReduceMotionChange);
       if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
@@ -391,6 +521,9 @@ const ParticleText = ({
     stagger,
     idleDrift,
     curveLoop,
+    enableHover,
+    pointerRepel,
+    repelRadius,
     trigger,
     fontSize,
     fontWeight,
