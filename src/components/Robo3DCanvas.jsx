@@ -95,6 +95,7 @@ export default function Robo3DCanvas({
   const simProgressRef = useRef(0);
   const robotPathProgressRef = useRef(0);
   const wheelVelocityRef = useRef(0);
+  const lastRawScrollRef = useRef(0);
 
   // References
   const sceneRef = useRef(null);
@@ -1089,6 +1090,10 @@ export default function Robo3DCanvas({
 
       // 1. Simulation progress along trajectory driven by scroll
       const rawScroll = Math.max(0, Math.min(1, scrollProgressRef.current || 0));
+      const prevRaw = lastRawScrollRef.current ?? rawScroll;
+      lastRawScrollRef.current = rawScroll;
+      const rawScrollDelta = Math.abs(rawScroll - prevRaw);
+
       // Smoothly interpolate scroll progress for silky physics
       simProgressRef.current += (rawScroll - simProgressRef.current) * 0.08;
       const s = simProgressRef.current;
@@ -1110,22 +1115,31 @@ export default function Robo3DCanvas({
       robotPathProgressRef.current = pathP;
       const pathDelta = pathP - prevPathP;
 
-      // 2. Wheels physically rotate when the robot is moving along the path
-      if (Math.abs(pathDelta) > 0.00002) {
-        wheelVelocityRef.current = pathDelta * 195;
+      // 2. Wheels physically rotate when the robot is moving or when user scrolls anywhere on the 3D model
+      const pathDeltaMag = Math.abs(pathDelta);
+      const scrollSpeedInst = rawScrollDelta * 380;
+      const dynamicMotion = Math.max(scrollSpeedInst, pathDeltaMag * 195);
+
+      if (dynamicMotion > 0.0001) {
+        wheelVelocityRef.current = Math.max(wheelVelocityRef.current * 0.84, dynamicMotion);
       } else {
-        wheelVelocityRef.current *= 0.82;
+        wheelVelocityRef.current *= 0.88;
       }
 
       const wheelSpeedMag = Math.abs(wheelVelocityRef.current);
       if (wheelSpeedMag > 0.0001) {
+        const dir = (rawScroll >= prevRaw) ? 1 : -1;
         wheels.forEach((w) => {
-          w.rotation.z += wheelVelocityRef.current;
+          w.rotation.z += wheelSpeedMag * dir * 0.22;
         });
       }
 
-      // Audio: wheel moving sound modulated by scroll velocity
-      wheelAudio.setSpeed('scroll', wheelSpeedMag * 1.5);
+      // Audio: wheel moving sound modulated by scroll velocity (fast scroll = fast sound)
+      if (wheelSpeedMag > 0.005) {
+        wheelAudio.setSpeed('scroll', wheelSpeedMag * 1.6);
+      } else {
+        wheelAudio.setSpeed('scroll', 0);
+      }
 
       // 3. Drive robot along Catmull-Rom simulation path
       const robotPos = simPath.getPointAt(pathP);
