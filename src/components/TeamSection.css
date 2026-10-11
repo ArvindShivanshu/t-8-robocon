@@ -134,11 +134,10 @@
   cursor: pointer;
 }
 
-/* Hover: subtle card border in sleek dark/white tone and deep black shadow, NO blue */
+/* Hover: subtle card border in sleek dark/white tone and clean black shadow, NO blue */
 .team-member-card:hover {
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 
-              0 0 24px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65);
 }
 
 /* Photo Wrapper - Studio backdrop base */
@@ -171,21 +170,6 @@
 }
 .team-card-member-7 .team-photo-wrap {
   background: radial-gradient(circle at 50% 35%, #e1e0dc 0%, #b6b4af 75%);
-}
-
-/* Black Ambient Backdrop strictly IN THE BACKGROUND (z-index: 1, behind the person) */
-.team-photo-bg-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.95) 85%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.team-member-card:hover .team-photo-bg-glow {
-  opacity: 1;
 }
 
 /* Photo Image (Person Cutout) - sits ON TOP of the background glow (z-index: 2).
