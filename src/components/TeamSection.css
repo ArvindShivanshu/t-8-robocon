@@ -141,53 +141,62 @@
               0 0 28px rgba(56, 189, 248, 0.16);
 }
 
-/* Photo Wrapper */
+/* Photo Wrapper - Studio backdrop base */
 .team-photo-wrap {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1.02;
   overflow: hidden;
-  background: #0d0f17;
+  background: radial-gradient(circle at 50% 35%, #e2e0da 0%, #b8b5ac 75%);
 }
 
-/* Bottom shelf guard: covers bottom 24px of photo with solid card background.
-   Guarantees that in the 8px space below the floating pill, NO person photo or clothing
-   is ever shown—only the pure, dark background of the card.
-   The shelf sits behind the solid white pill (z-index: 3), hiding the boundary completely. */
-.team-photo-wrap::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 24px;
-  background: #0d0f17;
-  z-index: 2;
-  pointer-events: none;
+/* Member-specific studio backdrops matching individual portrait aesthetics */
+.team-card-member-1 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #e4e2dc 0%, #b9b7af 75%);
+}
+.team-card-member-2 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #ece9e4 0%, #c8c5c0 75%);
+}
+.team-card-member-3 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #dee1e4 0%, #b6bcc2 75%);
+}
+.team-card-member-4 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #c6c5c1 0%, #a2a09c 75%);
+}
+.team-card-member-5 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #98a0a4 0%, #70787c 75%);
+}
+.team-card-member-6 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #e6e4e0 0%, #bcbaaf 75%);
+}
+.team-card-member-7 .team-photo-wrap {
+  background: radial-gradient(circle at 50% 35%, #e1e0dc 0%, #b6b4af 75%);
 }
 
-/* Ambient background glow inside card that activates on hover */
-.team-photo-wrap::after {
-  content: '';
+/* Blue Ambient Glow strictly IN THE BACKGROUND (z-index: 1, behind the person) */
+.team-photo-bg-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.18) 0%, transparent 68%);
+  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.45) 0%, rgba(56, 189, 248, 0) 70%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
   z-index: 1;
 }
 
-.team-member-card:hover .team-photo-wrap::after {
+.team-member-card:hover .team-photo-bg-glow {
   opacity: 1;
 }
 
-/* Photo Image - Jumps up on hover with subtle depth shadow */
+/* Photo Image (Person Cutout) - sits ON TOP of the background glow (z-index: 2).
+   Zero blue effect on the person's face or clothing! */
 .team-photo-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  position: relative;
+  z-index: 2;
   transform: translateY(0) scale(1);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
               filter 0.4s ease;
@@ -196,7 +205,7 @@
 /* Only the person inside jumps! */
 .team-member-card:hover .team-photo-img {
   transform: translateY(-9px) scale(1.03);
-  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.35));
 }
 
 .team-photo-vignette {
@@ -206,7 +215,7 @@
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0) 65%,
-    rgba(0, 0, 0, 0.3) 100%
+    rgba(0, 0, 0, 0.22) 100%
   );
   z-index: 2;
 }
