@@ -134,11 +134,11 @@
   cursor: pointer;
 }
 
-/* Hover: subtle card border glow and ambient shadow, NO translateY jump of entire block */
+/* Hover: subtle card border in sleek dark/white tone and deep black shadow, NO blue */
 .team-member-card:hover {
-  border-color: rgba(56, 189, 248, 0.38);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 
-              0 0 28px rgba(56, 189, 248, 0.16);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 
+              0 0 24px rgba(0, 0, 0, 0.5);
 }
 
 /* Photo Wrapper - Studio backdrop base */
@@ -173,11 +173,11 @@
   background: radial-gradient(circle at 50% 35%, #e1e0dc 0%, #b6b4af 75%);
 }
 
-/* Blue Ambient Glow strictly IN THE BACKGROUND (z-index: 1, behind the person) */
+/* Black Ambient Backdrop strictly IN THE BACKGROUND (z-index: 1, behind the person) */
 .team-photo-bg-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.45) 0%, rgba(56, 189, 248, 0) 70%);
+  background: radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.95) 85%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;

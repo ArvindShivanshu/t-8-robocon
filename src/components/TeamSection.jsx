@@ -57,7 +57,7 @@ const teamMembers = [
 const renderMemberCard = (member, keyPrefix) => (
   <div key={`${keyPrefix}-${member.id}`} className={`team-member-card team-card-${member.id}`}>
     <div className="team-photo-wrap">
-      {/* Blue Ambient Glow strictly in background behind subject */}
+      {/* Black Ambient Backdrop strictly in background behind subject */}
       <div className="team-photo-bg-glow" />
 
       {/* Person Portrait Cutout on top of background glow */}
