@@ -199,18 +199,7 @@ const ParticleText = ({
         pointer.y += (pointer.targetY - pointer.y) * 0.15;
       }
 
-      // Draw interactive holographic arc aura under cursor if active
-      if (enableHover && pointer.active && pointer.x > -500 && glow && !reducedMotion && scrollFade > 0.05) {
-        const auraRadius = pointer.radius * 0.85;
-        const pGrad = ctx.createRadialGradient(pointer.x, pointer.y, 2, pointer.x, pointer.y, auraRadius);
-        pGrad.addColorStop(0, 'rgba(0, 240, 255, 0.25)');
-        pGrad.addColorStop(0.5, 'rgba(0, 240, 255, 0.08)');
-        pGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
-        ctx.fillStyle = pGrad;
-        ctx.beginPath();
-        ctx.arc(pointer.x, pointer.y, auraRadius, 0, Math.PI * 2);
-        ctx.fill();
-      }
+
 
       if (glow && !reducedMotion) {
         ctx.shadowBlur = particleSize * 2.8 * scrollFade;
