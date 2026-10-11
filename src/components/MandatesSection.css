@@ -65,12 +65,13 @@
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-sm);
-  transition: border-color 0.25s ease, transform 0.25s ease;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .mandate-clean-col:hover {
   border-color: rgba(0, 240, 255, 0.35);
-  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .mandate-col-top {
