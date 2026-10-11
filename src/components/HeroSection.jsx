@@ -32,7 +32,7 @@ export default function HeroSection({
       anchor: { x: 0, y: 102, z: 126 },
       theta: 0.72,
       phi: 1.10,
-      radius: 780,
+      radius: 1480,
       explode: 0,
       p: 0,
       pose: { x: -1200, y: -1400, theta: 0, motion: 'ORIGIN_DEPOT' }
@@ -47,7 +47,7 @@ export default function HeroSection({
       anchor: { x: 100, y: -30, z: 80 },
       theta: 1.05,
       phi: 1.12,
-      radius: 780,
+      radius: 1480,
       explode: 0,
       p: 0.16,
       pose: { x: -1200, y: -200, theta: 45, motion: 'WEST_AISLE' }
@@ -62,9 +62,9 @@ export default function HeroSection({
       anchor: { x: 125, y: -30, z: 135 },
       theta: 1.25,
       phi: 1.05,
-      radius: 780,
+      radius: 1480,
       explode: 0,
-      p: 0.32,
+      p: 0.28,
       pose: { x: -500, y: 800, theta: 70, motion: 'NORTH_JUNCTION' }
     },
     {
@@ -77,9 +77,9 @@ export default function HeroSection({
       anchor: { x: 0, y: -14, z: 115 },
       theta: 0.65,
       phi: 1.18,
-      radius: 750,
+      radius: 1480,
       explode: 0,
-      p: 0.49,
+      p: 0.40,
       pose: { x: 700, y: 1200, theta: 110, motion: 'NORTHEAST_ARC' }
     },
     {
@@ -92,9 +92,9 @@ export default function HeroSection({
       anchor: { x: 90, y: 15, z: 90 },
       theta: 1.10,
       phi: 1.18,
-      radius: 750,
+      radius: 1480,
       explode: 0,
-      p: 0.66,
+      p: 0.52,
       pose: { x: 1400, y: 200, theta: 180, motion: 'EAST_CORRIDOR' }
     },
     {
@@ -107,9 +107,9 @@ export default function HeroSection({
       anchor: { x: 0, y: 72, z: 0 },
       theta: 0.85,
       phi: 0.75,
-      radius: 780,
+      radius: 1480,
       explode: 0,
-      p: 0.82,
+      p: 0.65,
       pose: { x: 1000, y: -1000, theta: 240, motion: 'CARGO_STATION' }
     },
     {
@@ -122,9 +122,9 @@ export default function HeroSection({
       anchor: { x: 0, y: -26, z: 138 },
       theta: 0.50,
       phi: 1.15,
-      radius: 780,
+      radius: 1480,
       explode: 0,
-      p: 0.93,
+      p: 0.78,
       pose: { x: -100, y: -400, theta: 300, motion: 'DESTINATION_DOCK' }
     },
   ];

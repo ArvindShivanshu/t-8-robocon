@@ -109,10 +109,11 @@ export default function TeamSection() {
       <div className="container team-header-container">
         {/* Section Header */}
         <div className="team-header-center">
-          <h2 className="team-title-headline">Your Team, Our Passion</h2>
+          <span className="team-badge-pill">T-8 ROBOCON DIVISION</span>
+          <h2 className="team-title-headline">The Minds Behind the Machine</h2>
           <p className="team-description-text">
-            There are many variations of available but the majority have
-            suffered alteration in some form.
+            Collegiate engineers across mechanical kinematics, embedded architecture,
+            autonomous navigation, and telemetry—united to pioneer the Mark-VIII platform.
           </p>
         </div>
       </div>

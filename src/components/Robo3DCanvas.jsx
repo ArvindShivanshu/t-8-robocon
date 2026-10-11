@@ -47,10 +47,10 @@ export default function Robo3DCanvas({
     prevY: 0,
     theta: 0.72,
     phi: 1.15,
-    radius: 780,
+    radius: 1480,
     targetTheta: 0.72,
     targetPhi: 1.15,
-    targetRadius: 780,
+    targetRadius: 1480,
   });
 
   const activeStepRef = useRef(activeStep);
@@ -1002,12 +1002,19 @@ export default function Robo3DCanvas({
       simProgressRef.current += (rawScroll - simProgressRef.current) * 0.08;
       const s = simProgressRef.current;
 
-      // Camera Zoom Factor: smooth transition from wide overview (s = 0) to close-up tracking (s >= 0.16)
-      const zoomBlend = freeOrbit ? 1.0 : THREE.MathUtils.smoothstep(s, 0.0, 0.16);
+      // Camera Zoom Factor Choreography:
+      // - s in [0, 0.12]: zooms in from overview (radius 3900) to max zoom (radius 1480, matching user screenshot)
+      // - s in [0.12, 0.78]: robot travels along path and reaches destination dock
+      // - s in [0.78, 0.83]: robot stays docked at destination dock with callout active
+      // - s in [0.83, 0.96]: camera smoothly zooms back OUT to wide overview ("zoom out like before on next scroll")
+      // - s in [0.96, 1.0]: wide arena overview; on next scroll smoothly rolls into next section
+      const zoomIn = THREE.MathUtils.smoothstep(s, 0.0, 0.12);
+      const zoomOut = THREE.MathUtils.smoothstep(s, 0.83, 0.96);
+      const zoomBlend = freeOrbit ? 1.0 : zoomIn * (1.0 - zoomOut);
 
-      // Path Movement: robot stays at start depot during initial camera zoom-in (s in [0, 0.05])
-      // then accelerates and travels smoothly along the path (s in [0.05, 1.0])
-      const pathP = s <= 0.05 ? 0 : Math.min(1, (s - 0.05) / 0.95);
+      // Path Movement: robot stays at start depot (s <= 0.12)
+      // then accelerates and travels smoothly along path to destination dock (s in [0.12, 0.78])
+      const pathP = s <= 0.12 ? 0 : Math.min(1, (s - 0.12) / 0.66);
       const prevPathP = robotPathProgressRef.current || 0;
       robotPathProgressRef.current = pathP;
       const pathDelta = pathP - prevPathP;
@@ -1026,7 +1033,7 @@ export default function Robo3DCanvas({
         });
       }
 
-      // Audio: wheel moving sound modulated by scroll velocity (faster scroll = faster & higher pitch sound)
+      // Audio: wheel moving sound modulated by scroll velocity
       wheelAudio.setSpeed('scroll', wheelSpeedMag * 1.5);
 
       // 3. Drive robot along Catmull-Rom simulation path
@@ -1041,7 +1048,7 @@ export default function Robo3DCanvas({
 
       // 5. Cinematic Camera:
       // In overview (zoomBlend = 0): camera is at overview coordinates looking at arena center
-      // On scroll (zoomBlend -> 1): camera dives down, smoothly centering on and tracking the robot
+      // On scroll: smoothly tracks the robot without zooming in more than 1480
       const overviewCenter = new THREE.Vector3(0, 15, -100);
       const robotCenter = new THREE.Vector3(robotPos.x, robotPos.y + 15, robotPos.z);
       const targetCenter = new THREE.Vector3().lerpVectors(overviewCenter, robotCenter, zoomBlend);
@@ -1050,7 +1057,9 @@ export default function Robo3DCanvas({
       const overviewPhi = 45 * Math.PI / 180;   // 0.785 rad
       const overviewTheta = -20 * Math.PI / 180; // -0.349 rad
 
-      const effectiveRadius = THREE.MathUtils.lerp(overviewRadius, orb.radius, zoomBlend);
+      // Never zoom closer than 1480 (preserves user screenshot zoom distance exactly)
+      const targetRadius = Math.max(1480, orb.radius);
+      const effectiveRadius = THREE.MathUtils.lerp(overviewRadius, targetRadius, zoomBlend);
       const effectivePhi = THREE.MathUtils.lerp(overviewPhi, orb.phi, zoomBlend);
       const effectiveTheta = THREE.MathUtils.lerp(overviewTheta, orb.theta, zoomBlend);
 
@@ -1412,7 +1421,7 @@ export default function Robo3DCanvas({
     if (!freeOrbit) return;
     e.preventDefault();
     orbitRef.current.targetRadius += e.deltaY * 0.35;
-    orbitRef.current.targetRadius = Math.max(380, Math.min(1300, orbitRef.current.targetRadius));
+    orbitRef.current.targetRadius = Math.max(1450, Math.min(3900, orbitRef.current.targetRadius));
   };
 
   const currentStep = steps[activeStep] || steps[0] || {};

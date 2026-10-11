@@ -36,6 +36,22 @@
   align-items: center;
 }
 
+.team-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.95rem;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 9999px;
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
 .team-title-headline {
   font-family: var(--font-display, -apple-system, BlinkMacSystemFont, sans-serif);
   font-size: clamp(2.2rem, 4.2vw, 3.2rem);
