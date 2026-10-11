@@ -1,6 +1,72 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { wheelAudio } from '../utils/wheelAudio';
+
+const partInfoMap = {
+  chassis: {
+    group: 'chassis',
+    code: 'CH-01',
+    name: '45° OMNI CHASSIS FRAME',
+    dims: '240 mm (W) × 260 mm (L) × 45 mm (H)',
+    spec: '6061-T6 Aluminum Alloy // 4 mm Plate Thickness',
+    material: 'Anodized 6061-T6 Aluminum CNC Rails',
+    datum: 'Primary Kinematics Datum',
+  },
+  motors: {
+    group: 'motors',
+    code: 'DR-02',
+    name: 'REPULSOR DRIVE MOTORS',
+    dims: 'Ø 42 mm Diameter × 85 mm Length',
+    spec: '4x Planetary Geared 12V DC // 450 RPM Max',
+    material: 'Neodymium Core // Hardened Steel Gearbox',
+    datum: '45° Holonomic Vector Mount',
+  },
+  wheels: {
+    group: 'wheels',
+    code: 'WH-03',
+    name: '45° HOLONOMIC OMNI ROLLERS',
+    dims: 'Ø 100 mm Roller OD × 38 mm Width',
+    spec: '14x High-Grip TPU Sub-Rollers // 360° Translation',
+    material: 'Die-Cast Aluminum Hub + Molded TPU',
+    datum: 'Continuous Zero-Scrub Ground Contact',
+  },
+  deck: {
+    group: 'deck',
+    code: 'SN-04',
+    name: 'ARC ODOMETRY & SENSOR DECK',
+    dims: '180 mm (W) × 180 mm (L) × 25 mm (H)',
+    spec: '1024 CPR Optical Encoders + 6-DoF IMU Fusion',
+    material: '3K Carbon Twill Plate + FR-4 Circuitry',
+    datum: 'EKF Navigation Datum @ Y=15 mm',
+  },
+  risers: {
+    group: 'risers',
+    code: 'ST-05',
+    name: 'LOAD-BEARING ALUMINUM RISERS',
+    dims: '4x Ø 16 mm Diameter × 60 mm Height',
+    spec: 'Solid Aluminum Columns // Direct Rail Standoffs',
+    material: 'High-Tensile Anodized Aluminum',
+    datum: 'Zero-Deflection Payload Mount',
+  },
+  cargo: {
+    group: 'cargo',
+    code: 'PL-06',
+    name: '15.0 KG PAYLOAD CONTAINMENT BAY',
+    dims: '190 mm (W) × 170 mm (L) × 110 mm (H)',
+    spec: '15.0 kg Max Load // Internal Volume: 3.55 L',
+    material: 'Deep-Stamped Crimson Sheet Alloy',
+    datum: 'Warehouse Transport Envelope',
+  },
+  docking: {
+    group: 'docking',
+    code: 'DK-07',
+    name: 'AUTONOMOUS LASER DOCKING PORT',
+    dims: '70 mm (W) × 35 mm (L) × 28 mm (H)',
+    spec: 'Dual Optical Targets + ±2.5 mm Laser Guide Pins',
+    material: 'Titanium Guide Pins + Optical Receiver Lens',
+    datum: 'Return-to-Dock Bay Lock Datum',
+  },
+};
 
 export default function Robo3DCanvas({
   activeStep = 0,
@@ -16,6 +82,14 @@ export default function Robo3DCanvas({
   useEffect(() => {
     scrollProgressRef.current = scrollProgress;
   }, [scrollProgress]);
+
+  // Hover dimension inspection state
+  const [hoveredPart, setHoveredPart] = useState(null);
+  const hoveredPartRef = useRef(null);
+  const caliperGroupRef = useRef(null);
+  const cadInteractiveMeshesRef = useRef([]);
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const dimTooltipRef = useRef(null);
 
   // Continuous simulation progress & wheel physics
   const simProgressRef = useRef(0);
@@ -381,6 +455,7 @@ export default function Robo3DCanvas({
     const robotRoot = new THREE.Group();
     robotRootRef.current = robotRoot;
     scene.add(robotRoot);
+    cadInteractiveMeshesRef.current = [];
 
     // Dynamic ground datum ring that moves across the floor with the robot
     const contactRing = new THREE.Mesh(
@@ -548,9 +623,14 @@ export default function Robo3DCanvas({
     };
     wireMatsRef.current = wireMats;
 
-    // Dual-Layer CAD Highlight: Edges + Wireframe Lattice
+    // Dual-Layer CAD Highlight: Edges + Wireframe Lattice + Interactive Measurement Raycast Registration
     const addCadHighlight = (mesh, groupKey, threshold = 20) => {
       if (!mesh || !mesh.geometry) return;
+      mesh.userData = mesh.userData || {};
+      mesh.userData.partGroup = groupKey;
+      mesh.userData.partInfo = partInfoMap[groupKey] || partInfoMap.chassis;
+      cadInteractiveMeshesRef.current.push(mesh);
+
       // 1. Sharp silhouette & feature edges with negative polygon offset
       const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
       const edgeLine = new THREE.LineSegments(edges, edgeMats[groupKey] || edgeMats.root);
@@ -695,6 +775,11 @@ export default function Robo3DCanvas({
             new THREE.CylinderGeometry(5.5, 5.5, 11, 12),
             materials.omniRoller
           );
+          roller.userData = {
+            partGroup: 'wheels',
+            partInfo: partInfoMap.wheels,
+          };
+          cadInteractiveMeshesRef.current.push(roller);
           roller.position.set(
             Math.cos(theta) * rollerRadius,
             Math.sin(theta) * rollerRadius,
@@ -942,6 +1027,12 @@ export default function Robo3DCanvas({
     );
     dimsGroup.add(rightTick);
 
+    // --- 3D Interactive Caliper Measurement Group ---
+    const caliperGroup = new THREE.Group();
+    caliperGroup.visible = false;
+    caliperGroupRef.current = caliperGroup;
+    robotRoot.add(caliperGroup);
+
     // --- 3D Holographic Callout Target Beacon with Concentric Reticle Rings ---
     const beaconGroup = new THREE.Group();
     beaconGroupRef.current = beaconGroup;
@@ -1080,16 +1171,20 @@ export default function Robo3DCanvas({
       const cardOpacity = zoomBlend > 0.4 ? Math.min(1, (zoomBlend - 0.4) / 0.4) : 0;
 
       // 6. Dynamic 3D CAD Component Highlighting on Model
-      // When the CAD callout card is highlighting a component, illuminate that specific part on the 3D model!
-      const activePart = curStep?.partGroup || 'root';
+      // When the CAD callout card is highlighting a component or user is hovering in Dims mode, illuminate that specific part!
+      const isDimHover = Boolean(showDims && hoveredPartRef.current);
+      const activePart = (showDims && hoveredPartRef.current)
+        ? hoveredPartRef.current.group
+        : (curStep?.partGroup || 'root');
+
       const targetHighlights = {
-        chassis: (activePart === 'chassis' && cardOpacity > 0.05) ? cardOpacity : 0,
-        motors: (activePart === 'motors' && cardOpacity > 0.05) ? cardOpacity : 0,
-        deck: (activePart === 'deck' && cardOpacity > 0.05) ? cardOpacity : 0,
-        risers: (activePart === 'risers' && cardOpacity > 0.05) ? cardOpacity : 0,
-        cargo: (activePart === 'cargo' && cardOpacity > 0.05) ? cardOpacity : 0,
-        docking: (activePart === 'docking' && cardOpacity > 0.05) ? cardOpacity : 0,
-        root: (activePart === 'root' && cardOpacity > 0.05) ? cardOpacity : 0,
+        chassis: (activePart === 'chassis' && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        motors: ((activePart === 'motors' || activePart === 'wheels') && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        deck: (activePart === 'deck' && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        risers: (activePart === 'risers' && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        cargo: (activePart === 'cargo' && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        docking: (activePart === 'docking' && (cardOpacity > 0.05 || isDimHover)) ? (isDimHover ? 1.0 : cardOpacity) : 0,
+        root: (activePart === 'root' && cardOpacity > 0.05 && !isDimHover) ? cardOpacity : 0,
       };
 
       const hl = highlightsRef.current;
@@ -1388,10 +1483,122 @@ export default function Robo3DCanvas({
     }
   }, [renderMode]);
 
-  // Dimension lines toggle
+  // 3D Caliper helpers for interactive part dimension inspection
+  const clear3DCaliper = () => {
+    if (!caliperGroupRef.current) return;
+    const cg = caliperGroupRef.current;
+    while (cg.children.length > 0) {
+      const child = cg.children[0];
+      cg.remove(child);
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) {
+        if (Array.isArray(child.material)) child.material.forEach((m) => m.dispose());
+        else child.material.dispose();
+      }
+    }
+    cg.visible = false;
+  };
+
+  const update3DCaliper = (targetMesh) => {
+    if (!caliperGroupRef.current || !robotRootRef.current || !targetMesh) return;
+    clear3DCaliper();
+
+    const cg = caliperGroupRef.current;
+    const root = robotRootRef.current;
+
+    const box = new THREE.Box3();
+    targetMesh.updateWorldMatrix(true, false);
+    box.setFromObject(targetMesh);
+
+    if (box.isEmpty()) return;
+
+    // Transform world bounding box to robotRoot local space
+    const invRoot = root.matrixWorld.clone().invert();
+    box.applyMatrix4(invRoot);
+
+    const pad = 2.0;
+    const min = box.min.clone().subScalar(pad);
+    const max = box.max.clone().addScalar(pad);
+    const dx = max.x - min.x;
+    const dy = max.y - min.y;
+    const dz = max.z - min.z;
+
+    const cornerLen = Math.max(3.5, Math.min(16, Math.min(dx, dy, dz) * 0.3));
+
+    // Corner brackets line segments
+    const cornerPts = [];
+    const corners = [
+      new THREE.Vector3(min.x, min.y, min.z),
+      new THREE.Vector3(max.x, min.y, min.z),
+      new THREE.Vector3(min.x, max.y, min.z),
+      new THREE.Vector3(max.x, max.y, min.z),
+      new THREE.Vector3(min.x, min.y, max.z),
+      new THREE.Vector3(max.x, min.y, max.z),
+      new THREE.Vector3(min.x, max.y, max.z),
+      new THREE.Vector3(max.x, max.y, max.z),
+    ];
+
+    corners.forEach((c) => {
+      const sx = c.x === min.x ? 1 : -1;
+      const sy = c.y === min.y ? 1 : -1;
+      const sz = c.z === min.z ? 1 : -1;
+
+      cornerPts.push(c.clone(), new THREE.Vector3(c.x + sx * cornerLen, c.y, c.z));
+      cornerPts.push(c.clone(), new THREE.Vector3(c.x, c.y + sy * cornerLen, c.z));
+      cornerPts.push(c.clone(), new THREE.Vector3(c.x, c.y, c.z + sz * cornerLen));
+    });
+
+    const cornerGeom = new THREE.BufferGeometry().setFromPoints(cornerPts);
+    const cornerMat = new THREE.LineBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.9,
+      depthTest: false,
+    });
+    const cornerLines = new THREE.LineSegments(cornerGeom, cornerMat);
+    cornerLines.renderOrder = 998;
+    cg.add(cornerLines);
+
+    // Dimension caliper lines along X (width) and Y (height)
+    const caliperPts = [];
+    const tickLen = 6.0;
+
+    // Top X-dimension caliper line
+    const yOffset = max.y + 10;
+    const zPlane = max.z + 2;
+    caliperPts.push(new THREE.Vector3(min.x, yOffset, zPlane), new THREE.Vector3(max.x, yOffset, zPlane));
+    caliperPts.push(new THREE.Vector3(min.x, yOffset - tickLen / 2, zPlane), new THREE.Vector3(min.x, yOffset + tickLen / 2, zPlane));
+    caliperPts.push(new THREE.Vector3(max.x, yOffset - tickLen / 2, zPlane), new THREE.Vector3(max.x, yOffset + tickLen / 2, zPlane));
+
+    // Right Y-dimension caliper line
+    const xOffset = max.x + 10;
+    caliperPts.push(new THREE.Vector3(xOffset, min.y, zPlane), new THREE.Vector3(xOffset, max.y, zPlane));
+    caliperPts.push(new THREE.Vector3(xOffset - tickLen / 2, min.y, zPlane), new THREE.Vector3(xOffset + tickLen / 2, min.y, zPlane));
+    caliperPts.push(new THREE.Vector3(xOffset - tickLen / 2, max.y, zPlane), new THREE.Vector3(xOffset + tickLen / 2, max.y, zPlane));
+
+    const caliperGeom = new THREE.BufferGeometry().setFromPoints(caliperPts);
+    const caliperMat = new THREE.LineBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: false,
+    });
+    const caliperLines = new THREE.LineSegments(caliperGeom, caliperMat);
+    caliperLines.renderOrder = 999;
+    cg.add(caliperLines);
+
+    cg.visible = true;
+  };
+
+  // Dimension lines & hover state reset
   useEffect(() => {
     if (dimsGroupRef.current) {
       dimsGroupRef.current.visible = showDims;
+    }
+    if (!showDims) {
+      hoveredPartRef.current = null;
+      setHoveredPart(null);
+      clear3DCaliper();
     }
   }, [showDims]);
 
@@ -1403,18 +1610,84 @@ export default function Robo3DCanvas({
   };
 
   const handleMouseMove = (e) => {
-    if (!orbitRef.current.isDragging) return;
-    const deltaX = e.clientX - orbitRef.current.prevX;
-    const deltaY = e.clientY - orbitRef.current.prevY;
-    orbitRef.current.prevX = e.clientX;
-    orbitRef.current.prevY = e.clientY;
+    if (orbitRef.current.isDragging) {
+      const deltaX = e.clientX - orbitRef.current.prevX;
+      const deltaY = e.clientY - orbitRef.current.prevY;
+      orbitRef.current.prevX = e.clientX;
+      orbitRef.current.prevY = e.clientY;
 
-    orbitRef.current.targetTheta -= deltaX * 0.008;
-    orbitRef.current.targetPhi -= deltaY * 0.008;
+      orbitRef.current.targetTheta -= deltaX * 0.008;
+      orbitRef.current.targetPhi -= deltaY * 0.008;
+      return;
+    }
+
+    if (!showDims) {
+      if (hoveredPartRef.current) {
+        hoveredPartRef.current = null;
+        setHoveredPart(null);
+        clear3DCaliper();
+      }
+      return;
+    }
+
+    const container = mountRef.current;
+    const camera = cameraRef.current;
+    if (!container || !camera) return;
+
+    const rect = container.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Direct tooltip positioning at 60 FPS
+    if (dimTooltipRef.current) {
+      const padX = 18;
+      const padY = 18;
+      const tipX = mouseX + 310 > rect.width ? Math.max(12, mouseX - 310) : mouseX + padX;
+      const tipY = mouseY + 180 > rect.height ? Math.max(12, mouseY - 170) : mouseY + padY;
+      dimTooltipRef.current.style.transform = `translate3d(${tipX}px, ${tipY}px, 0)`;
+    }
+
+    // Raycast against registered CAD interactive meshes
+    const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    const raycaster = raycasterRef.current;
+    raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
+
+    const interactiveList = cadInteractiveMeshesRef.current || [];
+    const intersects = raycaster.intersectObjects(interactiveList, false);
+
+    if (intersects.length > 0) {
+      const hit = intersects[0];
+      const partInfo = hit.object?.userData?.partInfo;
+      if (partInfo) {
+        if (!hoveredPartRef.current || hoveredPartRef.current.name !== partInfo.name) {
+          hoveredPartRef.current = partInfo;
+          setHoveredPart(partInfo);
+          update3DCaliper(hit.object);
+        }
+        return;
+      }
+    }
+
+    if (hoveredPartRef.current) {
+      hoveredPartRef.current = null;
+      setHoveredPart(null);
+      clear3DCaliper();
+    }
   };
 
   const handleMouseUp = () => {
     orbitRef.current.isDragging = false;
+  };
+
+  const handleMouseLeave = () => {
+    orbitRef.current.isDragging = false;
+    if (hoveredPartRef.current) {
+      hoveredPartRef.current = null;
+      setHoveredPart(null);
+      clear3DCaliper();
+    }
   };
 
   const handleWheel = (e) => {
@@ -1432,9 +1705,13 @@ export default function Robo3DCanvas({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
       onWheel={handleWheel}
-      style={{ cursor: freeOrbit ? (orbitRef.current.isDragging ? 'grabbing' : 'grab') : 'default' }}
+      style={{
+        cursor: showDims
+          ? 'crosshair'
+          : (freeOrbit ? (orbitRef.current.isDragging ? 'grabbing' : 'grab') : 'default')
+      }}
     >
       {/* 3D Canvas Mount Container */}
       <div
@@ -1442,6 +1719,42 @@ export default function Robo3DCanvas({
         className="hero-cad-canvas-mount"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
+
+      {/* Guide Banner when Dims mode is ON */}
+      {showDims && (
+        <div className="cad-dims-guide-indicator mono">
+          <span className="dims-pulse-dot" />
+          <span>INSPECTION MODE: HOVER OVER ANY CAD PART FOR EXACT DIMENSIONS</span>
+        </div>
+      )}
+
+      {/* 2D Floating Precision Dimension Tooltip on Hover */}
+      {showDims && hoveredPart && (
+        <div ref={dimTooltipRef} className="cad-dimension-tooltip">
+          <div className="dim-tooltip-header">
+            <span className="dim-tooltip-code mono">[{hoveredPart.code}]</span>
+            <span className="dim-tooltip-title">{hoveredPart.name}</span>
+          </div>
+          <div className="dim-tooltip-measure-box">
+            <span className="dim-measure-label mono">MEASURED ENVELOPE (XYZ)</span>
+            <span className="dim-measure-val mono">{hoveredPart.dims}</span>
+          </div>
+          <div className="dim-tooltip-specs">
+            <div className="dim-spec-row">
+              <span className="dim-spec-key mono">SPEC:</span>
+              <span className="dim-spec-val">{hoveredPart.spec}</span>
+            </div>
+            <div className="dim-spec-row">
+              <span className="dim-spec-key mono">MATERIAL:</span>
+              <span className="dim-spec-val">{hoveredPart.material}</span>
+            </div>
+            <div className="dim-spec-row">
+              <span className="dim-spec-key mono">DATUM:</span>
+              <span className="dim-spec-val mono">{hoveredPart.datum}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2D Projected CAD Callout Leader Line Overlay */}
       <div className="cad-callout-overlay">

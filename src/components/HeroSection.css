@@ -372,3 +372,127 @@
   }
 }
 
+/* Tactical Dimension HUD */
+.cad-dims-guide-indicator {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.1rem;
+  background: rgba(14, 14, 18, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: var(--radius-pill);
+  color: #00f0ff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(0, 240, 255, 0.2);
+  pointer-events: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.dims-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+  animation: reticlePulse 1.8s infinite ease-out;
+}
+
+.cad-dimension-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: 295px;
+  padding: 0.85rem 1rem;
+  background: rgba(10, 12, 18, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 240, 255, 0.22);
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.dim-tooltip-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dim-tooltip-code {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.08em;
+}
+
+.dim-tooltip-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dim-tooltip-measure-box {
+  background: rgba(0, 240, 255, 0.07);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  margin-bottom: 0.5rem;
+}
+
+.dim-measure-label {
+  display: block;
+  font-size: 0.58rem;
+  color: #71717a;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.15rem;
+}
+
+.dim-measure-val {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.45);
+}
+
+.dim-tooltip-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.62rem;
+}
+
+.dim-spec-row {
+  display: flex;
+  gap: 0.35rem;
+  line-height: 1.35;
+}
+
+.dim-spec-key {
+  color: #71717a;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.dim-spec-val {
+  color: #d4d4d8;
+}
+
