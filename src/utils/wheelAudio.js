@@ -32,6 +32,11 @@ class WheelSoundEngine {
     this.synthNoiseNode = null;
     this.synthFilter = null;
     this.synthMotorOsc = null;
+
+    // Immediately pre-initialize and pre-load audio sample in browser
+    if (typeof window !== 'undefined') {
+      this.init();
+    }
   }
 
   init() {
@@ -62,7 +67,7 @@ class WheelSoundEngine {
       // Start continuous physics momentum loop
       this.startPhysicsLoop();
 
-      // Load high-fidelity WAV sample
+      // Preload high-fidelity WAV sample immediately
       this.loadAudioSample('/assets/audio/wheel_rolling.wav');
     } catch (err) {
       console.warn('WheelSoundEngine init error:', err);
@@ -119,7 +124,7 @@ class WheelSoundEngine {
   }
 
   async loadAudioSample(url) {
-    if (this.isLoadingBuffer) return;
+    if (this.isLoadingBuffer || this.audioBuffer) return;
     this.isLoadingBuffer = true;
     try {
       const response = await fetch(url);
@@ -130,7 +135,8 @@ class WheelSoundEngine {
       if (!this.ctx) return;
       this.audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
 
-      if (this.ctx.state === 'running' || !this.isPlaying) {
+      // If motion is already ongoing, start buffer playback immediately
+      if (this.targetSpeed > 0.005 || this.smoothedSpeed > 0.005) {
         this.startBufferPlayback();
       }
     } catch (e) {
@@ -141,7 +147,9 @@ class WheelSoundEngine {
   }
 
   startBufferPlayback() {
-    if (!this.ctx || !this.audioBuffer || this.isPlaying) return;
+    if (!this.ctx || !this.audioBuffer) return;
+    if (this.isPlaying && this.bufferSource) return;
+
     try {
       this.bufferSource = this.ctx.createBufferSource();
       this.bufferSource.buffer = this.audioBuffer;
@@ -150,6 +158,7 @@ class WheelSoundEngine {
 
       this.bufferSource.onended = () => {
         this.isPlaying = false;
+        this.bufferSource = null;
       };
 
       this.bufferSource.connect(this.filterNode);
@@ -158,6 +167,7 @@ class WheelSoundEngine {
     } catch (err) {
       console.warn('startBufferPlayback error:', err);
       this.isPlaying = false;
+      this.bufferSource = null;
     }
   }
 
@@ -169,12 +179,12 @@ class WheelSoundEngine {
 
     if (this.ctx.state === 'suspended') {
       this.ctx.resume().then(() => {
-        if (this.audioBuffer && !this.isPlaying) {
+        if (this.audioBuffer && (!this.isPlaying || !this.bufferSource) && (this.targetSpeed > 0.005 || this.smoothedSpeed > 0.005)) {
           this.startBufferPlayback();
         }
       }).catch(() => {});
     } else if (this.ctx.state === 'running') {
-      if (this.audioBuffer && !this.isPlaying) {
+      if (this.audioBuffer && (!this.isPlaying || !this.bufferSource) && (this.targetSpeed > 0.005 || this.smoothedSpeed > 0.005)) {
         this.startBufferPlayback();
       }
     }
@@ -200,9 +210,9 @@ class WheelSoundEngine {
     const target = this.targetSpeed;
     const current = this.smoothedSpeed;
 
-    // Responsive attack (alpha = 0.22, ~50ms) for punchy throttle
-    // Gentle momentum coast-down (alpha = 0.045, ~450ms) for realistic 15kg vehicle inertia
-    const alpha = target > current ? 0.22 : 0.045;
+    // Responsive attack (alpha = 0.24, ~40ms) for punchy throttle
+    // Gentle momentum coast-down (alpha = 0.065, ~250ms) for realistic vehicle inertia
+    const alpha = target > current ? 0.24 : 0.065;
     this.smoothedSpeed += (target - current) * alpha;
 
     if (this.smoothedSpeed < 0.005) {
@@ -230,17 +240,22 @@ class WheelSoundEngine {
     if (s < 0.008) {
       // Smooth fade to complete silence when stopped
       if (this.gainNode) {
-        this.gainNode.gain.setTargetAtTime(0.00001, t, 0.12);
+        this.gainNode.gain.setTargetAtTime(0.00001, t, 0.08);
       }
       if (this.synthGain) {
-        this.synthGain.gain.setTargetAtTime(0.00001, t, 0.12);
+        this.synthGain.gain.setTargetAtTime(0.00001, t, 0.08);
       }
       return;
     }
 
+    // Auto-recover buffer playback if sample is loaded and playback hasn't started
+    if (this.audioBuffer && (!this.isPlaying || !this.bufferSource)) {
+      this.startBufferPlayback();
+    }
+
     // Volume curve: clearly audible across all laptop speakers & mobile
-    // Crawl: 18%, Cruise: 42%, Fast: 65%
-    const vol = Math.min(0.68, 0.18 + Math.pow(s / 1.1, 0.72) * 0.42);
+    // Crawl: 22%, Cruise: 46%, Fast: 72%
+    const vol = Math.min(0.72, 0.22 + Math.pow(s / 1.1, 0.72) * 0.44);
 
     // Natural vehicle pitch modulation:
     // Slow crawl: 0.80x (heavy mechanical rumble)
@@ -249,25 +264,25 @@ class WheelSoundEngine {
 
     // Butterworth acoustic filter:
     // Crawl: 680 Hz (deep rolling rumble)
-    // High speed: 3900 Hz (open, textured planetary gears & tire friction)
+    // High speed: 4200 Hz (open, textured planetary gears & tire friction)
     const cutoff = Math.min(4200, 680 + s * 1500);
 
     if (this.isPlaying && this.bufferSource) {
-      this.gainNode.gain.setTargetAtTime(vol, t, 0.04);
-      this.bufferSource.playbackRate.setTargetAtTime(rate, t, 0.04);
-      this.filterNode.frequency.setTargetAtTime(cutoff, t, 0.04);
+      this.gainNode.gain.setTargetAtTime(vol, t, 0.03);
+      this.bufferSource.playbackRate.setTargetAtTime(rate, t, 0.03);
+      this.filterNode.frequency.setTargetAtTime(cutoff, t, 0.03);
 
       // Blend subtle electric motor whine under the WAV sample
       if (this.synthGain) {
-        this.synthGain.gain.setTargetAtTime(vol * 0.18, t, 0.05);
-        this.synthMotorOsc.frequency.setTargetAtTime(110 + s * 140, t, 0.05);
-        this.synthFilter.frequency.setTargetAtTime(350 + s * 300, t, 0.05);
+        this.synthGain.gain.setTargetAtTime(vol * 0.20, t, 0.04);
+        this.synthMotorOsc.frequency.setTargetAtTime(110 + s * 140, t, 0.04);
+        this.synthFilter.frequency.setTargetAtTime(350 + s * 300, t, 0.04);
       }
     } else if (this.synthGain) {
-      // Fallback synthesis mode
-      this.synthGain.gain.setTargetAtTime(vol * 0.85, t, 0.04);
-      this.synthMotorOsc.frequency.setTargetAtTime(120 + s * 160, t, 0.04);
-      this.synthFilter.frequency.setTargetAtTime(320 + s * 450, t, 0.04);
+      // Fallback synthesis mode (while WAV buffer is downloading or if offline)
+      this.synthGain.gain.setTargetAtTime(vol * 0.90, t, 0.03);
+      this.synthMotorOsc.frequency.setTargetAtTime(120 + s * 160, t, 0.03);
+      this.synthFilter.frequency.setTargetAtTime(320 + s * 450, t, 0.03);
     }
   }
 }
@@ -293,5 +308,12 @@ if (typeof window !== 'undefined') {
 
   userGestureEvents.forEach((evt) => {
     window.addEventListener(evt, handleUserGesture, { passive: true, capture: true });
+  });
+
+  window.addEventListener('focus', () => wheelAudio.resumeContext());
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      wheelAudio.resumeContext();
+    }
   });
 }

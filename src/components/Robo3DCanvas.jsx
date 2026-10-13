@@ -1116,31 +1116,38 @@ export default function Robo3DCanvas({
       const pathDelta = pathP - prevPathP;
       const pathDeltaMag = Math.abs(pathDelta);
 
-      // The bot moves ONLY while actively traveling along the simulation path (s in (0.12, 0.78) and pathDeltaMag > 0)
-      const isBotMoving = (s > 0.12 && s < 0.78 && pathDeltaMag > 0.00003);
+      // The bot moves strictly while actively traveling along the simulation path (s in (0.12, 0.78))
+      const isBotOnActivePath = (s > 0.12 && s < 0.78);
 
-      if (isBotMoving) {
-        // Fast scroll = large delta = high speed; Slow scroll = low speed
-        const targetWheelVelocity = (pathDelta / 0.016) * 3.8;
-        wheelVelocityRef.current = Math.max(
-          wheelVelocityRef.current * 0.82,
-          Math.min(2.5, Math.abs(targetWheelVelocity))
-        ) * Math.sign(targetWheelVelocity || 1);
+      if (isBotOnActivePath) {
+        // Measure real movement from either spline progress delta or user scroll delta
+        const currentMotion = Math.max(pathDeltaMag * 220, rawScrollDelta * 280);
+
+        if (currentMotion > 0.001) {
+          // Fast scroll = high velocity; Slow scroll = low rumbling velocity
+          const targetVel = Math.min(2.5, currentMotion * 1.8);
+          wheelVelocityRef.current = Math.max(wheelVelocityRef.current * 0.86, targetVel);
+        } else {
+          // Smooth coast-down inertia when scroll pauses
+          wheelVelocityRef.current *= 0.86;
+        }
       } else {
-        // Stop quickly when bot reaches destination dock or when scroll stops
-        wheelVelocityRef.current *= 0.72;
+        // Completely stationary at depot origin (s <= 0.12) or at destination dock (s >= 0.78)
+        wheelVelocityRef.current = 0;
       }
 
       const wheelSpeedMag = Math.abs(wheelVelocityRef.current);
 
       if (wheelSpeedMag > 0.001) {
+        // Wheels physically spin in direction of path travel
+        const wheelDir = pathDelta < 0 ? -1 : 1;
         wheels.forEach((w) => {
-          w.rotation.z += wheelVelocityRef.current * 0.28;
+          w.rotation.z += wheelSpeedMag * wheelDir * 0.28;
         });
       }
 
-      // Audio: ONLY play when bot is actively moving!
-      if (isBotMoving && wheelSpeedMag > 0.01) {
+      // Audio: strictly gated to bot movement along the path
+      if (isBotOnActivePath && wheelSpeedMag > 0.01) {
         wheelAudio.setSpeed('scroll', Math.min(2.5, wheelSpeedMag * 1.5));
       } else {
         wheelAudio.setSpeed('scroll', 0);
